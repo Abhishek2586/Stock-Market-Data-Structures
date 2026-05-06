@@ -20,6 +20,8 @@ StockMarket-ADS/
 ├── web/                # Local web interface for interactive demo
 │   ├── server.py       # Python web server
 │   └── stock_market_ads.html
+├── assets/             # Images, diagrams, and UI assets
+├── outputs/            # Generated logs, builds, and program outputs
 ├── Makefile            # Build configuration
 └── .gitignore
 ```
