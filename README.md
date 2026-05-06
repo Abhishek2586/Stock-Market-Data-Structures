@@ -8,11 +8,11 @@ A high-performance C application implementing advanced data structures (Hash Tab
 StockMarket-ADS/
 ├── src/                # C Source files and headers
 │   ├── main.c          # Entry point and menu system
-│   ├── member1_hashtable.c 
-│   ├── member2_priority_queue.c
-│   ├── member3_avltree.c
-│   ├── member4_heap.c
-│   ├── member5_trie.c
+│   ├── hashtable.c     # Hash Table (O(1) Stock Lookups)
+│   ├── priority_queue.c# Priority Queue (Real-Time Alert Feed)
+│   ├── avl_tree.c      # AVL Tree (Chronological Price History)
+│   ├── heap.c          # Min/Max Heap (Top Gainers and Losers)
+│   ├── trie.c          # Trie (Auto-Complete Engine)
 │   └── stock_data.h    # Shared data structures and definitions
 ├── docs/               # Documentation and Reports
 │   ├── Research_Paper.pdf

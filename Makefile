@@ -6,11 +6,11 @@ CFLAGS  = -Wall -g
 TARGET  = stock_market
 
 SRCS = src/main.c \
-       src/member1_hashtable.c \
-       src/member2_priority_queue.c \
-       src/member3_avltree.c \
-       src/member4_heap.c \
-       src/member5_trie.c
+       src/hashtable.c \
+       src/priority_queue.c \
+       src/avl_tree.c \
+       src/heap.c \
+       src/trie.c
 
 OBJS = $(SRCS:.c=.o)
 

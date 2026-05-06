@@ -1,5 +1,16 @@
+# Compiled binaries
 *.exe
 *.o
 *.out
 stock_market
+
+# Python caching
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE and environment files
 .vscode/
+.idea/
+.DS_Store
+*.log
