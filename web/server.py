@@ -18,19 +18,19 @@ import threading
 PORT = 8000
 # server.py lives in ADS_unified/, so C files are right here
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-BINARY   = os.path.join(BASE_DIR, "stock_market")
+BINARY   = os.path.join(os.path.dirname(BASE_DIR), "stock_market")
 
 # ── Compile on startup ──────────────────────────────────────────
 def compile_c():
     c_files = [
-        "main.c",
-        "member1_hashtable.c",
-        "member2_priority_queue.c",
-        "member3_avltree.c",
-        "member4_heap.c",
-        "member5_trie.c",
+        "src/main.c",
+        "src/member1_hashtable.c",
+        "src/member2_priority_queue.c",
+        "src/member3_avltree.c",
+        "src/member4_heap.c",
+        "src/member5_trie.c",
     ]
-    sources = [os.path.join(BASE_DIR, f) for f in c_files]
+    sources = [os.path.join(os.path.dirname(BASE_DIR), f) for f in c_files]
     result = subprocess.run(
         ["gcc", "-o", BINARY] + sources + ["-lm"],
         capture_output=True, text=True

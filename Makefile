@@ -5,12 +5,12 @@ CC      = gcc
 CFLAGS  = -Wall -g
 TARGET  = stock_market
 
-SRCS = main.c \
-       member1_hashtable.c \
-       member2_priority_queue.c \
-       member3_avltree.c \
-       member4_heap.c \
-       member5_trie.c
+SRCS = src/main.c \
+       src/member1_hashtable.c \
+       src/member2_priority_queue.c \
+       src/member3_avltree.c \
+       src/member4_heap.c \
+       src/member5_trie.c
 
 OBJS = $(SRCS:.c=.o)
 
@@ -24,11 +24,11 @@ all: $(TARGET)
 $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS) -lm
 
-%.o: %.c stock_data.h
+src/%.o: src/%.c src/stock_data.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJS) $(TARGET)
+	rm -f src/*.o $(TARGET)
 	@echo "  Cleaned."
 
 .PHONY: all clean
