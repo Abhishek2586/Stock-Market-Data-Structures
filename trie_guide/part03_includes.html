@@ -1,0 +1,73 @@
+<!-- PART 3: LINES 1-11 — HEADERS & INCLUDES -->
+
+<hr>
+<div class="section" id="includes">
+  <div class="section-number">Section 03</div>
+  <h2>Lines 1–11: <span class="green">Headers & Includes</span> — Line by Line</h2>
+
+  <p>Let's go through the very first lines of <code>member5_trie.c</code>. Every single line explained.</p>
+
+  <h4>Lines 1–8: The Comment Block</h4>
+  <pre data-lang="C"><code><span class="cm">/*
+ * MEMBER 5: TRIE FOR STOCK SYMBOL AUTO-COMPLETE
+ * ==============================================
+ *
+ * Implements: Trie (Prefix Tree)
+ * Purpose: Fast prefix-based search for stock symbols
+ * Real-world use: Search suggestions as user types
+ */</span></code></pre>
+
+  <div class="line-box">
+    <div class="line-num">Lines 1–8</div>
+    <div class="line-code">/* ... */</div>
+    <div class="line-explain">
+      <strong>Yeh ek multi-line comment hai.</strong> <code>/*</code> se start hota hai, <code>*/</code> pe end. C mein <code>/* */</code> ke andar kuch bhi likho — compiler ignore karega. Yeh documentation purpose ke liye hai — batata hai ki yeh file kya karti hai.
+      <br><br>
+      <strong>Faculty Answer:</strong> "This is a block comment describing the module. It tells us this file implements a Trie data structure for stock symbol auto-complete functionality. The comment follows standard C multi-line comment syntax <code>/* ... */</code>."
+    </div>
+  </div>
+
+  <h4>Line 10: Including the shared header</h4>
+  <pre data-lang="C"><code>#<span class="kw">include</span> <span class="str">"stock_data.h"</span></code></pre>
+
+  <div class="line-box">
+    <div class="line-num">Line 10</div>
+    <div class="line-code">#include "stock_data.h"</div>
+    <div class="line-explain">
+      <strong>#include</strong> is a <em class="hi">preprocessor directive</em> — compiler ko bolta hai ki "is file ka saara content yahan paste kar do compile se pehle".<br><br>
+      <strong>Double quotes <code>"stock_data.h"</code></strong> means look in the CURRENT directory first (not system folders). This is our project's shared header file.<br><br>
+      <strong>What does stock_data.h contain?</strong><br>
+      • <code>#include &lt;stdio.h&gt;</code> — for printf, scanf<br>
+      • <code>#include &lt;stdlib.h&gt;</code> — for malloc, calloc, free<br>
+      • <code>#include &lt;string.h&gt;</code> — for strcmp, strcpy, strncpy<br>
+      • <code>#include &lt;time.h&gt;</code> — for time functions<br>
+      • <code>#define MAX_SYMBOL_LEN 10</code> — max length of stock symbol string<br>
+      • Common struct definitions used across all 5 member files<br><br>
+      <strong>Faculty Answer:</strong> "This includes our shared project header which provides common definitions like MAX_SYMBOL_LEN, standard library includes (stdio, stdlib, string), and shared data structures used across all five modules."
+    </div>
+  </div>
+
+  <h4>Line 11: Including ctype.h</h4>
+  <pre data-lang="C"><code>#<span class="kw">include</span> <span class="str">&lt;ctype.h&gt;</span></code></pre>
+
+  <div class="line-box">
+    <div class="line-num">Line 11</div>
+    <div class="line-code">#include &lt;ctype.h&gt;</div>
+    <div class="line-explain">
+      <strong>Angle brackets <code>&lt;ctype.h&gt;</code></strong> means look in SYSTEM include directories (not our project folder).<br><br>
+      <strong>ctype.h</strong> stands for "Character TYPE Header". It provides functions to check and convert characters:<br>
+      • <code>toupper(c)</code> — converts lowercase 'a' to uppercase 'A' (we use THIS one!)<br>
+      • <code>tolower(c)</code> — converts uppercase to lowercase<br>
+      • <code>isalpha(c)</code> — checks if character is a letter<br>
+      • <code>isdigit(c)</code> — checks if character is a digit<br><br>
+      <strong>Why do we need it?</strong> Because our <code>char_idx()</code> function uses <code>toupper()</code> to convert any character to uppercase before mapping it to an array index (0-25). This makes our trie <strong>case-insensitive</strong>.<br><br>
+      <strong>Faculty Answer:</strong> "We include ctype.h for the <code>toupper()</code> function, which ensures case-insensitive character handling. Whether the user types 'aapl' or 'AAPL', it gets converted to uppercase before trie operations."
+    </div>
+  </div>
+
+  <div class="callout callout-red">
+    <div class="callout-title">⚠️ Difference: "quotes" vs &lt;angle brackets&gt;</div>
+    <p><code>#include "file.h"</code> — Searches in YOUR project directory first, then system directories. Used for YOUR OWN header files.<br>
+    <code>#include &lt;file.h&gt;</code> — Searches ONLY in system/standard library directories. Used for STANDARD C library headers like stdio.h, stdlib.h, ctype.h.</p>
+  </div>
+</div>

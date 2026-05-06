@@ -1,0 +1,80 @@
+<!-- ═══════════ PART 8: TOPIC 4 — HEAP ═══════════ -->
+
+<div class="section" id="topic4">
+  <div class="section-number">Section 10</div>
+  <h2>Topic 4: <span class="gold">Heap — Max/Min Ranking</span></h2>
+  <p>A <strong>Heap</strong> is a complete binary tree where each parent node satisfies the heap property. A <strong>Max-Heap</strong> has every parent ≥ its children (largest at root). A <strong>Min-Heap</strong> has every parent ≤ its children (smallest at root). Our project uses <strong>both simultaneously</strong> — a max-heap for top gainers and a min-heap for top losers.</p>
+
+  <h4>Dual Heap Architecture</h4>
+  <div class="flow-box">Stock arrives with change_percent:
+  ┌─────────────────────────────────────────────┐
+  │ if change_percent >= 0   → MAX-HEAP (Gainers)│   Root = highest gainer
+  │ if change_percent <  0   → MIN-HEAP (Losers) │   Root = biggest loser
+  └─────────────────────────────────────────────┘
+
+  Extract-Max from Gainer Heap → "Top Gainer" (e.g., TSLA +12.3%)
+  Extract-Min from Loser  Heap → "Top Loser"  (e.g., GOOGL -5.2%)</div>
+
+  <h4>Heap Insert — Heapify Up</h4>
+  <pre data-lang="C"><code><span class="cm">// FROM member4_heap.c</span>
+<span class="kw">void</span> <span class="fn">heap_insert</span>(Heap* h, <span class="kw">const</span> <span class="type">char</span>* sym, <span class="type">double</span> price, <span class="type">double</span> chg, <span class="type">long</span> vol) {
+    <span class="kw">if</span>(h-&gt;size >= MAX_HEAP_SIZE) <span class="kw">return</span>;
+
+    <span class="cm">// Place at end of array</span>
+    <span class="type">int</span> i = h-&gt;size++;
+    strcpy(h-&gt;data[i].symbol, sym);
+    h-&gt;data[i].price = price;
+    h-&gt;data[i].change_percent = chg;
+
+    <span class="cm">// Bubble up: compare with parent, swap if heap property violated</span>
+    <span class="kw">while</span>(i > <span class="num">0</span>) {
+        <span class="type">int</span> parent = (i - <span class="num">1</span>) / <span class="num">2</span>;
+        <span class="kw">if</span>(h-&gt;is_max_heap) {
+            <span class="cm">// MAX-HEAP: parent should be >= child</span>
+            <span class="kw">if</span>(h-&gt;data[parent].change_percent &lt; h-&gt;data[i].change_percent) {
+                heap_swap(&amp;h-&gt;data[parent], &amp;h-&gt;data[i]);
+                i = parent;
+            } <span class="kw">else break</span>;
+        } <span class="kw">else</span> {
+            <span class="cm">// MIN-HEAP: parent should be <= child</span>
+            <span class="kw">if</span>(h-&gt;data[parent].change_percent > h-&gt;data[i].change_percent) {
+                heap_swap(&amp;h-&gt;data[parent], &amp;h-&gt;data[i]);
+                i = parent;
+            } <span class="kw">else break</span>;
+        }
+    }
+}</code></pre>
+
+  <h4>Heap Extract — Heapify Down</h4>
+  <pre data-lang="C"><code><span class="cm">// FROM member4_heap.c — Extract root (max or min) and restore heap</span>
+HeapStock <span class="fn">heap_extract</span>(Heap* h) {
+    HeapStock top = h-&gt;data[<span class="num">0</span>];               <span class="cm">// Save root (best element)</span>
+    h-&gt;data[<span class="num">0</span>] = h-&gt;data[--h-&gt;size];           <span class="cm">// Move last to root</span>
+
+    <span class="cm">// Push down: compare with children, swap with appropriate child</span>
+    <span class="type">int</span> i = <span class="num">0</span>;
+    <span class="kw">while</span>(<span class="num">1</span>) {
+        <span class="type">int</span> best = i;
+        <span class="type">int</span> left  = <span class="num">2</span>*i + <span class="num">1</span>;
+        <span class="type">int</span> right = <span class="num">2</span>*i + <span class="num">2</span>;
+
+        <span class="kw">if</span>(h-&gt;is_max_heap) {
+            <span class="kw">if</span>(left  &lt; h-&gt;size &amp;&amp; h-&gt;data[left].change_percent  > h-&gt;data[best].change_percent)  best = left;
+            <span class="kw">if</span>(right &lt; h-&gt;size &amp;&amp; h-&gt;data[right].change_percent > h-&gt;data[best].change_percent) best = right;
+        } <span class="kw">else</span> {
+            <span class="kw">if</span>(left  &lt; h-&gt;size &amp;&amp; h-&gt;data[left].change_percent  &lt; h-&gt;data[best].change_percent)  best = left;
+            <span class="kw">if</span>(right &lt; h-&gt;size &amp;&amp; h-&gt;data[right].change_percent &lt; h-&gt;data[best].change_percent) best = right;
+        }
+
+        <span class="kw">if</span>(best == i) <span class="kw">break</span>;
+        heap_swap(&amp;h-&gt;data[i], &amp;h-&gt;data[best]);
+        i = best;
+    }
+    <span class="kw">return</span> top;
+}</code></pre>
+
+  <div class="callout callout-important">
+    <div class="callout-title">Syllabus Connection — Unit 2: Heaps &amp; DEPQs</div>
+    <p><strong>Heaps (Unit 1, 2)</strong> — The dual-heap approach implements a <strong>Double Ended Priority Queue (DEPQ)</strong> concept from Unit 2. The max-heap extracts the maximum (top gainer), the min-heap extracts the minimum (top loser). This connects to <strong>Min-Max Heaps, Deaps, Leftist Trees, and Binomial Heaps</strong> from the syllabus — all advanced variations of the basic heap structure.</p>
+  </div>
+</div>

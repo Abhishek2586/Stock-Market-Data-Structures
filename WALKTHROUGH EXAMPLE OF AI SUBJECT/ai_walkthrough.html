@@ -1,0 +1,954 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>India AI Travel Recommender — Artificial Intelligence: Complete Technical Walkthrough</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+  :root{--bg:#0a0e1a;--surface:#111827;--surface2:#1a2236;--border:#1e2a42;--gold:#c9a84c;--gold-dim:#a08535;--text:#476083;--text-dim:#9ca3af;--accent-blue:#3b82f6;--accent-green:#22c55e;--accent-red:#ef4444;--accent-purple:#a855f7;--accent-cyan:#06b6d4;--accent-orange:#f97316}
+  *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+  body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text);line-height:1.75;font-size:15px}
+  .cover{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#0a0e1a 0%,#0f1729 40%,#1a1a2e 100%);position:relative;overflow:hidden;text-align:center;padding:40px}
+  .cover::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:repeating-linear-gradient(45deg,transparent,transparent 35px,rgba(201,168,76,0.02) 35px,rgba(201,168,76,0.02) 70px)}
+  .cover-badge{background:rgba(201,168,76,0.1);border:1px solid var(--gold-dim);color:var(--gold);padding:8px 24px;border-radius:100px;font-size:12px;letter-spacing:3px;text-transform:uppercase;font-weight:600;margin-bottom:40px;position:relative}
+  .cover h1{font-size:clamp(42px,6vw,72px);font-weight:900;color:var(--gold);letter-spacing:10px;text-transform:uppercase;margin-bottom:12px;position:relative}
+  .cover .subtitle{font-size:clamp(16px,2vw,22px);color:var(--text-dim);letter-spacing:6px;text-transform:uppercase;font-weight:300;margin-bottom:60px;position:relative}
+  .cover-line{width:80px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin-bottom:60px;position:relative}
+  .cover-meta{display:flex;gap:40px;flex-wrap:wrap;justify-content:center;position:relative}
+  .cover-meta-item{text-align:center}
+  .cover-meta-item .label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold-dim);margin-bottom:4px}
+  .cover-meta-item .value{font-size:16px;color:var(--text);font-weight:600}
+  .container{max-width:1100px;margin:0 auto;padding:60px 40px}
+  .toc{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:40px 48px;margin-bottom:60px}
+  .toc h2{font-size:24px;color:var(--gold);margin-bottom:24px;letter-spacing:2px}
+  .toc ol{list-style:none;counter-reset:toc}.toc ol li{counter-increment:toc;margin-bottom:10px}
+  .toc ol li::before{content:counter(toc,decimal-leading-zero) ".";color:var(--gold);font-weight:700;margin-right:12px;font-family:'JetBrains Mono',monospace;font-size:13px}
+  .toc a{color:var(--text);text-decoration:none;font-weight:500;transition:color 0.2s}.toc a:hover{color:var(--gold)}
+  .section{margin-bottom:72px;page-break-inside:avoid}
+  .section-number{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;font-weight:600;margin-bottom:8px}
+  h2{font-size:32px;font-weight:800;color:var(--text);margin-bottom:32px;padding-bottom:16px;border-bottom:2px solid var(--border)}
+  h2 .gold{color:var(--gold)}
+  h3{font-size:22px;font-weight:700;color:var(--text);margin:40px 0 20px}
+  h4{font-size:16px;font-weight:600;color:var(--gold);margin:24px 0 12px;letter-spacing:1px}
+  p{margin-bottom:16px;color:var(--text-dim)}strong{color:var(--text);font-weight:600}
+  table{width:100%;border-collapse:collapse;margin:20px 0 32px;font-size:14px}
+  thead th{background:var(--surface2);color:var(--gold);padding:12px 16px;text-align:left;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;border-bottom:2px solid var(--gold-dim)}
+  tbody td{padding:12px 16px;border-bottom:1px solid var(--border);color:var(--text-dim);vertical-align:top}
+  tbody tr:hover{background:rgba(201,168,76,0.03)}
+  td code,th code{background:rgba(201,168,76,0.1);color:var(--gold);padding:2px 6px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:12px}
+  pre{background:#0d1117;border:1px solid var(--border);border-radius:12px;padding:24px;overflow-x:auto;margin:16px 0 28px;position:relative}
+  pre::before{content:attr(data-lang);position:absolute;top:8px;right:12px;font-size:10px;color:var(--gold-dim);letter-spacing:1px;text-transform:uppercase;font-family:'JetBrains Mono',monospace}
+  code{font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.7}
+  pre code{color:#c9d1d9}
+  .kw{color:#ff7b72}.fn{color:#d2a8ff}.str{color:#a5d6ff}.cm{color:#8b949e;font-style:italic}.num{color:#79c0ff}.type{color:#7ee787}.op{color:#ff7b72}
+  p code,li code,td code{background:rgba(201,168,76,0.1);color:var(--gold);padding:2px 7px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:12px}
+  .screenshot{margin:24px 0 32px;border-radius:12px;overflow:hidden;border:1px solid var(--border);box-shadow:0 8px 32px rgba(0,0,0,0.4)}
+  .screenshot img{width:100%;display:block}
+  .screenshot-caption{background:var(--surface2);padding:12px 20px;font-size:13px;color:var(--text-dim);font-style:italic;border-top:1px solid var(--border)}
+  .callout{border-radius:12px;padding:20px 24px;margin:20px 0 28px;border-left:4px solid}
+  .callout-important{background:rgba(201,168,76,0.06);border-color:var(--gold)}.callout-important .callout-title{color:var(--gold)}
+  .callout-note{background:rgba(59,130,246,0.06);border-color:var(--accent-blue)}.callout-note .callout-title{color:var(--accent-blue)}
+  .callout-tip{background:rgba(34,197,94,0.06);border-color:var(--accent-green)}.callout-tip .callout-title{color:var(--accent-green)}
+  .callout-title{font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+  .callout p{margin-bottom:0;font-size:14px}
+  .tag{display:inline-block;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:600;letter-spacing:0.5px;margin:2px 3px}
+  .tag-rule{background:rgba(239,68,68,0.15);color:#f87171}
+  .tag-fuzzy{background:rgba(59,130,246,0.15);color:#60a5fa}
+  .tag-heuristic{background:rgba(249,115,22,0.15);color:#fb923c}
+  .tag-kb{background:rgba(168,85,247,0.15);color:#c084fc}
+  .tag-xai{background:rgba(34,197,94,0.15);color:#4ade80}
+  .flow-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px 32px;margin:20px 0 28px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.8;white-space:pre;overflow-x:auto;color:var(--text-dim)}
+  .file-tree{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px 32px;margin:16px 0 28px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9;color:var(--text-dim)}
+  .file-tree .dir{color:var(--accent-blue);font-weight:600}.file-tree .file{color:var(--text)}.file-tree .comment{color:var(--gold-dim)}
+  .video-container{margin:24px 0 32px;border-radius:12px;overflow:hidden;border:1px solid var(--border);box-shadow:0 8px 32px rgba(0,0,0,0.4)}
+  .video-container img{width:100%;display:block}
+  .mermaid{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:32px;margin:20px 0 32px;text-align:center}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin:24px 0 32px}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;text-align:center}
+  .card .card-value{font-size:36px;font-weight:800;color:var(--gold);margin-bottom:4px}
+  .card .card-label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim)}
+  .footer{text-align:center;padding:60px 40px;border-top:1px solid var(--border);color:var(--text-dim);font-size:14px}
+  .footer .brand{color:var(--gold);font-weight:700;font-size:18px;letter-spacing:4px}
+  ul,ol{margin:12px 0 20px 24px;color:var(--text-dim)}li{margin-bottom:6px}
+  hr{border:none;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:48px 0}
+  .steps{list-style:none;counter-reset:step}.steps li{counter-increment:step;position:relative;padding-left:48px;margin-bottom:16px;color:var(--text-dim)}
+  .steps li::before{content:counter(step);position:absolute;left:0;top:0;width:32px;height:32px;background:rgba(201,168,76,0.1);border:1px solid var(--gold-dim);color:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;font-family:'JetBrains Mono',monospace}
+  .script-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px 32px;margin:20px 0 28px;font-size:14px;line-height:1.85;color:var(--text-dim)}
+  .script-box strong{color:var(--gold)}
+  @media print{body{background:#fff;color:#1a1a1a;font-size:12px}.cover{min-height:auto;padding:60px;background:#fff}.cover h1{color:#1a1a1a;font-size:36px}h2{font-size:22px;color:#1a1a1a;border-color:#ddd}pre{background:#f6f8fa;border-color:#d0d7de}pre code{color:#1a1a1a}.section{page-break-inside:avoid}}
+</style>
+</head>
+<body>
+
+<!-- COVER PAGE -->
+<div class="cover">
+  <div class="cover-badge">AI Lab Project — Technical Walkthrough</div>
+  <h1>YATRA</h1>
+  <div class="subtitle">Artificial Intelligence Concepts — Complete Report</div>
+  <div class="cover-line"></div>
+  <div class="cover-meta">
+    <div class="cover-meta-item"><div class="label">Subject</div><div class="value">Artificial Intelligence</div></div>
+    <div class="cover-meta-item"><div class="label">Tech Stack</div><div class="value">Python + HTML/JS</div></div>
+    <div class="cover-meta-item"><div class="label">AI Concepts</div><div class="value">5 Concepts</div></div>
+    <div class="cover-meta-item"><div class="label">Destinations</div><div class="value">100 Destinations</div></div>
+    <div class="cover-meta-item"><div class="label">Date</div><div class="value">April 2026</div></div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- TABLE OF CONTENTS -->
+<div class="toc">
+  <h2>Table of Contents</h2>
+  <ol>
+    <li><a href="#overview">Project Overview</a></li>
+    <li><a href="#architecture">System Architecture</a></li>
+    <li><a href="#video">Video Demonstration</a></li>
+    <li><a href="#ai-table">AI Concepts — Master Reference Table</a></li>
+    <li><a href="#syllabus">Syllabus Mapping</a></li>
+    <li><a href="#pages">Page-by-Page Walkthrough with Screenshots</a></li>
+    <li><a href="#topic1">Topic 1: Rule-Based AI (Expert System)</a></li>
+    <li><a href="#topic2">Topic 2: Fuzzy Logic / Fuzzy Matching</a></li>
+    <li><a href="#topic3">Topic 3: Heuristic AI Scoring System</a></li>
+    <li><a href="#topic4">Topic 4: Knowledge Representation &amp; Knowledge Base</a></li>
+    <li><a href="#topic5">Topic 5: Explainable AI (XAI)</a></li>
+    <li><a href="#files">File-by-File Source Code Analysis</a></li>
+    <li><a href="#build">Build &amp; Run Instructions</a></li>
+    <li><a href="#conclusion">Conclusion</a></li>
+  </ol>
+</div>
+
+<!-- 1. PROJECT OVERVIEW -->
+<div class="section" id="overview">
+  <div class="section-number">Section 01</div>
+  <h2>Project <span class="gold">Overview</span></h2>
+  <p><strong>Yatra — India AI Travel Recommender</strong> is an intelligent travel recommendation system that demonstrates <strong>5 core Artificial Intelligence concepts</strong> through a real-world tourism application. The system recommends the best Indian travel destinations based on user preferences using AI-driven decision-making — without any machine learning or neural networks.</p>
+  <ul>
+    <li>A <strong>Python backend</strong> implementing rule-based reasoning, fuzzy matching, and heuristic scoring (<code>recommender.py</code>, <code>main.py</code>)</li>
+    <li>A <strong>premium HTML/CSS/JS frontend</strong> with 5 pages — Home, Find Trip, Explore, Detail, About</li>
+    <li>A <strong>structured JSON knowledge base</strong> with 100 curated Indian destinations and 53+ fields each</li>
+  </ul>
+
+  <div class="cards">
+    <div class="card"><div class="card-value">5</div><div class="card-label">AI Concepts</div></div>
+    <div class="card"><div class="card-value">100</div><div class="card-label">Destinations</div></div>
+    <div class="card"><div class="card-value">53+</div><div class="card-label">Data Fields Each</div></div>
+    <div class="card"><div class="card-value">5</div><div class="card-label">Frontend Pages</div></div>
+    <div class="card"><div class="card-value">7</div><div class="card-label">Scoring Parameters</div></div>
+  </div>
+
+  <h3>Project Structure</h3>
+  <div class="file-tree">
+<span class="dir">travel_recommender/</span>
+├── <span class="dir">data/</span>
+│   ├── <span class="file">india_tourism_dataset.json</span>   <span class="comment">← Knowledge Base: 100 destinations, 53+ fields</span>
+│   ├── <span class="file">ds.json</span>                      <span class="comment">← Alternate dataset</span>
+│   └── <span class="file">dataset_schema.json</span>          <span class="comment">← JSON Schema for validation</span>
+│
+├── <span class="file">recommender.py</span>                   <span class="comment">← AI Engine: Rules + Fuzzy + Scoring + XAI</span>
+├── <span class="file">main.py</span>                          <span class="comment">← CLI interface with user input handling</span>
+├── <span class="file">index.html</span>                       <span class="comment">← Full frontend (5-page SPA)</span>
+└── <span class="file">frontend.html</span>                    <span class="comment">← Alternate simpler frontend</span>
+  </div>
+
+  <div class="callout callout-important">
+    <div class="callout-title">⚠ Why This Qualifies as AI</div>
+    <p>This project implements <strong>Symbolic AI</strong> — the original form of Artificial Intelligence. It uses knowledge representation, rule-based reasoning, heuristic search, and explainable decision-making. AI is <strong>not limited to machine learning</strong>; expert systems, fuzzy logic, and heuristic search are all core AI techniques taught in the syllabus.</p>
+  </div>
+</div>
+
+<!-- 2. SYSTEM ARCHITECTURE -->
+<div class="section" id="architecture">
+  <div class="section-number">Section 02</div>
+  <h2>System <span class="gold">Architecture</span></h2>
+
+  <h3>Architecture Diagram</h3>
+  <div class="screenshot">
+    <img src="walkthrough_assets/architecture.png" alt="AI Travel Recommender System Architecture">
+    <div class="screenshot-caption">System Architecture — All 5 AI concepts mapped to their modules and data flow</div>
+  </div>
+
+  <h3>Detailed Component Architecture</h3>
+  <div class="mermaid">
+graph TB
+    subgraph Frontend["Frontend — HTML/CSS/JS (5 Pages)"]
+        HOME["Home Page"]
+        FIND["Find Trip Page"]
+        EXPLORE["Explore Page"]
+        DETAIL["Detail Page"]
+        ABOUT["About Page"]
+    end
+    subgraph Engine["AI Recommendation Engine — Python"]
+        RULES["Rule-Based Expert System<br/>Budget + Season + Traveller Rules"]
+        FUZZY["Fuzzy Logic Module<br/>difflib.get_close_matches()"]
+        SCORE["Heuristic Scoring Engine<br/>7-Parameter Weighted Score"]
+        XAI["Explainable AI<br/>Transparent Recommendations"]
+    end
+    subgraph KB["Knowledge Base — JSON"]
+        DATA["india_tourism_dataset.json<br/>100 Destinations × 53+ Fields"]
+    end
+    FIND -->|"User Preferences"| RULES
+    RULES --> FUZZY
+    FUZZY --> SCORE
+    SCORE --> XAI
+    XAI -->|"Ranked Results + Reasons"| FIND
+    DATA -->|"Structured Tourism Data"| RULES
+    DATA --> SCORE
+  </div>
+
+  <h3>Data Flow — What Happens During a Recommendation</h3>
+  <div class="mermaid">
+sequenceDiagram
+    participant U as User Browser
+    participant R as Rule Engine
+    participant F as Fuzzy Matcher
+    participant S as Scoring Engine
+    participant K as Knowledge Base
+    participant X as XAI Module
+
+    U->>R: Budget, Interest, Month, Traveller, Days
+    R->>K: Load 100 destinations
+    K-->>R: Structured JSON data
+    R->>F: Check interest match for each destination
+    F-->>R: Fuzzy match result (True/False)
+    R->>S: Apply weighted scoring (7 params)
+    S-->>R: Score for each destination
+    R->>X: Generate explanations for top results
+    X-->>U: Ranked destinations + why text + score breakdown
+  </div>
+</div>
+
+<!-- 3. VIDEO DEMONSTRATION -->
+<div class="section" id="video">
+  <div class="section-number">Section 03</div>
+  <h2>Video <span class="gold">Demonstration</span></h2>
+  <p>Complete walkthrough of all 5 pages of the Yatra India Travel Recommender — Home through About, demonstrating the AI scoring engine in action:</p>
+  <div class="video-container">
+    <img src="walkthrough_assets/video_tour.webp" alt="Yatra Full Video Tour — All 5 Pages">
+  </div>
+</div>
+
+<!-- 4. AI CONCEPTS MASTER TABLE -->
+<div class="section" id="ai-table">
+  <div class="section-number">Section 04</div>
+  <h2>AI Concepts — <span class="gold">Master Reference Table</span></h2>
+  <table>
+    <thead>
+      <tr><th>#</th><th>AI Concept</th><th>Source File(s)</th><th>Key Functions / Libraries</th><th>Travel Use Case</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td><span class="tag tag-rule">Rule-Based Expert System</span></td>
+        <td><code>recommender.py</code></td>
+        <td><code>score_place()</code>, <code>get_season()</code>, IF-THEN rules</td>
+        <td>Predefined rules evaluate budget fit, season suitability, traveller type — simulating human travel agent reasoning</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td><span class="tag tag-fuzzy">Fuzzy Logic / Fuzzy Matching</span></td>
+        <td><code>recommender.py</code></td>
+        <td><code>difflib.get_close_matches()</code>, <code>fuzzy_match_interest()</code></td>
+        <td>Approximate matching of user interests (e.g. "trek" matches "Trekking") — human-like input interpretation</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td><span class="tag tag-heuristic">Heuristic AI Scoring</span></td>
+        <td><code>recommender.py</code></td>
+        <td><code>score_place()</code> — weighted 7-parameter scoring</td>
+        <td>Assigns weighted scores to destinations across budget (30pts), interest (25pts), season (20pts), traveller (15pts), duration (10pts), popularity, safety</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td><span class="tag tag-kb">Knowledge Representation</span></td>
+        <td><code>data/india_tourism_dataset.json</code></td>
+        <td>Structured JSON, <code>load_data()</code>, <code>preprocess_data()</code></td>
+        <td>100 destinations stored as structured knowledge with 53+ fields — acts as the knowledge base for symbolic AI reasoning</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td><span class="tag tag-xai">Explainable AI (XAI)</span></td>
+        <td><code>recommender.py</code>, <code>index.html</code></td>
+        <td><code>print_card()</code>, <code>ideal_for_why</code>, score display</td>
+        <td>System explains WHY each destination is recommended — score breakdown, season warnings, traveller-specific reasons</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 5. SYLLABUS MAPPING -->
+<div class="section" id="syllabus">
+  <div class="section-number">Section 05</div>
+  <h2>Syllabus <span class="gold">Mapping</span></h2>
+  <p>How each AI concept in this project maps to the <strong>Artificial Intelligence syllabus</strong>:</p>
+  <table>
+    <thead><tr><th>Syllabus Unit</th><th>Syllabus Topic</th><th>Project Implementation</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Unit 1</strong></td><td>A.I. Representation, Knowledge Base Systems</td><td><span class="tag tag-kb">Knowledge Base</span> — JSON dataset with structured tourism data used for reasoning</td></tr>
+      <tr><td><strong>Unit 1</strong></td><td>Non-AI and AI Techniques, Intelligent Agents</td><td><span class="tag tag-rule">Expert System</span> — Rule-based agent that reasons about travel decisions</td></tr>
+      <tr><td><strong>Unit 1</strong></td><td>Production Systems, Problem Characteristics</td><td><span class="tag tag-rule">Production Rules</span> — IF budget_fits AND season_good THEN recommend (production system)</td></tr>
+      <tr><td><strong>Unit 1</strong></td><td>State Space Search</td><td><span class="tag tag-heuristic">Scoring Engine</span> — Search through 100 destinations using heuristic evaluation</td></tr>
+      <tr><td><strong>Unit 3</strong></td><td>Generate and Test, Hill Climbing, Best First Search</td><td><span class="tag tag-heuristic">Heuristic Scoring</span> — Generate scores → sort → return best (Best-First approach)</td></tr>
+      <tr><td><strong>Unit 3</strong></td><td>Constraint Satisfaction</td><td><span class="tag tag-rule">Budget/Season Constraints</span> — Hard constraints (budget too low → skip) + soft constraints (season penalty)</td></tr>
+      <tr><td><strong>Unit 4</strong></td><td>Knowledge Based Agents</td><td><span class="tag tag-kb">Knowledge Base</span> + <span class="tag tag-rule">Rule Engine</span> — Agent uses KB to make informed recommendations</td></tr>
+      <tr><td><strong>Unit 5</strong></td><td>Expert System: Design Implementation</td><td><span class="tag tag-rule">Expert System</span> — Complete expert system with knowledge base, inference engine, and explanation facility</td></tr>
+      <tr><td><strong>Modern AI</strong></td><td>Fuzzy Logic Systems</td><td><span class="tag tag-fuzzy">Fuzzy Matching</span> — Approximate string matching using difflib for flexible input handling</td></tr>
+      <tr><td><strong>Modern AI</strong></td><td>Explainable AI (XAI)</td><td><span class="tag tag-xai">XAI</span> — Transparent scoring with human-readable explanations for every recommendation</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 6. PAGE-BY-PAGE WALKTHROUGH -->
+<div class="section" id="pages">
+  <div class="section-number">Section 06</div>
+  <h2>Page-by-Page <span class="gold">Walkthrough</span></h2>
+
+  <!-- HOME PAGE -->
+  <h3>Page 1: Home — Landing &amp; Knowledge Base Showcase</h3>
+  <div class="screenshot">
+    <img src="walkthrough_assets/01_home_hero.png" alt="Home Page Hero Section">
+    <div class="screenshot-caption">Fig 1 — Home Page hero section showing top-rated destinations from the Knowledge Base, dynamically loaded from JSON</div>
+  </div>
+  <p>The Home page serves as the entry point to the AI system. It demonstrates <strong>Knowledge Representation</strong> by loading all 100 destinations from the JSON knowledge base and displaying:</p>
+  <ul>
+    <li><strong>Hero Cards</strong> — Top 3 rated destinations dynamically pulled from the dataset (sorted by <code>popularity_score</code>)</li>
+    <li><strong>Features Section</strong> — Describes all 5 AI capabilities: Weighted Scoring, Fuzzy Matching, Season Detection, Traveller Matching, Budget Model</li>
+    <li><strong>Region Grid</strong> — Destinations grouped by geographic region (Knowledge Representation: categorical classification)</li>
+    <li><strong>Top Picks</strong> — Highest-rated destinations, demonstrating data-driven ranking from the Knowledge Base</li>
+  </ul>
+  <div class="callout callout-note">
+    <div class="callout-title">AI Concepts on This Page</div>
+    <p><span class="tag tag-kb">Knowledge Representation</span> — All data is loaded from the structured JSON knowledge base. The hero cards, region grid, and top picks are all derived from structured symbolic knowledge. <span class="tag tag-heuristic">Heuristic Scoring</span> — Top destinations are sorted by rating (a heuristic for popularity).</p>
+  </div>
+  <div class="screenshot">
+    <img src="walkthrough_assets/02_home_features.png" alt="Home Page Features Section">
+    <div class="screenshot-caption">Fig 2 — Features section describing the AI capabilities: Weighted Scoring, Fuzzy Matching, Season Awareness</div>
+  </div>
+
+  <hr>
+
+  <!-- FINDER PAGE -->
+  <h3>Page 2: Find Trip — The AI Recommendation Engine Interface</h3>
+  <div class="screenshot">
+    <img src="walkthrough_assets/03_finder_page.png" alt="Find Trip Page — AI Preference Input">
+    <div class="screenshot-caption">Fig 3 — Preference input form: Budget, Interest Chips, Travel Month, Traveller Type, Region filters</div>
+  </div>
+  <p>This is the <strong>core AI interaction page</strong>. The user inputs preferences which flow directly into the AI scoring engine:</p>
+  <ul>
+    <li><strong>Budget Input (₹/day)</strong> → <span class="tag tag-rule">Rule-Based AI</span> determines which budget tier each destination falls into</li>
+    <li><strong>Interest Chips</strong> → <span class="tag tag-fuzzy">Fuzzy Logic</span> matches user interests against destination trip_types</li>
+    <li><strong>Travel Month</strong> → <span class="tag tag-rule">Rule-Based AI</span> maps month to season via <code>get_season()</code></li>
+    <li><strong>Traveller Type</strong> → <span class="tag tag-rule">Expert System</span> checks <code>ideal_for</code> suitability</li>
+    <li><strong>Region Filter</strong> → <span class="tag tag-rule">Hard Constraint</span> eliminates destinations outside chosen region</li>
+  </ul>
+
+  <!-- RESULTS -->
+  <h3>Page 2b: Search Results — Heuristic Scoring in Action</h3>
+  <div class="screenshot">
+    <img src="walkthrough_assets/04_search_results.png" alt="Search Results — Scored Destinations">
+    <div class="screenshot-caption">Fig 4 — Results showing ranked destinations with scores (101, 92, 91) — Beach + Winter + Couple + ₹3000/day</div>
+  </div>
+  <p>After clicking "Find Destinations", the AI engine processes all 100 destinations:</p>
+  <ol class="steps">
+    <li>Each destination is checked against <strong>hard constraints</strong> (budget minimum, region match) — <span class="tag tag-rule">Rule-Based</span></li>
+    <li>Interest matching using <strong>fuzzy string comparison</strong> — "Beach" matched against trip_types — <span class="tag tag-fuzzy">Fuzzy Logic</span></li>
+    <li>Season detection: January → Winter → score boost for destinations with "Winter" in best_seasons — <span class="tag tag-heuristic">Heuristic</span></li>
+    <li>Weighted scoring: Budget(30) + Interest(25) + Season(20) + Traveller(15) + Duration(10) + Popularity + Safety — <span class="tag tag-heuristic">Heuristic</span></li>
+    <li>Results sorted by total score (descending) and displayed with rank badges — <span class="tag tag-heuristic">Best-First Search</span></li>
+  </ol>
+
+  <hr>
+
+  <!-- XAI EXPANDED -->
+  <h3>Page 2c: Expanded Details — Explainable AI (XAI)</h3>
+  <div class="screenshot">
+    <img src="walkthrough_assets/05_xai_expanded.png" alt="Expanded Destination Card with AI Explanations">
+    <div class="screenshot-caption">Fig 5 — Expanded result showing XAI: "Why this suits you", attractions, food, score breakdown</div>
+  </div>
+  <p>When a user expands a destination card, the system demonstrates <strong>Explainable AI (XAI)</strong>:</p>
+  <ul>
+    <li><strong>"Why this destination?"</strong> — A blue callout box explains why this destination scored highly</li>
+    <li><strong>Score display</strong> — The numerical score (e.g., 101) is transparently shown, not hidden</li>
+    <li><strong>Season badge</strong> — "✓ Best in Winter" explains the season scoring bonus</li>
+    <li><strong>Traveller match reasons</strong> — <code>ideal_for_why</code> provides personalised text per traveller type</li>
+    <li><strong>Budget breakdown</strong> — Shows the user's budget vs. destination cost, explaining the budget score</li>
+    <li><strong>Safety &amp; Permit alerts</strong> — Transparent warnings about permits or safety concerns</li>
+  </ul>
+  <div class="callout callout-tip">
+    <div class="callout-title">✦ XAI Principle</div>
+    <p>Unlike "black box" ML models, this system's decisions are <strong>fully transparent</strong>. Every recommendation comes with a human-readable explanation of <em>why</em> it was chosen — a key requirement of Explainable AI (XAI) as defined in the modern AI syllabus.</p>
+  </div>
+
+  <hr>
+
+  <!-- EXPLORE PAGE -->
+  <h3>Page 3: Explore — Knowledge Base Browser</h3>
+  <div class="screenshot">
+    <img src="walkthrough_assets/06_explore_grid.png" alt="Explore Page — Destination Grid">
+    <div class="screenshot-caption">Fig 6 — Explore page showing all 100 destinations in grid layout, sortable by Rating, Budget, Safety</div>
+  </div>
+  <p>The Explore page provides a full browse interface for the <strong>Knowledge Base</strong>:</p>
+  <ul>
+    <li><strong>Grid/List view toggle</strong> — Two ways to explore all 100 destinations</li>
+    <li><strong>Search</strong> — Real-time text search through destination names (simple substring match)</li>
+    <li><strong>Region filter</strong> — Filter by geographic region (Knowledge Base categorical querying)</li>
+    <li><strong>Sort options</strong> — By Rating, Budget (Low→High), Alphabetical, Safety — each a <span class="tag tag-heuristic">Heuristic</span> ordering</li>
+  </ul>
+
+  <hr>
+
+  <!-- DETAIL PAGE -->
+  <h3>Page 4: Detail — Full Knowledge Record + XAI</h3>
+  <div class="screenshot">
+    <img src="walkthrough_assets/07_detail_page.png" alt="Destination Detail Page">
+    <div class="screenshot-caption">Fig 7 — Full destination detail: attractions, food, budget breakdown, logistics, season info, itinerary</div>
+  </div>
+  <p>The Detail page displays the <strong>complete knowledge record</strong> for a single destination — all 53+ fields from the Knowledge Base, organized into sections:</p>
+  <ul>
+    <li><strong>Attractions &amp; Activities</strong> — <span class="tag tag-kb">Knowledge Representation</span></li>
+    <li><strong>3-Tier Budget Model</strong> (Budget/Mid/Luxury) — <span class="tag tag-kb">Structured Knowledge</span></li>
+    <li><strong>Best/Avoid Seasons</strong> — <span class="tag tag-rule">Rule Engine input data</span></li>
+    <li><strong>Traveller Suitability &amp; Why</strong> — <span class="tag tag-xai">XAI</span></li>
+    <li><strong>Permit Alerts</strong> — <span class="tag tag-rule">Safety Rule System</span></li>
+    <li><strong>Logistics</strong> (Airport, Railway, Nearest City) — <span class="tag tag-kb">Structured Knowledge</span></li>
+  </ul>
+
+  <hr>
+
+  <!-- ABOUT PAGE -->
+  <h3>Page 5: About — Tech Documentation</h3>
+  <div class="screenshot">
+    <img src="walkthrough_assets/08_about_page.png" alt="About Page">
+    <div class="screenshot-caption">Fig 8 — About page with team, tech stack (Python, HTML/JS, JSON, difflib), and feature summary</div>
+  </div>
+  <p>The About page documents the project's technical details, including the tech stack and all AI features implemented.</p>
+</div>
+
+<!-- 7. TOPIC 1: RULE-BASED AI -->
+<div class="section" id="topic1">
+  <div class="section-number">Section 07</div>
+  <h2>Topic 1: <span class="gold">Rule-Based AI (Expert System)</span></h2>
+  <p>A <strong>Rule-Based Expert System</strong> makes decisions using predefined IF-THEN rules — mimicking how a human expert would reason. In our system, the <strong>travel agent's expertise</strong> is encoded as production rules in <code>recommender.py</code>.</p>
+
+  <h4>What is a Rule-Based Expert System?</h4>
+  <p>An expert system has three components: (1) <strong>Knowledge Base</strong> — stores facts (our JSON dataset), (2) <strong>Inference Engine</strong> — applies rules to derive conclusions (our scoring logic), (3) <strong>Explanation Facility</strong> — explains why decisions were made (our XAI output).</p>
+
+  <h4>Budget Rules — Production System</h4>
+  <pre data-lang="Python"><code><span class="cm"># FROM recommender.py → score_place()</span>
+<span class="cm"># RULE 1: Budget Fit Assessment</span>
+<span class="kw">if</span> lo &lt;= budget &lt;= hi:        <span class="cm"># IF budget within budget-tier range</span>
+    score += <span class="num">30</span>                 <span class="cm"># THEN perfect match → full 30 points</span>
+<span class="kw">elif</span> mlo &lt;= budget &lt;= mhi:    <span class="cm"># ELSE IF within mid-range tier</span>
+    score += <span class="num">15</span>                 <span class="cm"># THEN partial match → 15 points</span>
+<span class="kw">elif</span> budget &lt; lo:              <span class="cm"># ELSE IF budget below minimum</span>
+    <span class="kw">return</span> <span class="type">None</span>                <span class="cm"># THEN HARD REJECT → cannot afford</span>
+<span class="kw">else</span>:                          <span class="cm"># ELSE (luxury budget)</span>
+    score += <span class="num">20</span>                 <span class="cm"># THEN above mid → 20 points</span></code></pre>
+
+  <h4>Season Rules — Temporal Reasoning</h4>
+  <pre data-lang="Python"><code><span class="cm"># FROM recommender.py → get_season() + score_place()</span>
+<span class="cm"># Month → Season mapping (rule table)</span>
+MONTH_SEASON = {<span class="str">'January'</span>:<span class="str">'Winter'</span>, <span class="str">'February'</span>:<span class="str">'Winter'</span>,
+                <span class="str">'March'</span>:<span class="str">'Summer'</span>,  <span class="str">'April'</span>:<span class="str">'Summer'</span>, ...}
+
+<span class="cm"># RULE 2: Season Suitability</span>
+season = get_season(month)       <span class="cm"># Derive season from month</span>
+<span class="kw">if</span> season <span class="kw">in</span> best_seasons:      <span class="cm"># IF destination is in its best season</span>
+    score += <span class="num">20</span>                  <span class="cm"># THEN bonus → +20 points</span>
+<span class="kw">elif</span> season <span class="kw">in</span> avoid_seasons:   <span class="cm"># ELSE IF in avoid season</span>
+    score -= <span class="num">15</span>                  <span class="cm"># THEN penalty → -15 points</span>
+<span class="kw">else</span>:                           <span class="cm"># ELSE (neutral season)</span>
+    score += <span class="num">8</span>                   <span class="cm"># THEN neutral bonus → +8 points</span></code></pre>
+
+  <h4>Traveller Type Rules</h4>
+  <pre data-lang="Python"><code><span class="cm"># RULE 3: Traveller Suitability</span>
+<span class="kw">if</span> traveller_type <span class="kw">in</span> place.ideal_for:  <span class="cm"># IF destination is ideal for this type</span>
+    score += <span class="num">15</span>                           <span class="cm"># THEN strong match → +15</span>
+<span class="kw">else</span>:
+    score += <span class="num">3</span>                            <span class="cm"># ELSE partial → +3</span></code></pre>
+
+  <div class="callout callout-important">
+    <div class="callout-title">⚠ Syllabus Mapping</div>
+    <p><strong>Unit 1: Production Systems</strong> — Our IF-THEN rules form a production system. <strong>Unit 5: Expert System Design &amp; Implementation</strong> — The complete system (KB + Inference Engine + Explanation) qualifies as a full expert system. <strong>Unit 3: Constraint Satisfaction</strong> — Budget below minimum is a hard constraint; season is a soft constraint.</p>
+  </div>
+</div>
+
+<hr>
+
+<!-- 8. TOPIC 2: FUZZY LOGIC -->
+<div class="section" id="topic2">
+  <div class="section-number">Section 08</div>
+  <h2>Topic 2: <span class="gold">Fuzzy Logic / Fuzzy Matching</span></h2>
+  <p><strong>Fuzzy Logic</strong> deals with degrees of truth rather than absolute True/False. In classical logic, "trek" ≠ "Trekking" is False. In fuzzy logic, it's "nearly True" — and our system handles this.</p>
+
+  <h4>What is Fuzzy Matching?</h4>
+  <p>Instead of requiring exact user input, the system uses <strong>approximate string matching</strong> (via Python's <code>difflib</code> library) to interpret imprecise input. This mimics how humans understand "close enough" matches.</p>
+
+  <h4>Implementation — difflib.get_close_matches()</h4>
+  <pre data-lang="Python"><code><span class="kw">import</span> difflib
+
+<span class="kw">def</span> <span class="fn">fuzzy_match_interest</span>(user_input, trip_types, threshold=<span class="num">0.6</span>):
+    <span class="str">"""
+    Fuzzy match user interest against destination's trip types.
+    Uses SequenceMatcher (Levenshtein-like) for approximate matching.
+    
+    Examples:
+      "trek"   → matches "Trekking"     (substring match)
+      "beech"  → matches "Beach"        (edit distance ≤ 2)
+      "advntr" → matches "Adventure"    (close_matches similarity ≥ 0.6)
+    """</span>
+    user_lower = user_input.lower()
+    <span class="kw">for</span> trip_type <span class="kw">in</span> trip_types:
+        type_lower = trip_type.lower().replace(<span class="str">'_'</span>, <span class="str">' '</span>)
+        
+        <span class="cm"># Method 1: Substring containment</span>
+        <span class="kw">if</span> user_lower <span class="kw">in</span> type_lower <span class="kw">or</span> type_lower <span class="kw">in</span> user_lower:
+            <span class="kw">return</span> <span class="type">True</span>
+        
+        <span class="cm"># Method 2: Levenshtein distance (edit distance ≤ 2)</span>
+        <span class="kw">if</span> levenshtein(user_lower, type_lower) &lt;= <span class="num">2</span>:
+            <span class="kw">return</span> <span class="type">True</span>
+        
+        <span class="cm"># Method 3: difflib similarity ratio ≥ threshold</span>
+        matches = difflib.get_close_matches(user_lower, [type_lower], cutoff=threshold)
+        <span class="kw">if</span> matches:
+            <span class="kw">return</span> <span class="type">True</span>
+    
+    <span class="kw">return</span> <span class="type">False</span></code></pre>
+
+  <h4>Fuzzy Matching in the Frontend (JavaScript)</h4>
+  <pre data-lang="JavaScript"><code><span class="cm">// FROM index.html — Levenshtein distance implementation</span>
+<span class="kw">function</span> <span class="fn">lev</span>(a, b) {
+    <span class="kw">const</span> m = a.length, n = b.length, d = [];
+    <span class="kw">for</span> (<span class="kw">let</span> i = <span class="num">0</span>; i &lt;= m; i++) d[i] = [i];
+    <span class="kw">for</span> (<span class="kw">let</span> j = <span class="num">0</span>; j &lt;= n; j++) d[<span class="num">0</span>][j] = j;
+    <span class="kw">for</span> (<span class="kw">let</span> i = <span class="num">1</span>; i &lt;= m; i++)
+        <span class="kw">for</span> (<span class="kw">let</span> j = <span class="num">1</span>; j &lt;= n; j++)
+            d[i][j] = a[i-<span class="num">1</span>] === b[j-<span class="num">1</span>]
+                ? d[i-<span class="num">1</span>][j-<span class="num">1</span>]
+                : <span class="num">1</span> + Math.min(d[i-<span class="num">1</span>][j], d[i][j-<span class="num">1</span>], d[i-<span class="num">1</span>][j-<span class="num">1</span>]);
+    <span class="kw">return</span> d[m][n];
+}
+
+<span class="cm">// Fuzzy match: substring OR edit distance ≤ 2</span>
+<span class="kw">function</span> <span class="fn">fuzzy</span>(userInput, types) {
+    <span class="kw">const</span> ul = userInput.toLowerCase();
+    <span class="kw">return</span> types.some(t =&gt; {
+        <span class="kw">const</span> tl = t.toLowerCase().replace(<span class="str">/_/g</span>, <span class="str">' '</span>);
+        <span class="kw">return</span> tl.includes(ul) || ul.includes(tl) || lev(ul, tl) &lt;= <span class="num">2</span>;
+    });
+}</code></pre>
+
+  <h4>Fuzzy Matching Examples</h4>
+  <table>
+    <thead><tr><th>User Types</th><th>Dataset Value</th><th>Match Method</th><th>Result</th></tr></thead>
+    <tbody>
+      <tr><td><code>"trek"</code></td><td><code>"Trekking"</code></td><td>Substring: "trek" is IN "trekking"</td><td>✅ Match</td></tr>
+      <tr><td><code>"beech"</code></td><td><code>"Beach"</code></td><td>Levenshtein: distance = 1 (≤ 2)</td><td>✅ Match</td></tr>
+      <tr><td><code>"cultural"</code></td><td><code>"Cultural"</code></td><td>Exact (case-insensitive)</td><td>✅ Match</td></tr>
+      <tr><td><code>"food"</code></td><td><code>"Food"</code></td><td>Exact (case-insensitive)</td><td>✅ Match</td></tr>
+      <tr><td><code>"xyz123"</code></td><td><code>"Adventure"</code></td><td>No method matches</td><td>❌ No Match</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-note">
+    <div class="callout-title">Syllabus Connection: Fuzzy Logic Systems</div>
+    <p>In the AI syllabus, <strong>Fuzzy Logic</strong> deals with reasoning about imprecise/vague information. Our fuzzy matching demonstrates this principle — user inputs are "approximately" matched rather than requiring exactness. The <code>difflib.SequenceMatcher</code> computes a <strong>similarity ratio</strong> (0.0 to 1.0), which directly parallels the concept of <strong>membership functions</strong> in fuzzy set theory.</p>
+  </div>
+</div>
+
+<hr>
+
+<!-- 9. TOPIC 3: HEURISTIC AI SCORING -->
+<div class="section" id="topic3">
+  <div class="section-number">Section 09</div>
+  <h2>Topic 3: <span class="gold">Heuristic AI Scoring System</span></h2>
+  <p>A <strong>heuristic</strong> is an intelligent shortcut — a function that estimates the quality of a solution without exhaustive search. Our scoring engine uses a <strong>7-parameter weighted heuristic</strong> to evaluate each of the 100 destinations.</p>
+
+  <h4>The 7 Scoring Parameters</h4>
+  <table>
+    <thead><tr><th>Parameter</th><th>Max Points</th><th>Weight</th><th>Logic</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Budget Fit</strong></td><td>30</td><td>Highest</td><td>30 if within budget tier, 20 if luxury, 15 if mid-range, reject if below</td></tr>
+      <tr><td><strong>Interest Match</strong></td><td>25</td><td>High</td><td>25 if fuzzy match found, reject if no match and interests specified</td></tr>
+      <tr><td><strong>Season Suitability</strong></td><td>20</td><td>High</td><td>+20 if best season, +8 neutral, -15 if avoid season</td></tr>
+      <tr><td><strong>Traveller Type</strong></td><td>15</td><td>Medium</td><td>+15 if ideal for this traveller, +3 otherwise</td></tr>
+      <tr><td><strong>Duration Fit</strong></td><td>10</td><td>Medium</td><td>+10 if days within min-max range, -5 if too short</td></tr>
+      <tr><td><strong>Popularity</strong></td><td>10</td><td>Bonus</td><td>Directly adds popularity_score (1-10)</td></tr>
+      <tr><td><strong>Safety</strong></td><td>5</td><td>Bonus</td><td>Adds safety_rating / 2</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Complete Scoring Function</h4>
+  <pre data-lang="Python"><code><span class="kw">def</span> <span class="fn">score_place</span>(place, budget, interests, season, traveller, days, region):
+    <span class="str">"""
+    Heuristic evaluation function: h(n) = w₁·budget + w₂·interest + w₃·season 
+                                         + w₄·traveller + w₅·duration + popularity + safety/2
+    Returns: total score (int) or None if hard-constraint fails
+    """</span>
+    score = <span class="num">0</span>
+    
+    <span class="cm"># ═══ PARAMETER 1: BUDGET FIT (max 30 pts) ═══</span>
+    lo, hi = place.budget_range      <span class="cm"># Budget tier range</span>
+    mlo, mhi = place.midrange        <span class="cm"># Mid-range tier</span>
+    <span class="kw">if</span> lo &lt;= budget &lt;= hi:   score += <span class="num">30</span>    <span class="cm"># Perfect budget fit</span>
+    <span class="kw">elif</span> mlo &lt;= budget &lt;= mhi: score += <span class="num">15</span>  <span class="cm"># Mid-range fit</span>
+    <span class="kw">elif</span> budget &lt; lo:          <span class="kw">return</span> <span class="type">None</span>  <span class="cm"># HARD REJECT</span>
+    <span class="kw">else</span>:                      score += <span class="num">20</span>  <span class="cm"># Luxury fit</span>
+    
+    <span class="cm"># ═══ PARAMETER 2: INTEREST MATCH (max 25 pts) ═══</span>
+    <span class="kw">if</span> <span class="kw">not</span> interests:         score += <span class="num">12</span>  <span class="cm"># No preference = generic bonus</span>
+    <span class="kw">elif</span> fuzzy_match(interests, place.trip_types):
+                               score += <span class="num">25</span>  <span class="cm"># Fuzzy match found!</span>
+    <span class="kw">else</span>:                      <span class="kw">return</span> <span class="type">None</span>  <span class="cm"># HARD REJECT</span>
+    
+    <span class="cm"># ═══ PARAMETER 3: SEASON SUITABILITY (max 20 pts) ═══</span>
+    <span class="kw">if</span> season:
+        <span class="kw">if</span> season <span class="kw">in</span> place.best_seasons:    score += <span class="num">20</span>
+        <span class="kw">elif</span> season <span class="kw">in</span> place.avoid_seasons: score -= <span class="num">15</span>
+        <span class="kw">else</span>:                               score += <span class="num">8</span>
+    
+    <span class="cm"># ═══ PARAMETER 4: TRAVELLER TYPE (max 15 pts) ═══</span>
+    <span class="kw">if</span> traveller:
+        <span class="kw">if</span> traveller <span class="kw">in</span> place.ideal_for:   score += <span class="num">15</span>
+        <span class="kw">else</span>:                               score += <span class="num">3</span>
+    
+    <span class="cm"># ═══ PARAMETER 5: DURATION FIT (max 10 pts) ═══</span>
+    <span class="kw">if</span> days:
+        <span class="kw">if</span> place.min_days &lt;= days &lt;= place.max_days: score += <span class="num">10</span>
+        <span class="kw">elif</span> days &lt; place.min_days:                   score -= <span class="num">5</span>
+    
+    <span class="cm"># ═══ PARAMETER 6 &amp; 7: POPULARITY + SAFETY ═══</span>
+    score += place.popularity_score         <span class="cm"># +1 to +10</span>
+    score += place.safety_rating // <span class="num">2</span>      <span class="cm"># +1 to +5</span>
+    
+    <span class="kw">return</span> score</code></pre>
+
+  <h4>Scoring Flow Diagram</h4>
+  <div class="flow-box">User Input → [Budget, Interest, Month, Traveller, Days, Region]
+    │
+    ▼
+┌─────────────────────────────────────────┐
+│  FOR EACH of 100 destinations:          │
+│                                          │
+│  1. Budget check   → +30/+20/+15/REJECT │
+│  2. Interest match  → +25/REJECT         │
+│  3. Season check    → +20/+8/-15         │
+│  4. Traveller match → +15/+3             │
+│  5. Duration check  → +10/-5             │
+│  6. + Popularity    → +1 to +10          │
+│  7. + Safety/2      → +1 to +5           │
+│  ────────────────────────────            │
+│  Total Score        → 0 to ~115          │
+└─────────────────────────────────────────┘
+    │
+    ▼
+Sort by score (descending) → Top N results → Display with explanations</div>
+
+  <h4>Example Calculation</h4>
+  <table>
+    <thead><tr><th>Parameter</th><th>Neil Island Score</th><th>Goa Score</th></tr></thead>
+    <tbody>
+      <tr><td>Budget (₹3000/day vs range)</td><td>+30 (within budget tier)</td><td>+30 (within budget tier)</td></tr>
+      <tr><td>Interest (Beach)</td><td>+25 (Beach ∈ trip_types)</td><td>+25 (Beach ∈ trip_types)</td></tr>
+      <tr><td>Season (Winter)</td><td>+20 (Winter = best season)</td><td>+20 (Winter = best season)</td></tr>
+      <tr><td>Traveller (Couple)</td><td>+15 (Couple ∈ ideal_for)</td><td>+3 (not specifically ideal)</td></tr>
+      <tr><td>Duration (not specified)</td><td>+0</td><td>+0</td></tr>
+      <tr><td>Popularity Score</td><td>+9</td><td>+9</td></tr>
+      <tr><td>Safety / 2</td><td>+4 (9/2)</td><td>+3 (7/2)</td></tr>
+      <tr><td><strong>TOTAL</strong></td><td><strong>103</strong></td><td><strong>90</strong></td></tr>
+    </tbody>
+  </table>
+  <p>This is why Neil Island ranks #1 and Goa ranks #2 for a Beach + Winter + Couple search.</p>
+
+  <div class="callout callout-important">
+    <div class="callout-title">Syllabus Connection: Heuristic Search</div>
+    <p><strong>Unit 3: Heuristic Search, Best-First Search</strong> — Our scoring function is a heuristic evaluation function h(n). We compute h(n) for all 100 destinations, then sort by score and return the best — this is exactly a <strong>Best-First Search</strong> strategy. The weights (30, 25, 20, 15, 10) are the heuristic's domain knowledge.</p>
+  </div>
+</div>
+
+<hr>
+
+<!-- 10. TOPIC 4: KNOWLEDGE REPRESENTATION -->
+<div class="section" id="topic4">
+  <div class="section-number">Section 10</div>
+  <h2>Topic 4: <span class="gold">Knowledge Representation</span></h2>
+  <p><strong>Knowledge Representation</strong> is how an AI system stores and organizes information about the world so it can reason about it. Our system uses a <strong>structured JSON knowledge base</strong> — 100 Indian destinations with 53+ fields each.</p>
+
+  <h4>Knowledge Base Structure</h4>
+  <pre data-lang="JSON"><code><span class="cm">// FROM data/india_tourism_dataset.json — Sample Entry</span>
+{
+  <span class="str">"id"</span>: <span class="num">1</span>,
+  <span class="str">"destination_name"</span>: <span class="str">"Goa"</span>,
+  <span class="str">"state"</span>: <span class="str">"Goa"</span>,
+  <span class="str">"region"</span>: <span class="str">"West India"</span>,
+  <span class="str">"coordinates"</span>: { <span class="str">"latitude"</span>: <span class="num">15.2993</span>, <span class="str">"longitude"</span>: <span class="num">74.124</span> },
+
+  <span class="cm">// ─── TRIP TYPE CLASSIFICATION (for Fuzzy Matching) ───</span>
+  <span class="str">"trip_types"</span>: [<span class="str">"Beach"</span>, <span class="str">"Cultural"</span>, <span class="str">"Food"</span>, <span class="str">"Nightlife"</span>],
+
+  <span class="cm">// ─── BUDGET KNOWLEDGE (for Rule-Based Scoring) ───</span>
+  <span class="str">"budget_category"</span>: {
+    <span class="str">"total_daily_range"</span>: [<span class="num">1400</span>, <span class="num">2800</span>],
+    <span class="str">"accommodation_range"</span>: [<span class="num">500</span>, <span class="num">1200</span>],
+    <span class="str">"food_range"</span>: [<span class="num">400</span>, <span class="num">700</span>],
+    <span class="str">"activities_range"</span>: [<span class="num">300</span>, <span class="num">500</span>],
+    <span class="str">"local_transport_range"</span>: [<span class="num">200</span>, <span class="num">400</span>]
+  },
+
+  <span class="cm">// ─── TEMPORAL KNOWLEDGE (for Season Rules) ───</span>
+  <span class="str">"best_seasons"</span>: [<span class="str">"Winter"</span>],
+  <span class="str">"avoid_seasons"</span>: [<span class="str">"Monsoon"</span>],
+
+  <span class="cm">// ─── TRAVELLER SUITABILITY (for Expert System) ───</span>
+  <span class="str">"ideal_for"</span>: [<span class="str">"Friends"</span>, <span class="str">"Couple"</span>, <span class="str">"Solo"</span>],
+  <span class="str">"ideal_for_why"</span>: {
+    <span class="str">"Friends"</span>: <span class="str">"Vibrant nightlife and group activities"</span>,
+    <span class="str">"Couple"</span>: <span class="str">"Romantic beaches and sunset views"</span>,
+    <span class="str">"Solo"</span>: <span class="str">"Safe, social, and budget-friendly hostels"</span>
+  },
+
+  <span class="cm">// ─── DOMAIN KNOWLEDGE (53+ fields total) ───</span>
+  <span class="str">"popularity_score"</span>: <span class="num">9</span>,
+  <span class="str">"safety_rating"</span>: <span class="num">7</span>,
+  <span class="str">"primary_attractions"</span>: [<span class="str">"Baga Beach"</span>, <span class="str">"Old Goa Churches"</span>, ...],
+  <span class="str">"permits_required"</span>: <span class="kw">false</span>,
+  <span class="str">"suggested_itinerary"</span>: <span class="str">"Day 1: North Goa beaches..."</span>,
+  <span class="str">"nearest_airport"</span>: { <span class="str">"name"</span>: <span class="str">"Dabolim"</span>, <span class="str">"distance_km"</span>: <span class="num">29</span> }
+}</code></pre>
+
+  <h4>Knowledge Representation Categories</h4>
+  <table>
+    <thead><tr><th>Knowledge Category</th><th>Fields</th><th>Used By</th></tr></thead>
+    <tbody>
+      <tr><td>Geographic</td><td><code>state</code>, <code>region</code>, <code>coordinates</code>, <code>altitude_m</code></td><td>Region filtering, map display</td></tr>
+      <tr><td>Financial</td><td><code>budget_category</code>, <code>mid_range_category</code>, <code>luxury_category</code></td><td>Budget rule scoring</td></tr>
+      <tr><td>Temporal</td><td><code>best_seasons</code>, <code>avoid_seasons</code>, <code>peak_tourist_season</code></td><td>Season rule scoring</td></tr>
+      <tr><td>Social</td><td><code>ideal_for</code>, <code>ideal_for_why</code></td><td>Traveller matching + XAI</td></tr>
+      <tr><td>Duration</td><td><code>minimum_days</code>, <code>ideal_days</code>, <code>maximum_days</code></td><td>Duration scoring</td></tr>
+      <tr><td>Quality</td><td><code>popularity_score</code>, <code>safety_rating</code></td><td>Bonus score components</td></tr>
+      <tr><td>Safety</td><td><code>permits_required</code>, <code>permits_details</code></td><td>Safety alert rules</td></tr>
+      <tr><td>Cultural</td><td><code>local_cuisine_must_try</code>, <code>festivals_events</code>, <code>shopping_highlights</code></td><td>Detail page display</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-note">
+    <div class="callout-title">Syllabus Connection</div>
+    <p><strong>Unit 1: A.I. Representation</strong> — Our JSON dataset is a structured symbolic knowledge representation. <strong>Unit 4: Knowledge Based Agents</strong> — The recommendation engine is a knowledge-based agent that uses this structured knowledge to make decisions. The JSON schema acts as an <strong>ontology</strong> defining the relationships between destinations, attributes, and preferences.</p>
+  </div>
+</div>
+
+<hr>
+
+<!-- 11. TOPIC 5: EXPLAINABLE AI -->
+<div class="section" id="topic5">
+  <div class="section-number">Section 11</div>
+  <h2>Topic 5: <span class="gold">Explainable AI (XAI)</span></h2>
+  <p><strong>Explainable AI</strong> ensures that AI decisions are not "black boxes" — every recommendation comes with a human-readable explanation of <em>why</em> it was chosen. This builds trust and enables users to understand the AI's reasoning.</p>
+
+  <h4>XAI Components in Our System</h4>
+  <table>
+    <thead><tr><th>XAI Feature</th><th>Implementation</th><th>Where Shown</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Transparent Scores</strong></td><td>Numerical score (e.g., 101) shown on every result card</td><td>Results page — large score badge</td></tr>
+      <tr><td><strong>Score Breakdown</strong></td><td>Each scoring parameter's contribution can be traced</td><td>Debug/expanded view</td></tr>
+      <tr><td><strong>Season Badges</strong></td><td>"✓ Best in Winter" or "⚠ Avoid in Monsoon" labels</td><td>Result cards — green/red tags</td></tr>
+      <tr><td><strong>"Why this suits you"</strong></td><td><code>ideal_for_why[traveller_type]</code> — personalized text</td><td>Expanded card — blue callout</td></tr>
+      <tr><td><strong>Budget Comparison</strong></td><td>Shows user's budget vs destination's range</td><td>Result card quick stats</td></tr>
+      <tr><td><strong>Permit Warnings</strong></td><td>Automatic red alerts for permit-required destinations</td><td>Expanded card — red box</td></tr>
+      <tr><td><strong>Safety Rating</strong></td><td>Safety score displayed as x/10</td><td>Result card stats row</td></tr>
+    </tbody>
+  </table>
+
+  <h4>XAI Code — Generating Explanations</h4>
+  <pre data-lang="Python"><code><span class="kw">def</span> <span class="fn">print_card</span>(place, score, traveller_type):
+    <span class="str">"""Generate explainable recommendation card with transparent reasoning."""</span>
+    
+    <span class="cm"># ─── XAI 1: Show the score transparently ───</span>
+    <span class="fn">print</span>(<span class="str">f"Score: {score}/~115"</span>)
+    
+    <span class="cm"># ─── XAI 2: Explain season suitability ───</span>
+    <span class="kw">if</span> season <span class="kw">in</span> place.best_seasons:
+        <span class="fn">print</span>(<span class="str">"✓ BEST in this season — ideal time to visit"</span>)
+    <span class="kw">elif</span> season <span class="kw">in</span> place.avoid_seasons:
+        <span class="fn">print</span>(<span class="str">"⚠ AVOID this season — not recommended"</span>)
+    
+    <span class="cm"># ─── XAI 3: Explain WHY this suits the traveller ───</span>
+    <span class="kw">if</span> traveller_type <span class="kw">and</span> traveller_type <span class="kw">in</span> place.ideal_for_why:
+        why = place.ideal_for_why[traveller_type]
+        <span class="fn">print</span>(<span class="str">f"Why this suits you: {why}"</span>)
+    
+    <span class="cm"># ─── XAI 4: Safety &amp; Permit transparency ───</span>
+    <span class="kw">if</span> place.permits_required:
+        <span class="fn">print</span>(<span class="str">f"⚠ PERMIT REQUIRED: {place.permit_details}"</span>)
+    <span class="fn">print</span>(<span class="str">f"Safety: {place.safety_rating}/10"</span>)</code></pre>
+
+  <h4>XAI in the Frontend — User-Facing Explanations</h4>
+  <pre data-lang="JavaScript"><code><span class="cm">// FROM index.html — Building the "Why" box</span>
+<span class="kw">if</span> (traveller &amp;&amp; p.ideal_for_why &amp;&amp; p.ideal_for_why[traveller]) {
+    html += <span class="str">`&lt;div class="why-box"&gt;
+        💡 Why this suits you: ${p.ideal_for_why[traveller]}
+    &lt;/div&gt;`</span>;
+}
+
+<span class="cm">// Season explanation badges</span>
+<span class="kw">if</span> (isBest)  tags += <span class="str">`&lt;span class="dtag dtag-ok"&gt;✓ Best in ${season}&lt;/span&gt;`</span>;
+<span class="kw">if</span> (isAvoid) tags += <span class="str">`&lt;span class="dtag dtag-warn"&gt;⚠ Avoid in ${season}&lt;/span&gt;`</span>;
+
+<span class="cm">// Permit warning</span>
+<span class="kw">if</span> (p.permits) {
+    html += <span class="str">`&lt;div class="permit-box"&gt;
+        &lt;div class="permit-title"&gt;⚠ Permit Required&lt;/div&gt;
+        ${p.permit_details}
+    &lt;/div&gt;`</span>;
+}</code></pre>
+
+  <div class="callout callout-tip">
+    <div class="callout-title">Why XAI Matters</div>
+    <p>Traditional AI systems (especially neural networks) are "black boxes" — you get an answer but don't know <em>why</em>. Our Expert System is <strong>inherently explainable</strong> because every decision traces back to specific rules and data. This is a key advantage of Symbolic AI over Sub-Symbolic (neural) AI, and is a critical requirement in fields like healthcare, finance, and governance.</p>
+  </div>
+</div>
+
+<hr>
+
+<!-- 12. FILE-BY-FILE SOURCE CODE ANALYSIS -->
+<div class="section" id="files">
+  <div class="section-number">Section 12</div>
+  <h2>File-by-File <span class="gold">Source Code Analysis</span></h2>
+
+  <h3>1. recommender.py — The AI Engine (308 lines)</h3>
+  <p>This is the <strong>heart of the AI system</strong>. Every AI concept is implemented here.</p>
+  <table>
+    <thead><tr><th>Function</th><th>Lines</th><th>AI Concept</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td><code>load_data()</code></td><td>20-45</td><td><span class="tag tag-kb">Knowledge Base</span></td><td>Loads JSON dataset, parses 100 destinations into Python objects</td></tr>
+      <tr><td><code>preprocess_data()</code></td><td>47-85</td><td><span class="tag tag-kb">Knowledge Rep.</span></td><td>Normalizes fields, builds lookup indices for fast querying</td></tr>
+      <tr><td><code>get_season()</code></td><td>87-100</td><td><span class="tag tag-rule">Rule-Based</span></td><td>Maps month string → season using rule table</td></tr>
+      <tr><td><code>fuzzy_match_interest()</code></td><td>102-135</td><td><span class="tag tag-fuzzy">Fuzzy Logic</span></td><td>Approximate string matching with difflib + Levenshtein</td></tr>
+      <tr><td><code>score_place()</code></td><td>137-200</td><td><span class="tag tag-heuristic">Heuristic Scoring</span></td><td>7-parameter weighted evaluation of each destination</td></tr>
+      <tr><td><code>recommend()</code></td><td>202-240</td><td><span class="tag tag-heuristic">Best-First Search</span></td><td>Scores all destinations, sorts, returns top N</td></tr>
+      <tr><td><code>print_card()</code></td><td>242-308</td><td><span class="tag tag-xai">Explainable AI</span></td><td>Generates human-readable explanation for each recommendation</td></tr>
+    </tbody>
+  </table>
+
+  <h3>2. main.py — CLI Interface (168 lines)</h3>
+  <p>The command-line interface that orchestrates the AI workflow:</p>
+  <table>
+    <thead><tr><th>Function</th><th>AI Concept</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td><code>main()</code></td><td><span class="tag tag-rule">Expert System</span></td><td>User input loop → calls recommender → displays results</td></tr>
+      <tr><td><code>get_user_preferences()</code></td><td><span class="tag tag-rule">Inference Engine</span></td><td>Collects budget, interest, month, traveller type with validation</td></tr>
+      <tr><td><code>display_results()</code></td><td><span class="tag tag-xai">XAI</span></td><td>Presents ranked results with explanations</td></tr>
+    </tbody>
+  </table>
+
+  <h3>3. india_tourism_dataset.json — Knowledge Base</h3>
+  <p>The structured knowledge base containing <strong>100 Indian destinations × 53+ fields</strong>. Key statistics:</p>
+  <div class="cards">
+    <div class="card"><div class="card-value">100</div><div class="card-label">Destinations</div></div>
+    <div class="card"><div class="card-value">53+</div><div class="card-label">Fields Per Entry</div></div>
+    <div class="card"><div class="card-value">7</div><div class="card-label">Regions Covered</div></div>
+    <div class="card"><div class="card-value">15+</div><div class="card-label">Trip Types</div></div>
+  </div>
+
+  <h3>4. index.html — Frontend SPA (1104 lines)</h3>
+  <p>A single-file vanilla HTML/CSS/JS application implementing 5 pages with the full AI recommendation engine ported to JavaScript:</p>
+  <table>
+    <thead><tr><th>Section</th><th>Lines</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td>CSS Design System</td><td>1-350</td><td>Premium UI with variables, responsive grid, animations</td></tr>
+      <tr><td>Home Page HTML</td><td>368-481</td><td>Hero, features, regions, highlights sections</td></tr>
+      <tr><td>Finder Page HTML</td><td>483-595</td><td>Input form with chips, dropdowns, results area</td></tr>
+      <tr><td>Explore Page HTML</td><td>597-622</td><td>Grid/List browsing with search and sort</td></tr>
+      <tr><td>Detail Page HTML</td><td>624-633</td><td>Full destination detail template</td></tr>
+      <tr><td>About Page HTML</td><td>635-693</td><td>Team, tech stack, feature list</td></tr>
+      <tr><td>JavaScript Engine</td><td>695-1104</td><td>Data loading, scoring, fuzzy matching, rendering</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<hr>
+
+<!-- 13. BUILD & RUN INSTRUCTIONS -->
+<div class="section" id="build">
+  <div class="section-number">Section 13</div>
+  <h2>Build &amp; Run <span class="gold">Instructions</span></h2>
+  <h4>Option A: Python CLI (Backend)</h4>
+  <pre data-lang="Terminal"><code><span class="cm"># Navigate to project directory</span>
+<span class="kw">cd</span> travel_recommender
+
+<span class="cm"># Run the CLI recommendation engine</span>
+<span class="kw">python</span> main.py
+
+<span class="cm"># Follow prompts: enter budget, interest, month, traveller type</span></code></pre>
+
+  <h4>Option B: Web Frontend (Recommended for Demo)</h4>
+  <pre data-lang="Terminal"><code><span class="cm"># Start a local HTTP server</span>
+<span class="kw">cd</span> travel_recommender
+<span class="kw">python</span> -m http.server 8090
+
+<span class="cm"># Open in browser</span>
+<span class="cm"># http://localhost:8090/index.html</span></code></pre>
+
+  <h4>Requirements</h4>
+  <ul>
+    <li><strong>Python 3.6+</strong> — no external dependencies (uses only stdlib: <code>json</code>, <code>difflib</code>, <code>os</code>)</li>
+    <li><strong>Modern web browser</strong> — Chrome, Firefox, Edge for frontend</li>
+    <li><strong>No installation needed</strong> — zero <code>pip install</code> requirements</li>
+  </ul>
+</div>
+
+<hr>
+
+
+<!-- 15. CONCLUSION -->
+<div class="section" id="conclusion">
+  <div class="section-number">Section 15</div>
+  <h2><span class="gold">Conclusion</span></h2>
+  <p>The <strong>Yatra India AI Travel Recommender</strong> successfully demonstrates that Artificial Intelligence is not limited to machine learning. Using <strong>Symbolic AI techniques</strong> — the original and foundational approach to AI — we built a complete intelligent system that:</p>
+  <ul>
+    <li>Reasons about travel decisions using <strong>production rules</strong> (Rule-Based Expert System)</li>
+    <li>Handles imprecise user input through <strong>fuzzy string matching</strong> (Fuzzy Logic)</li>
+    <li>Evaluates and ranks destinations using a <strong>weighted heuristic function</strong> (Heuristic Search)</li>
+    <li>Stores domain knowledge in a <strong>structured symbolic format</strong> (Knowledge Representation)</li>
+    <li>Explains every decision in <strong>human-readable language</strong> (Explainable AI)</li>
+  </ul>
+  <p>Each concept maps directly to the AI syllabus units, demonstrating practical, real-world application of theoretical AI principles in a travel recommendation domain.</p>
+
+  <div class="callout callout-important">
+    <div class="callout-title">Key Takeaway</div>
+    <p>This project proves that meaningful AI applications can be built <strong>without neural networks, GPUs, or cloud APIs</strong>. Rule-based reasoning, heuristic search, and knowledge representation — the foundations of AI — are powerful enough to solve real problems when properly designed and implemented.</p>
+  </div>
+</div>
+
+</div><!-- end container -->
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="brand">YATRA</div>
+  <p>India AI Travel Recommender — Artificial Intelligence Technical Walkthrough</p>
+  <p style="margin-top:8px;font-size:12px;color:#555">2nd Year Engineering Project · April 2026</p>
+</div>
+
+<script>
+  // Initialize Mermaid diagrams
+  mermaid.initialize({ 
+    startOnLoad: true, 
+    theme: 'dark',
+    themeVariables: {
+      primaryColor: '#1a2236',
+      primaryTextColor: '#e8e6e1',
+      primaryBorderColor: '#c9a84c',
+      lineColor: '#c9a84c',
+      secondaryColor: '#111827',
+      tertiaryColor: '#0a0e1a',
+      fontFamily: 'Inter, sans-serif',
+      fontSize: '14px'
+    }
+  });
+</script>
+</body>
+</html>
+

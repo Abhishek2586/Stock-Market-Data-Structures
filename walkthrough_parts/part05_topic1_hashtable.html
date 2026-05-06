@@ -1,0 +1,86 @@
+<!-- ═══════════ PART 5: TOPIC 1 — HASH TABLE ═══════════ -->
+
+<div class="section" id="topic1">
+  <div class="section-number">Section 07</div>
+  <h2>Topic 1: <span class="gold">Hash Table with Chaining</span></h2>
+  <p>A <strong>Hash Table</strong> is a data structure that maps keys to values using a hash function. It provides <strong>O(1) average-time</strong> insert, search, and delete operations. In our project, stock symbols (like "AAPL") are hashed to bucket indices for instant price lookups.</p>
+
+  <h4>What is a Hash Table?</h4>
+  <p>A hash table uses a <strong>hash function</strong> to compute an index into an array of buckets. When two keys hash to the same index (a <strong>collision</strong>), we use <strong>separate chaining</strong> — each bucket contains a linked list of all entries that hash to that index.</p>
+
+  <h4>The djb2 Hash Function</h4>
+  <pre data-lang="C"><code><span class="cm">// FROM member1_hashtable.c</span>
+<span class="cm">// Daniel J. Bernstein's hash function — simple, fast, good distribution</span>
+<span class="type">unsigned int</span> <span class="fn">hash_function</span>(<span class="kw">const</span> <span class="type">char</span>* str) {
+    <span class="type">unsigned long</span> hash = <span class="num">5381</span>;        <span class="cm">// Magic seed value</span>
+    <span class="type">int</span> c;
+    <span class="kw">while</span> ((c = *str++))
+        hash = ((hash &lt;&lt; <span class="num">5</span>) + hash) + c;  <span class="cm">// hash * 33 + c</span>
+    <span class="kw">return</span> hash % <span class="num">TABLE_SIZE</span>;          <span class="cm">// Mod to fit in table</span>
+}</code></pre>
+  <p><strong>How djb2 works:</strong> Start with seed 5381, for each character multiply current hash by 33 (via bit shift) and add the character's ASCII value. Finally, modulo by TABLE_SIZE (100) to get the bucket index.</p>
+
+  <h4>Collision Handling — Separate Chaining</h4>
+  <pre data-lang="C"><code><span class="cm">// FROM member1_hashtable.c → ht_insert()</span>
+<span class="kw">void</span> <span class="fn">ht_insert</span>(HashTable* ht, <span class="kw">const</span> <span class="type">char</span>* symbol, <span class="type">double</span> price, <span class="type">long</span> volume) {
+    <span class="type">unsigned int</span> index = hash_function(symbol);   <span class="cm">// Compute bucket index</span>
+    Stock* current = ht-&gt;buckets[index];
+
+    <span class="cm">// Check if symbol already exists (UPDATE case)</span>
+    <span class="kw">while</span>(current != NULL) {
+        <span class="kw">if</span>(strcmp(current-&gt;symbol, symbol) == <span class="num">0</span>) {
+            current-&gt;price = price;                <span class="cm">// Update existing entry</span>
+            current-&gt;change_percent = ((price - old_price) / old_price) * <span class="num">100.0</span>;
+            <span class="kw">return</span>;
+        }
+        current = current-&gt;next;                   <span class="cm">// Traverse chain</span>
+    }
+
+    <span class="cm">// New entry — prepend to chain (collision = chain grows)</span>
+    Stock* new_stock = (Stock*)malloc(<span class="kw">sizeof</span>(Stock));
+    strcpy(new_stock-&gt;symbol, symbol);
+    new_stock-&gt;price = price;
+
+    <span class="kw">if</span>(ht-&gt;buckets[index] != NULL)
+        ht_stats.collisions++;                     <span class="cm">// COLLISION detected!</span>
+
+    new_stock-&gt;next = ht-&gt;buckets[index];          <span class="cm">// Prepend to chain</span>
+    ht-&gt;buckets[index] = new_stock;
+    ht-&gt;total_stocks++;
+}</code></pre>
+
+  <h4>Search — O(1) Average</h4>
+  <pre data-lang="C"><code><span class="cm">// FROM member1_hashtable.c → ht_search()</span>
+Stock* <span class="fn">ht_search</span>(HashTable* ht, <span class="kw">const</span> <span class="type">char</span>* symbol) {
+    <span class="type">unsigned int</span> index = hash_function(symbol);   <span class="cm">// Hash to find bucket</span>
+    Stock* current = ht-&gt;buckets[index];
+    <span class="type">int</span> chain_length = <span class="num">0</span>;
+
+    <span class="kw">while</span>(current != NULL) {
+        chain_length++;
+        <span class="kw">if</span>(strcmp(current-&gt;symbol, symbol) == <span class="num">0</span>) {
+            <span class="kw">return</span> current;                        <span class="cm">// FOUND at chain position</span>
+        }
+        current = current-&gt;next;
+    }
+    <span class="kw">return</span> NULL;                                   <span class="cm">// NOT FOUND</span>
+}</code></pre>
+
+  <h4>Performance Statistics</h4>
+  <table>
+    <thead><tr><th>Metric</th><th>Value</th><th>Significance</th></tr></thead>
+    <tbody>
+      <tr><td>Table Size</td><td>100 buckets</td><td>Fixed array size for hash distribution</td></tr>
+      <tr><td>Load Factor</td><td>0.12 (12 stocks / 100 buckets)</td><td>Low load factor = fewer collisions</td></tr>
+      <tr><td>Hash Function</td><td>djb2 (multiply by 33)</td><td>Fast, good distribution, widely used</td></tr>
+      <tr><td>Collision Resolution</td><td>Separate Chaining (linked list)</td><td>No limit on entries per bucket</td></tr>
+      <tr><td>Average Search</td><td>O(1)</td><td>Direct bucket access + short chain</td></tr>
+      <tr><td>Worst Case Search</td><td>O(n)</td><td>All entries in one bucket (unlikely)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-important">
+    <div class="callout-title">Syllabus Connection</div>
+    <p><strong>Hash Tables</strong> are a foundational data structure that supports the more advanced structures in the syllabus. The chaining technique demonstrates <strong>linked list integration</strong> with array-based storage. The load factor analysis connects to <strong>amortized complexity</strong> concepts. In practice, hash tables underpin database indexing — similar to how <strong>B-Trees and B+-Trees</strong> (Unit 1) provide indexed access in databases.</p>
+  </div>
+</div>

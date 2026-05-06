@@ -1,0 +1,94 @@
+<!-- PART 10: COMPLEXITY ANALYSIS & FAQ -->
+
+<hr>
+<div class="section" id="complexity">
+  <div class="section-number">Section 10</div>
+  <h2>Complexity Analysis & <span class="green">Space-Time Tradeoff</span></h2>
+
+  <table>
+    <thead><tr><th>Operation</th><th>Time</th><th>Explanation</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Insert</strong></td><td>O(m)</td><td>m = length of key. Walk/create one node per character. "AAPL" = 4 steps.</td></tr>
+      <tr><td><strong>Exact Search</strong></td><td>O(m)</td><td>Walk the trie for m characters. Check is_end at the final node.</td></tr>
+      <tr><td><strong>Auto-Complete</strong></td><td>O(m + r)</td><td>m steps to reach prefix node + r steps to collect r results via DFS.</td></tr>
+      <tr><td><strong>Space (per node)</strong></td><td>O(26) = O(1)</td><td>Each node has a fixed-size array of 26 pointers regardless of usage.</td></tr>
+      <tr><td><strong>Total Space</strong></td><td>O(26 × N)</td><td>N = total nodes. Each node stores 26 pointers. With 58 nodes → ~13KB.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-purple">
+    <div class="callout-title">⚖️ The Space-Time Tradeoff</div>
+    <p>
+      <strong>Trie WASTES space</strong> — each node has 26 child pointers, but most are NULL. A typical node might use only 1-2 of its 26 slots.<br><br>
+      <strong>But it GAINS speed</strong> — O(m) lookup independent of how many words exist. A hash table is O(1) average but CANNOT do prefix search. You'd need to check every key!<br><br>
+      <strong>Real numbers:</strong> 18 stocks, 58 nodes, ~13KB memory. The same 18 stocks in a hash table would use ~2KB. But the hash table can't answer "give me all stocks starting with A" without scanning everything.<br><br>
+      <strong>Conclusion:</strong> Trie trades ~6x more memory for the ABILITY to do instant prefix queries. For auto-complete, this is worth it.
+    </p>
+  </div>
+</div>
+
+<hr>
+<div class="section" id="faq">
+  <div class="section-number">Section 11</div>
+  <h2>Faculty FAQ — <span class="green">Tricky Questions & Answers</span> 🎯</h2>
+
+  <div class="line-box">
+    <div class="line-num">Q1</div>
+    <div class="line-code">Why did you use calloc instead of malloc?</div>
+    <div class="line-explain">calloc zero-initializes all memory. This sets all 26 child pointers to NULL automatically. With malloc, we'd need a loop to set each pointer to NULL manually. calloc is cleaner and safer for structures with pointer arrays.</div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Q2</div>
+    <div class="line-code">What does "static" mean before a function?</div>
+    <div class="line-explain">Static limits the function's visibility to the current file (translation unit). Other .c files cannot call static functions. It's like "private" in Java/C++. Only <code>run_trie()</code> is non-static (public) — it's the module's entry point.</div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Q3</div>
+    <div class="line-code">Why is ALPHABET_SIZE 26? What if we had digits too?</div>
+    <div class="line-explain">26 for uppercase A-Z only. If we needed digits (0-9), we'd change to 36. If we needed full ASCII, 128. But more children per node = more memory per node = less efficient. Since stock symbols are only letters, 26 is optimal.</div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Q4</div>
+    <div class="line-code">What does "symbol[i]" in the for-loop condition mean?</div>
+    <div class="line-explain">In C, strings end with '\0' (null terminator, ASCII value 0). The loop condition <code>symbol[i]</code> evaluates the character — any non-zero character is "true" (continue), but '\0' is "false" (stop). This is a standard C idiom for iterating through strings.</div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Q5</div>
+    <div class="line-code">Why use strncpy instead of strcpy?</div>
+    <div class="line-explain"><code>strcpy</code> has NO length limit — if the source string is too long, it overflows the destination buffer (security vulnerability!). <code>strncpy</code> takes a max length parameter, copying at most N-1 characters. This prevents buffer overflow attacks. It's safer.</div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Q6</div>
+    <div class="line-code">What is the difference between trie_search and get_suggestions?</div>
+    <div class="line-explain"><code>trie_search</code> checks if an EXACT complete word exists (returns 0 or 1). <code>get_suggestions</code> finds ALL words that START WITH a given prefix. Search checks is_end at the final node. Suggestions navigates to the prefix node and then does DFS to collect all is_end nodes below.</div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Q7</div>
+    <div class="line-code">Why is cnt passed as int* (pointer) in collect()?</div>
+    <div class="line-explain">Because collect() is recursive. If cnt was a regular int, each recursive call would get its OWN COPY, and modifications wouldn't propagate back to the caller. With a pointer, all recursive calls share the SAME counter variable, so everyone sees the updated count.</div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Q8</div>
+    <div class="line-code">What happens if I search for "AM" when only "AMD" and "AMZN" exist?</div>
+    <div class="line-explain">trie_search("AM") returns 0 (NOT FOUND). The path A→M exists, but the M node has <code>is_end = 0</code> because "AM" was never inserted as a complete word. However, get_suggestions("AM") would return AMD and AMZN — because they're complete words BELOW the AM prefix node.</div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Q9</div>
+    <div class="line-code">What is toupper() and why do we need it?</div>
+    <div class="line-explain"><code>toupper()</code> from ctype.h converts lowercase to uppercase ('a'→'A'). We use it so our trie is case-insensitive — "aapl", "Aapl", "AAPL" all map to the same path. Without it, 'a' and 'A' would map to different indices (97-65=32 vs 65-65=0).</div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Q10</div>
+    <div class="line-code">What is sizeof(stocks)/sizeof(stocks[0])?</div>
+    <div class="line-explain">A compile-time trick to calculate array length. <code>sizeof(stocks)</code> gives total bytes of the array. <code>sizeof(stocks[0])</code> gives bytes of one element. Division = number of elements. This is better than hardcoding "18" because it auto-adjusts if you add/remove items.</div>
+  </div>
+</div>

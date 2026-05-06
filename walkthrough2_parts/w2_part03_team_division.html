@@ -1,0 +1,118 @@
+<!-- 3. TEAM TOPIC DIVISION -->
+<div class="sec" id="team">
+  <div class="sn">Section 03</div>
+  <h2>Team Topic Division — <span class="g">Who Explains What</span></h2>
+  <p>Each team member is responsible for one ADS concept. Below is the division with what each member should know and be ready to explain.</p>
+
+  <div class="member">
+    <div class="member-head">
+      <div class="member-avatar" style="background:#ef4444">1</div>
+      <div><div class="member-name">Member 1 — Hash Table with Chaining</div><div class="member-role"><span class="tag t1">Hashing</span> · djb2 Algorithm · Separate Chaining · Collision Resolution</div></div>
+    </div>
+    <h4>What You Explain:</h4>
+    <ul>
+      <li>What is Hashing? — Mapping keys to array indices using a hash function</li>
+      <li>The <strong>djb2 hash algorithm</strong> — why multiply by 33 and XOR each character</li>
+      <li>What are collisions? — When two keys map to the same bucket</li>
+      <li>How <strong>separate chaining</strong> resolves collisions using linked lists</li>
+      <li>Show <code>hash_function()</code>, <code>ht_insert()</code>, <code>ht_search()</code> code</li>
+      <li>Load factor = items / table_size, and why 0.12 means few collisions</li>
+    </ul>
+    <h4>Pages You Demo:</h4>
+    <p><strong>01 HASH TABLE page</strong> — Click "Load Demo", show bucket visualization, point to [COLLISION] log entry, search for a stock</p>
+    <h4>Key Code File:</h4>
+    <p><code>member1_hashtable.c</code> → <code>hash_function()</code>, <code>ht_insert()</code>, <code>ht_search()</code></p>
+    <h4>Syllabus Units:</h4>
+    <p>Foundation (Hashing fundamentals, Hash functions, Collision resolution — Open Addressing vs Chaining)</p>
+  </div>
+
+  <div class="member">
+    <div class="member-head">
+      <div class="member-avatar" style="background:#3b82f6">2</div>
+      <div><div class="member-name">Member 2 — Priority Queue (Min-Heap)</div><div class="member-role"><span class="tag t2">Priority Queue</span> · Min-Heap · Heapify Up/Down · Alert Processing</div></div>
+    </div>
+    <h4>What You Explain:</h4>
+    <ul>
+      <li>What is a Priority Queue? — Elements dequeued by priority, not arrival order</li>
+      <li>Why use a min-heap? — Parent ≤ children ensures the most urgent alert is at root</li>
+      <li><strong>heapify_up</strong> — after insert, bubble the new element up to its correct position</li>
+      <li><strong>heapify_down</strong> — after extract, push the replacement down to restore heap</li>
+      <li>Parent/child index formulas: parent = (i-1)/2, left = 2i+1, right = 2i+2</li>
+      <li>Show 4 priority levels: CRITICAL(1) → HIGH(2) → MEDIUM(3) → LOW(4)</li>
+    </ul>
+    <h4>Pages You Demo:</h4>
+    <p><strong>02 PRIORITY QUEUE page</strong> — Load demo, show priority-ordered extraction, point to console showing CRITICAL alerts first</p>
+    <h4>Key Code File:</h4>
+    <p><code>member2_priority_queue.c</code> → <code>heapify_up()</code>, <code>heapify_down()</code>, <code>pq_insert()</code>, <code>pq_extract()</code></p>
+    <h4>Syllabus Units:</h4>
+    <p>Unit 2 (Single &amp; Double Ended Priority Queues, Leftist Trees, Binomial Heaps)</p>
+  </div>
+
+  <div class="member">
+    <div class="member-head">
+      <div class="member-avatar" style="background:#f97316">3</div>
+      <div><div class="member-name">Member 3 — AVL Tree (Self-Balancing BST)</div><div class="member-role"><span class="tag t3">AVL Tree</span> · Balance Factor · LL/RR/LR/RL Rotations · O(log n) Guarantee</div></div>
+    </div>
+    <h4>What You Explain:</h4>
+    <ul>
+      <li>What is an AVL Tree? — A BST where |height(left) - height(right)| ≤ 1 at every node</li>
+      <li><strong>Balance Factor</strong> = height(left subtree) - height(right subtree)</li>
+      <li>4 rotation cases: <strong>LL</strong> (right rotate), <strong>RR</strong> (left rotate), <strong>LR</strong> (left-right), <strong>RL</strong> (right-left)</li>
+      <li>Why rotations are O(1) but guarantee O(log n) tree height</li>
+      <li>Show <code>avl_insert()</code> with the 4-case rotation logic</li>
+      <li>Compare to plain BST: sequential inserts create O(n) linked list vs O(log n) AVL</li>
+    </ul>
+    <h4>Pages You Demo:</h4>
+    <p><strong>03 AVL TREE page</strong> — Load records, show tree height staying balanced, point to rotation count in console</p>
+    <h4>Key Code File:</h4>
+    <p><code>member3_avltree.c</code> → <code>rotate_right()</code>, <code>rotate_left()</code>, <code>avl_insert()</code>, <code>avl_balance()</code></p>
+    <h4>Syllabus Units:</h4>
+    <p>Unit 1 (AVL Trees, Red-Black Trees, B-Trees, Splay Trees — all self-balancing tree variants)</p>
+  </div>
+
+  <div class="member">
+    <div class="member-head">
+      <div class="member-avatar" style="background:#a855f7">4</div>
+      <div><div class="member-name">Member 4 — Heap (Max/Min Ranking)</div><div class="member-role"><span class="tag t4">Heap</span> · Max-Heap · Min-Heap · DEPQ · Top-K Extraction</div></div>
+    </div>
+    <h4>What You Explain:</h4>
+    <ul>
+      <li>What is a Heap? — A complete binary tree satisfying the heap property</li>
+      <li><strong>Max-Heap</strong> for gainers (root = biggest gainer) vs <strong>Min-Heap</strong> for losers (root = biggest loser)</li>
+      <li>This implements a <strong>Double Ended Priority Queue (DEPQ)</strong> — extract max AND min</li>
+      <li>How the same <code>heap_insert()</code> handles both modes with an <code>is_max_heap</code> flag</li>
+      <li>Array-based complete binary tree — no pointers needed, parent/child via index math</li>
+      <li>Top-K extraction: extract the root K times to get K best/worst stocks</li>
+    </ul>
+    <h4>Pages You Demo:</h4>
+    <p><strong>04 HEAP page</strong> — Click "Demo", show top gainers/losers lists, point to "Extract Gainer" and "Extract Loser" buttons</p>
+    <h4>Key Code File:</h4>
+    <p><code>member4_heap.c</code> → <code>heap_insert()</code>, <code>heap_extract()</code></p>
+    <h4>Syllabus Units:</h4>
+    <p>Unit 1 (Heaps — Max/Min), Unit 2 (DEPQs, Min-Max Heaps, Deaps, Leftist Trees)</p>
+  </div>
+
+  <div class="member">
+    <div class="member-head">
+      <div class="member-avatar" style="background:#22c55e">5</div>
+      <div><div class="member-name">Member 5 — Trie (Prefix Tree)</div><div class="member-role"><span class="tag t5">Trie</span> · 26-ary Branching · Prefix Search · Auto-Complete · DFS Collection</div></div>
+    </div>
+    <h4>What You Explain:</h4>
+    <ul>
+      <li>What is a Trie? — A tree where each node represents one character; paths spell words</li>
+      <li><strong>26-ary branching</strong> — each node has up to 26 children (A-Z)</li>
+      <li>Insert: walk character by character, create nodes as needed, mark <code>is_end</code></li>
+      <li><strong>Auto-complete</strong>: navigate to prefix node, then DFS to collect all descendants</li>
+      <li>O(m) search — independent of number of stored words (unlike hash table for prefix queries)</li>
+      <li><strong>Space-time tradeoff</strong>: 26 pointers per node uses more memory but enables prefix matching</li>
+    </ul>
+    <h4>Pages You Demo:</h4>
+    <p><strong>05 TRIE page</strong> — Load demo, type "A" in auto-complete to see AAPL/AMD/AMZN, type "NV" to see NVDA</p>
+    <h4>Key Code File:</h4>
+    <p><code>member5_trie.c</code> → <code>trie_insert()</code>, <code>trie_search()</code>, <code>get_suggestions()</code>, <code>collect()</code></p>
+    <h4>Syllabus Units:</h4>
+    <p>Unit 3 (Tries, Digital Search Trees, String Searching — KMP, Boyer-Moore)</p>
+  </div>
+</div>
+
+<hr>

@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Walkthrough 2 — ADS Concepts &amp; Presentation Guide | StockADS</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+:root{--bg:#0a0e1a;--s1:#111827;--s2:#1a2236;--bd:#1e2a42;--gold:#c9a84c;--gd:#a08535;--tx:#e8e6e1;--dim:#9ca3af;--blue:#3b82f6;--green:#22c55e;--red:#ef4444;--purple:#a855f7;--cyan:#06b6d4;--orange:#f97316}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);line-height:1.75;font-size:15px}
+.cover{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#0a0e1a,#0f1729 40%,#1a1a2e);position:relative;overflow:hidden;text-align:center;padding:40px}
+.cover::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 35px,rgba(201,168,76,.02) 35px,rgba(201,168,76,.02) 70px)}
+.cover-badge{background:rgba(201,168,76,.1);border:1px solid var(--gd);color:var(--gold);padding:8px 24px;border-radius:100px;font-size:12px;letter-spacing:3px;text-transform:uppercase;font-weight:600;margin-bottom:40px;position:relative}
+.cover h1{font-size:clamp(40px,6vw,68px);font-weight:900;color:var(--gold);letter-spacing:8px;text-transform:uppercase;margin-bottom:12px;position:relative}
+.cover .sub{font-size:clamp(14px,2vw,20px);color:var(--dim);letter-spacing:5px;text-transform:uppercase;font-weight:300;margin-bottom:50px;position:relative}
+.cover-line{width:80px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin-bottom:50px;position:relative}
+.cover-meta{display:flex;gap:36px;flex-wrap:wrap;justify-content:center;position:relative}
+.cover-meta div{text-align:center}.cover-meta .l{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gd);margin-bottom:4px}.cover-meta .v{font-size:15px;color:var(--tx);font-weight:600}
+.ct{max-width:1060px;margin:0 auto;padding:56px 40px}
+h2{font-size:30px;font-weight:800;margin-bottom:28px;padding-bottom:14px;border-bottom:2px solid var(--bd)}h2 .g{color:var(--gold)}
+h3{font-size:21px;font-weight:700;margin:36px 0 16px}
+h4{font-size:15px;font-weight:600;color:var(--gold);margin:20px 0 10px;letter-spacing:1px}
+p{margin-bottom:14px;color:var(--dim)}strong{color:var(--tx);font-weight:600}
+.sn{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;font-weight:600;margin-bottom:6px}
+.sec{margin-bottom:64px}
+table{width:100%;border-collapse:collapse;margin:18px 0 28px;font-size:14px}
+thead th{background:var(--s2);color:var(--gold);padding:11px 14px;text-align:left;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;border-bottom:2px solid var(--gd)}
+td{padding:11px 14px;border-bottom:1px solid var(--bd);color:var(--dim);vertical-align:top}
+tbody tr:hover{background:rgba(201,168,76,.03)}
+pre{background:#0d1117;border:1px solid var(--bd);border-radius:12px;padding:22px;overflow-x:auto;margin:14px 0 24px;position:relative}
+pre::before{content:attr(data-lang);position:absolute;top:8px;right:12px;font-size:10px;color:var(--gd);letter-spacing:1px;text-transform:uppercase;font-family:'JetBrains Mono',monospace}
+code{font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.7}pre code{color:#c9d1d9}
+.kw{color:#ff7b72}.fn{color:#d2a8ff}.str{color:#a5d6ff}.cm{color:#8b949e;font-style:italic}.num{color:#79c0ff}.type{color:#7ee787}.op{color:#ff7b72}
+p code,li code,td code{background:rgba(201,168,76,.1);color:var(--gold);padding:2px 7px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:12px}
+.co{border-radius:12px;padding:18px 22px;margin:18px 0 24px;border-left:4px solid}
+.co-g{background:rgba(201,168,76,.06);border-color:var(--gold)}.co-g .ct2{color:var(--gold)}
+.co-b{background:rgba(59,130,246,.06);border-color:var(--blue)}.co-b .ct2{color:var(--blue)}
+.co-gr{background:rgba(34,197,94,.06);border-color:var(--green)}.co-gr .ct2{color:var(--green)}
+.co-p{background:rgba(168,85,247,.06);border-color:var(--purple)}.co-p .ct2{color:var(--purple)}
+.ct2{font-weight:700;font-size:12px;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
+.co p{margin-bottom:0;font-size:14px}
+.tag{display:inline-block;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:600;letter-spacing:.5px;margin:2px 3px}
+.t1{background:rgba(239,68,68,.15);color:#f87171}.t2{background:rgba(59,130,246,.15);color:#60a5fa}.t3{background:rgba(249,115,22,.15);color:#fb923c}.t4{background:rgba(168,85,247,.15);color:#c084fc}.t5{background:rgba(34,197,94,.15);color:#4ade80}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin:20px 0 28px}
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:12px;padding:22px;text-align:center}
+.card .cv{font-size:32px;font-weight:800;color:var(--gold);margin-bottom:4px}.card .cl{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim)}
+.sb{background:var(--s1);border:1px solid var(--bd);border-radius:12px;padding:26px 30px;margin:18px 0 24px;font-size:14px;line-height:1.85;color:var(--dim)}
+.sb strong{color:var(--gold)}
+.member{background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:28px;margin:18px 0 28px}
+.member-head{display:flex;align-items:center;gap:16px;margin-bottom:16px}
+.member-avatar{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff}
+.member-name{font-size:18px;font-weight:700;color:var(--tx)}.member-role{font-size:13px;color:var(--dim)}
+ul,ol{margin:10px 0 18px 22px;color:var(--dim)}li{margin-bottom:5px}
+hr{border:none;height:1px;background:linear-gradient(90deg,transparent,var(--bd),transparent);margin:44px 0}
+.footer{text-align:center;padding:50px 40px;border-top:1px solid var(--bd);color:var(--dim);font-size:13px}
+.footer .brand{color:var(--gold);font-weight:700;font-size:16px;letter-spacing:3px}
+.toc{background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:36px 44px;margin-bottom:52px}
+.toc h2{font-size:22px;color:var(--gold);margin-bottom:20px;border:none;padding:0}
+.toc ol{list-style:none;counter-reset:toc}.toc ol li{counter-increment:toc;margin-bottom:8px}
+.toc ol li::before{content:counter(toc,decimal-leading-zero) ".";color:var(--gold);font-weight:700;margin-right:10px;font-family:'JetBrains Mono',monospace;font-size:12px}
+.toc a{color:var(--tx);text-decoration:none;font-weight:500}.toc a:hover{color:var(--gold)}
+.flow{background:var(--s1);border:1px solid var(--bd);border-radius:12px;padding:24px 30px;margin:18px 0 24px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9;white-space:pre;overflow-x:auto;color:var(--dim)}
+@media print{body{background:#fff;color:#1a1a1a;font-size:12px}.cover{min-height:auto;padding:50px;background:#fff}.cover h1{color:#1a1a1a;font-size:32px}h2{color:#1a1a1a;border-color:#ddd}pre{background:#f6f8fa}pre code{color:#1a1a1a}.sec{page-break-inside:avoid}}
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-badge">Walkthrough 2 — ADS Concepts &amp; Presentation Guide</div>
+  <h1>StockADS</h1>
+  <div class="sub">Advanced Data Structures — Concept Mapping &amp; Explanation Guide</div>
+  <div class="cover-line"></div>
+  <div class="cover-meta">
+    <div><div class="l">Purpose</div><div class="v">Concept Explanation</div></div>
+    <div><div class="l">ADS Topics</div><div class="v">5 Concepts</div></div>
+    <div><div class="l">Team Split</div><div class="v">5 Members</div></div>
+    <div><div class="l">Pages Covered</div><div class="v">6 Pages</div></div>
+    <div><div class="l">Date</div><div class="v">May 2026</div></div>
+  </div>
+</div>
+
+<div class="ct">
+
+<!-- TOC -->
+<div class="toc">
+  <h2>Contents</h2>
+  <ol>
+    <li><a href="#intro">Introduction — What ADS Concepts We Use &amp; Why</a></li>
+    <li><a href="#arch">Architecture — How ADS Components Connect</a></li>
+    <li><a href="#team">Team Topic Division — Who Explains What</a></li>
+    <li><a href="#t1">Member 1 &rarr; Hash Table with Chaining</a></li>
+    <li><a href="#t2">Member 2 &rarr; Priority Queue (Min-Heap)</a></li>
+    <li><a href="#t3">Member 3 &rarr; AVL Tree (Self-Balancing BST)</a></li>
+    <li><a href="#t4">Member 4 &rarr; Heap (Max/Min Ranking)</a></li>
+    <li><a href="#t5">Member 5 &rarr; Trie (Prefix Tree)</a></li>
+    <li><a href="#pages">Page-by-Page &rarr; ADS Concept Mapping</a></li>
+    <li><a href="#script">Full Presentation Script for Faculty</a></li>
+  </ol>
+</div>
+
+<!-- 1. INTRODUCTION -->
+<div class="sec" id="intro">
+  <div class="sn">Section 01</div>
+  <h2>Introduction — <span class="g">What ADS Concepts We Use &amp; Why</span></h2>
+
+  <p><strong>StockADS</strong> is a stock market data management system that applies <strong>5 Advanced Data Structures</strong> to solve real-world financial data problems. Each data structure is chosen because it uniquely solves a specific stock market requirement that <em>no other data structure can solve as efficiently</em>.</p>
+
+  <h4>Why These 5 ADS Concepts?</h4>
+  <table>
+    <thead><tr><th>#</th><th>ADS Concept</th><th>What It Does in Our Project</th><th>Why We Need It</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td><span class="tag t1">Hash Table</span></td>
+        <td>Maps stock symbols to their data (price, volume, change) using djb2 hash function with separate chaining</td>
+        <td>A stock exchange needs <strong>O(1) average-time lookup</strong> — when a trader queries "AAPL", the response must be instantaneous. No other structure gives constant-time lookup by key.</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td><span class="tag t2">Priority Queue</span></td>
+        <td>Processes stock market alerts in urgency order using a min-heap — CRITICAL alerts before INFO alerts</td>
+        <td>In a trading floor, a <strong>trading halt alert</strong> must be processed before a routine price update. A priority queue ensures the most urgent item is always at the top — O(log n) insert/extract.</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td><span class="tag t3">AVL Tree</span></td>
+        <td>Stores historical stock prices in a self-balancing BST keyed by timestamp, with automatic rotations</td>
+        <td>Price records arrive <strong>in timestamp order</strong>, which would degenerate a regular BST into a linked list (O(n)). AVL rotations guarantee <strong>O(log n) worst-case</strong> — essential for time-series data.</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td><span class="tag t4">Heap</span></td>
+        <td>Dual max-heap (top gainers) and min-heap (top losers) for instant market ranking</td>
+        <td>A stock screener needs to show the <strong>"top gainer" and "top loser"</strong> at any time. A heap gives O(1) peek at the extremum and O(log n) extraction — perfect for ranking.</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td><span class="tag t5">Trie</span></td>
+        <td>26-ary prefix tree for stock symbol auto-complete — type "A" and instantly get AAPL, AMD, AMZN</td>
+        <td>Search bars need <strong>prefix-based suggestions</strong> as the user types. A trie finds all matches in O(m + r) time — independent of how many symbols are stored. Hash tables cannot do prefix queries.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="co co-g">
+    <div class="ct2">Important — What Makes This Advanced Data Structures?</div>
+    <p>These are <strong>not basic data structures</strong> like arrays or linked lists. The ADS syllabus specifically covers AVL Trees, Heaps, Priority Queues, Tries, and Hashing — all of which we implement from scratch in C. Each structure demonstrates a <strong>specific algorithmic advantage</strong> (balancing, heapification, prefix matching) that basic structures cannot provide.</p>
+  </div>
+</div>
+
+<hr>
+
+<!-- 2. ARCHITECTURE -->
+<div class="sec" id="arch">
+  <div class="sn">Section 02</div>
+  <h2>Architecture — <span class="g">How ADS Components Connect</span></h2>
+
+  <h4>Layer 1: Frontend (HTML/CSS/JS) — The User Interface</h4>
+  <p>6 interactive pages where users interact with the data structures visually. The frontend <strong>sends commands</strong> and <strong>displays ADS-processed results</strong> with real-time console output.</p>
+
+  <h4>Layer 2: Python Server (server.py) — Compilation &amp; Execution Bridge</h4>
+  <p>Compiles all C modules via <code>gcc</code> and executes specific modules through <code>subprocess.run()</code> with stdin/stdout piping. Routes HTTP requests to the appropriate C module.</p>
+
+  <h4>Layer 3: C Backend (5 Modules) — Where All ADS Concepts Live</h4>
+  <ul>
+    <li><span class="tag t1">member1_hashtable.c</span> — djb2 hash function + separate chaining for O(1) stock lookup</li>
+    <li><span class="tag t2">member2_priority_queue.c</span> — Min-heap priority queue for urgency-based alert processing</li>
+    <li><span class="tag t3">member3_avltree.c</span> — Self-balancing BST with LL/RR/LR/RL rotations for historical prices</li>
+    <li><span class="tag t4">member4_heap.c</span> — Dual max/min heaps for gainers/losers ranking</li>
+    <li><span class="tag t5">member5_trie.c</span> — 26-ary prefix tree for symbol auto-complete</li>
+  </ul>
+
+  <h4>How Data Flows During a Module Execution</h4>
+  <div class="flow">Step 1: User clicks a tab (e.g., "01 HASH TABLE") in the frontend
+         |
+Step 2: Frontend sends HTTP request to Python server (GET /run?module=1)
+         |
+Step 3: server.py executes: subprocess.run("./stock_market", input="1", ...)
+         |
+Step 4: main.c reads stdin choice "1" -> calls run_hashtable()
+         |
+Step 5: <span class="tag t1">Hash Table</span> module executes:
+        - Loads 12 stocks from stock_data.h
+        - Applies djb2 hash to each symbol
+        - Inserts into 100-bucket array with chaining
+        - Prints formatted output to stdout
+         |
+Step 6: server.py captures stdout, returns as HTTP response
+         |
+Step 7: Frontend renders output in the console panel
+        + Updates visualization (bucket display, statistics cards)</div>
+
+  <div class="co co-b">
+    <div class="ct2">Key Architectural Point</div>
+    <p>All 5 data structures are implemented in <strong>pure C</strong> — no external libraries. The <code>stock_data.h</code> header provides a single source of truth: 12 <code>StockRecord</code> structs containing symbol, price, change_percent, and volume. Every module imports this shared data and processes it through its specific ADS algorithm.</p>
+  </div>
+</div>
+
+<hr>
+
+<!-- 3. TEAM TOPIC DIVISION -->
+<div class="sec" id="team">
+  <div class="sn">Section 03</div>
+  <h2>Team Topic Division — <span class="g">Who Explains What</span></h2>
+  <p>Each team member is responsible for one ADS concept. Below is the division with what each member should know and be ready to explain.</p>
+
+  <div class="member">
+    <div class="member-head">
+      <div class="member-avatar" style="background:#ef4444">1</div>
+      <div><div class="member-name">Member 1 — Hash Table with Chaining</div><div class="member-role"><span class="tag t1">Hashing</span> · djb2 Algorithm · Separate Chaining · Collision Resolution</div></div>
+    </div>
+    <h4>What You Explain:</h4>
+    <ul>
+      <li>What is Hashing? — Mapping keys to array indices using a hash function</li>
+      <li>The <strong>djb2 hash algorithm</strong> — why multiply by 33 and XOR each character</li>
+      <li>What are collisions? — When two keys map to the same bucket</li>
+      <li>How <strong>separate chaining</strong> resolves collisions using linked lists</li>
+      <li>Show <code>hash_function()</code>, <code>ht_insert()</code>, <code>ht_search()</code> code</li>
+      <li>Load factor = items / table_size, and why 0.12 means few collisions</li>
+    </ul>
+    <h4>Pages You Demo:</h4>
+    <p><strong>01 HASH TABLE page</strong> — Click "Load Demo", show bucket visualization, point to [COLLISION] log entry, search for a stock</p>
+    <h4>Key Code File:</h4>
+    <p><code>member1_hashtable.c</code> → <code>hash_function()</code>, <code>ht_insert()</code>, <code>ht_search()</code></p>
+    <h4>Syllabus Units:</h4>
+    <p>Foundation (Hashing fundamentals, Hash functions, Collision resolution — Open Addressing vs Chaining)</p>
+  </div>
+
+  <div class="member">
+    <div class="member-head">
+      <div class="member-avatar" style="background:#3b82f6">2</div>
+      <div><div class="member-name">Member 2 — Priority Queue (Min-Heap)</div><div class="member-role"><span class="tag t2">Priority Queue</span> · Min-Heap · Heapify Up/Down · Alert Processing</div></div>
+    </div>
+    <h4>What You Explain:</h4>
+    <ul>
+      <li>What is a Priority Queue? — Elements dequeued by priority, not arrival order</li>
+      <li>Why use a min-heap? — Parent ≤ children ensures the most urgent alert is at root</li>
+      <li><strong>heapify_up</strong> — after insert, bubble the new element up to its correct position</li>
+      <li><strong>heapify_down</strong> — after extract, push the replacement down to restore heap</li>
+      <li>Parent/child index formulas: parent = (i-1)/2, left = 2i+1, right = 2i+2</li>
+      <li>Show 4 priority levels: CRITICAL(1) → HIGH(2) → MEDIUM(3) → LOW(4)</li>
+    </ul>
+    <h4>Pages You Demo:</h4>
+    <p><strong>02 PRIORITY QUEUE page</strong> — Load demo, show priority-ordered extraction, point to console showing CRITICAL alerts first</p>
+    <h4>Key Code File:</h4>
+    <p><code>member2_priority_queue.c</code> → <code>heapify_up()</code>, <code>heapify_down()</code>, <code>pq_insert()</code>, <code>pq_extract()</code></p>
+    <h4>Syllabus Units:</h4>
+    <p>Unit 2 (Single &amp; Double Ended Priority Queues, Leftist Trees, Binomial Heaps)</p>
+  </div>
+
+  <div class="member">
+    <div class="member-head">
+      <div class="member-avatar" style="background:#f97316">3</div>
+      <div><div class="member-name">Member 3 — AVL Tree (Self-Balancing BST)</div><div class="member-role"><span class="tag t3">AVL Tree</span> · Balance Factor · LL/RR/LR/RL Rotations · O(log n) Guarantee</div></div>
+    </div>
+    <h4>What You Explain:</h4>
+    <ul>
+      <li>What is an AVL Tree? — A BST where |height(left) - height(right)| ≤ 1 at every node</li>
+      <li><strong>Balance Factor</strong> = height(left subtree) - height(right subtree)</li>
+      <li>4 rotation cases: <strong>LL</strong> (right rotate), <strong>RR</strong> (left rotate), <strong>LR</strong> (left-right), <strong>RL</strong> (right-left)</li>
+      <li>Why rotations are O(1) but guarantee O(log n) tree height</li>
+      <li>Show <code>avl_insert()</code> with the 4-case rotation logic</li>
+      <li>Compare to plain BST: sequential inserts create O(n) linked list vs O(log n) AVL</li>
+    </ul>
+    <h4>Pages You Demo:</h4>
+    <p><strong>03 AVL TREE page</strong> — Load records, show tree height staying balanced, point to rotation count in console</p>
+    <h4>Key Code File:</h4>
+    <p><code>member3_avltree.c</code> → <code>rotate_right()</code>, <code>rotate_left()</code>, <code>avl_insert()</code>, <code>avl_balance()</code></p>
+    <h4>Syllabus Units:</h4>
+    <p>Unit 1 (AVL Trees, Red-Black Trees, B-Trees, Splay Trees — all self-balancing tree variants)</p>
+  </div>
+
+  <div class="member">
+    <div class="member-head">
+      <div class="member-avatar" style="background:#a855f7">4</div>
+      <div><div class="member-name">Member 4 — Heap (Max/Min Ranking)</div><div class="member-role"><span class="tag t4">Heap</span> · Max-Heap · Min-Heap · DEPQ · Top-K Extraction</div></div>
+    </div>
+    <h4>What You Explain:</h4>
+    <ul>
+      <li>What is a Heap? — A complete binary tree satisfying the heap property</li>
+      <li><strong>Max-Heap</strong> for gainers (root = biggest gainer) vs <strong>Min-Heap</strong> for losers (root = biggest loser)</li>
+      <li>This implements a <strong>Double Ended Priority Queue (DEPQ)</strong> — extract max AND min</li>
+      <li>How the same <code>heap_insert()</code> handles both modes with an <code>is_max_heap</code> flag</li>
+      <li>Array-based complete binary tree — no pointers needed, parent/child via index math</li>
+      <li>Top-K extraction: extract the root K times to get K best/worst stocks</li>
+    </ul>
+    <h4>Pages You Demo:</h4>
+    <p><strong>04 HEAP page</strong> — Click "Demo", show top gainers/losers lists, point to "Extract Gainer" and "Extract Loser" buttons</p>
+    <h4>Key Code File:</h4>
+    <p><code>member4_heap.c</code> → <code>heap_insert()</code>, <code>heap_extract()</code></p>
+    <h4>Syllabus Units:</h4>
+    <p>Unit 1 (Heaps — Max/Min), Unit 2 (DEPQs, Min-Max Heaps, Deaps, Leftist Trees)</p>
+  </div>
+
+  <div class="member">
+    <div class="member-head">
+      <div class="member-avatar" style="background:#22c55e">5</div>
+      <div><div class="member-name">Member 5 — Trie (Prefix Tree)</div><div class="member-role"><span class="tag t5">Trie</span> · 26-ary Branching · Prefix Search · Auto-Complete · DFS Collection</div></div>
+    </div>
+    <h4>What You Explain:</h4>
+    <ul>
+      <li>What is a Trie? — A tree where each node represents one character; paths spell words</li>
+      <li><strong>26-ary branching</strong> — each node has up to 26 children (A-Z)</li>
+      <li>Insert: walk character by character, create nodes as needed, mark <code>is_end</code></li>
+      <li><strong>Auto-complete</strong>: navigate to prefix node, then DFS to collect all descendants</li>
+      <li>O(m) search — independent of number of stored words (unlike hash table for prefix queries)</li>
+      <li><strong>Space-time tradeoff</strong>: 26 pointers per node uses more memory but enables prefix matching</li>
+    </ul>
+    <h4>Pages You Demo:</h4>
+    <p><strong>05 TRIE page</strong> — Load demo, type "A" in auto-complete to see AAPL/AMD/AMZN, type "NV" to see NVDA</p>
+    <h4>Key Code File:</h4>
+    <p><code>member5_trie.c</code> → <code>trie_insert()</code>, <code>trie_search()</code>, <code>get_suggestions()</code>, <code>collect()</code></p>
+    <h4>Syllabus Units:</h4>
+    <p>Unit 3 (Tries, Digital Search Trees, String Searching — KMP, Boyer-Moore)</p>
+  </div>
+</div>
+
+<hr>
+
+<!-- 4. MEMBER 1: HASH TABLE -->
+<div class="sec" id="t1">
+  <div class="sn">Section 04 — Member 1</div>
+  <h2>Hash Table with <span class="g">Chaining</span></h2>
+
+  <h3>What Is It? (Explain to Faculty)</h3>
+  <p>A <strong>Hash Table</strong> is a data structure that maps keys to values using a hash function. The hash function converts a key (e.g., stock symbol "AAPL") into an array index. This enables <strong>O(1) average-time</strong> insert, search, and delete — the fastest possible lookup for key-value data.</p>
+  <p>When two keys map to the same index (a <strong>collision</strong>), we need a strategy. Our project uses <strong>separate chaining</strong> — each bucket stores a linked list of all elements that hash to that index.</p>
+
+  <h3>Where Is It Applied? (Code)</h3>
+
+  <h4>The djb2 Hash Function</h4>
+  <pre data-lang="C"><code><span class="cm">// File: member1_hashtable.c → hash_function()</span>
+<span class="cm">// Daniel Bernstein's djb2 — one of the most effective string hash algorithms</span>
+
+<span class="type">unsigned int</span> <span class="fn">hash_function</span>(<span class="kw">const</span> <span class="type">char</span>* key) {
+    <span class="type">unsigned long</span> hash = <span class="num">5381</span>;         <span class="cm">// Magic starting value</span>
+    <span class="type">int</span> c;
+    <span class="kw">while</span>((c = *key++))
+        hash = ((hash &lt;&lt; <span class="num">5</span>) + hash) + c;  <span class="cm">// hash * 33 + c</span>
+    <span class="kw">return</span> hash % TABLE_SIZE;           <span class="cm">// Modulo 100 → bucket index</span>
+}</code></pre>
+  <p><strong>Explain to faculty:</strong> "This is the <strong>djb2 hash function</strong> by Daniel Bernstein. It starts with 5381, then for each character: multiplies the hash by 33 (via bit shift + addition) and adds the character's ASCII value. The modulo operation maps the result to one of our 100 buckets. This produces a <strong>uniform distribution</strong> — minimizing collisions."</p>
+
+  <h4>Collision Handling — Separate Chaining</h4>
+  <pre data-lang="C"><code><span class="cm">// File: member1_hashtable.c → ht_insert()</span>
+<span class="cm">// When AAPL hashes to index 11 and AMZN also hashes to 11 → COLLISION</span>
+
+<span class="kw">void</span> <span class="fn">ht_insert</span>(HashTable* ht, StockRecord stock) {
+    <span class="type">int</span> index = hash_function(stock.symbol);  <span class="cm">// Get bucket index</span>
+
+    <span class="cm">// Check if already exists — traverse the chain</span>
+    HashNode* curr = ht-&gt;buckets[index];
+    <span class="kw">while</span>(curr) {
+        <span class="kw">if</span>(strcmp(curr-&gt;stock.symbol, stock.symbol) == <span class="num">0</span>) {
+            curr-&gt;stock = stock;  <span class="cm">// Update existing entry</span>
+            <span class="kw">return</span>;
+        }
+        curr = curr-&gt;next;
+    }
+
+    <span class="cm">// New entry — prepend to linked list at this bucket</span>
+    HashNode* node = malloc(<span class="kw">sizeof</span>(HashNode));
+    node-&gt;stock = stock;
+    node-&gt;next = ht-&gt;buckets[index];  <span class="cm">// Point to old head</span>
+    ht-&gt;buckets[index] = node;          <span class="cm">// New head</span>
+    ht-&gt;count++;
+}</code></pre>
+  <p><strong>Explain to faculty:</strong> "When two symbols hash to the same index — like AAPL and AMZN both mapping to index 11 — we have a <strong>collision</strong>. Instead of finding another slot (open addressing), we use <strong>separate chaining</strong>: each bucket is a linked list. New collisions are prepended in O(1). Search traverses the chain — O(1) average with a good hash function and low load factor."</p>
+
+  <div class="co co-g">
+    <div class="ct2">Syllabus Connection</div>
+    <p><strong>Foundation:</strong> Hashing fundamentals — hash functions, collision resolution strategies. Our project implements <strong>separate chaining</strong> (linked list at each bucket). The syllabus also covers <strong>open addressing</strong> (linear/quadratic probing, double hashing) — explain the tradeoff: chaining is simpler and handles high load factors better; open addressing has better cache performance but degrades past ~70% load factor.</p>
+  </div>
+</div>
+
+<hr>
+
+<!-- 5. MEMBER 2: PRIORITY QUEUE -->
+<div class="sec" id="t2">
+  <div class="sn">Section 05 — Member 2</div>
+  <h2>Priority Queue — <span class="g">Min-Heap</span></h2>
+
+  <h3>What Is It? (Explain to Faculty)</h3>
+  <p>A <strong>Priority Queue</strong> is an abstract data type where each element has a priority. Unlike a regular queue (FIFO), elements are dequeued in <strong>priority order</strong> — the highest-priority element comes out first, regardless of when it was inserted.</p>
+  <p>We implement it using a <strong>Min-Heap</strong> — a complete binary tree where every parent node has a priority value ≤ its children. The root always holds the minimum (most urgent) element.</p>
+
+  <h3>Where Is It Applied? (Code)</h3>
+
+  <h4>Heapify Up — Restoring Heap After Insert</h4>
+  <pre data-lang="C"><code><span class="cm">// File: member2_priority_queue.c → heapify_up()</span>
+<span class="cm">// After inserting at the end, bubble the element UP until heap property holds</span>
+
+<span class="kw">void</span> <span class="fn">heapify_up</span>(PriorityQueue* pq, <span class="type">int</span> idx) {
+    <span class="kw">while</span>(idx > <span class="num">0</span>) {
+        <span class="type">int</span> parent = (idx - <span class="num">1</span>) / <span class="num">2</span>;          <span class="cm">// Parent index formula</span>
+        <span class="kw">if</span>(pq-&gt;heap[parent].priority > pq-&gt;heap[idx].priority) {
+            swap(&amp;pq-&gt;heap[parent], &amp;pq-&gt;heap[idx]);  <span class="cm">// Parent is bigger → swap</span>
+            idx = parent;                               <span class="cm">// Continue up</span>
+        } <span class="kw">else break</span>;                               <span class="cm">// Heap property satisfied</span>
+    }
+}</code></pre>
+  <p><strong>Explain to faculty:</strong> "After inserting a new alert at the end of the array, <code>heapify_up</code> compares it with its parent. If the new element has <strong>higher urgency</strong> (lower priority number), it swaps upward. This continues until the root is reached or the heap property is satisfied. This is O(log n) — the height of the tree."</p>
+
+  <h4>Heapify Down — Restoring Heap After Extract</h4>
+  <pre data-lang="C"><code><span class="cm">// File: member2_priority_queue.c → heapify_down()</span>
+<span class="cm">// After extracting root and moving last element to root, push it DOWN</span>
+
+<span class="kw">void</span> <span class="fn">heapify_down</span>(PriorityQueue* pq, <span class="type">int</span> idx) {
+    <span class="type">int</span> size = pq-&gt;size;
+    <span class="kw">while</span>(<span class="num">1</span>) {
+        <span class="type">int</span> smallest = idx;
+        <span class="type">int</span> left  = <span class="num">2</span> * idx + <span class="num">1</span>;              <span class="cm">// Left child index</span>
+        <span class="type">int</span> right = <span class="num">2</span> * idx + <span class="num">2</span>;              <span class="cm">// Right child index</span>
+
+        <span class="kw">if</span>(left &lt; size &amp;&amp; pq-&gt;heap[left].priority &lt; pq-&gt;heap[smallest].priority)
+            smallest = left;
+        <span class="kw">if</span>(right &lt; size &amp;&amp; pq-&gt;heap[right].priority &lt; pq-&gt;heap[smallest].priority)
+            smallest = right;
+
+        <span class="kw">if</span>(smallest == idx) <span class="kw">break</span>;           <span class="cm">// Heap property satisfied</span>
+        swap(&amp;pq-&gt;heap[idx], &amp;pq-&gt;heap[smallest]);
+        idx = smallest;
+    }
+}</code></pre>
+  <p><strong>Explain to faculty:</strong> "After extracting the root (most urgent alert), we move the last element to the root position. <code>heapify_down</code> then pushes it to the correct position by comparing with both children and swapping with the <strong>smaller child</strong>. This maintains the min-heap invariant in O(log n)."</p>
+
+  <h4>Priority Levels in Our System</h4>
+  <table>
+    <thead><tr><th>Priority</th><th>Value</th><th>Example Alert</th><th>Processing Order</th></tr></thead>
+    <tbody>
+      <tr><td><strong style="color:#ef4444">CRITICAL</strong></td><td>1</td><td>Trading halt detected for TSLA</td><td>Processed FIRST</td></tr>
+      <tr><td><strong style="color:#f97316">HIGH</strong></td><td>2</td><td>Price dropped 10% — circuit breaker</td><td>Processed SECOND</td></tr>
+      <tr><td><strong style="color:#eab308">MEDIUM</strong></td><td>3</td><td>Volume spike — unusual activity</td><td>Processed THIRD</td></tr>
+      <tr><td><strong style="color:#22c55e">LOW</strong></td><td>4</td><td>Daily closing price update</td><td>Processed LAST</td></tr>
+    </tbody>
+  </table>
+
+  <div class="co co-g">
+    <div class="ct2">Syllabus Connection</div>
+    <p><strong>Unit 2:</strong> Single &amp; Double Ended Priority Queues — Our min-heap directly implements a Single Ended PQ. The syllabus extends to <strong>Leftist Trees</strong> (mergeable heaps), <strong>Binomial Heaps</strong> (efficient merge in O(log n)), and <strong>Fibonacci Heaps</strong> (amortized O(1) decrease-key). Explain: our min-heap is the <strong>foundational building block</strong> — all advanced PQ implementations build on the same heapify-up/down logic.</p>
+  </div>
+</div>
+
+<hr>
+
+<!-- 6. MEMBER 3: AVL TREE -->
+<div class="sec" id="t3">
+  <div class="sn">Section 06 — Member 3</div>
+  <h2>AVL Tree — <span class="g">Self-Balancing BST</span></h2>
+
+  <h3>What Is It? (Explain to Faculty)</h3>
+  <p>An <strong>AVL Tree</strong> (Adelson-Velsky and Landis, 1962) is a Binary Search Tree that <strong>automatically rebalances</strong> after every insertion or deletion. The <strong>balance factor</strong> at every node — defined as height(left subtree) - height(right subtree) — must be in {-1, 0, +1}. If an operation causes |BF| > 1, one or two <strong>rotations</strong> restore balance.</p>
+  <p>This guarantees <strong>O(log n) worst-case</strong> for all operations — unlike a plain BST which can degrade to O(n) with sorted input.</p>
+
+  <h3>Where Is It Applied? (Code)</h3>
+
+  <h4>Rotation Cases — The Core of AVL</h4>
+  <pre data-lang="C"><code><span class="cm">// File: member3_avltree.c</span>
+<span class="cm">// RIGHT ROTATION (for LL imbalance — left-left heavy)</span>
+PriceNode* <span class="fn">rotate_right</span>(PriceNode* y) {
+    PriceNode* x  = y-&gt;left;        <span class="cm">// x becomes new root</span>
+    PriceNode* T2 = x-&gt;right;       <span class="cm">// T2 = x's right subtree</span>
+    x-&gt;right = y;                   <span class="cm">// y drops down to x's right</span>
+    y-&gt;left  = T2;                  <span class="cm">// T2 attaches to y's left</span>
+    <span class="cm">// Update heights</span>
+    y-&gt;height = <span class="num">1</span> + MAX(avl_height(y-&gt;left), avl_height(y-&gt;right));
+    x-&gt;height = <span class="num">1</span> + MAX(avl_height(x-&gt;left), avl_height(x-&gt;right));
+    <span class="kw">return</span> x;  <span class="cm">// x is the new root of this subtree</span>
+}
+
+<span class="cm">// LEFT ROTATION (for RR imbalance — mirror of above)</span>
+PriceNode* <span class="fn">rotate_left</span>(PriceNode* x) {
+    PriceNode* y  = x-&gt;right;
+    PriceNode* T2 = y-&gt;left;
+    y-&gt;left  = x;
+    x-&gt;right = T2;
+    x-&gt;height = <span class="num">1</span> + MAX(avl_height(x-&gt;left), avl_height(x-&gt;right));
+    y-&gt;height = <span class="num">1</span> + MAX(avl_height(y-&gt;left), avl_height(y-&gt;right));
+    <span class="kw">return</span> y;
+}</code></pre>
+
+  <h4>AVL Insert with Auto-Rebalancing</h4>
+  <pre data-lang="C"><code><span class="cm">// File: member3_avltree.c → avl_insert()</span>
+<span class="cm">// After standard BST insert, check balance factor and rotate if needed</span>
+
+<span class="type">int</span> balance = avl_balance(node);
+
+<span class="cm">// Case 1: LL — Left-Left heavy</span>
+<span class="kw">if</span>(balance >  <span class="num">1</span>  &amp;&amp; key &lt; node-&gt;left-&gt;key)
+    <span class="kw">return</span> rotate_right(node);           <span class="cm">// Single right rotation</span>
+
+<span class="cm">// Case 2: RR — Right-Right heavy</span>
+<span class="kw">if</span>(balance &lt; -<span class="num">1</span>  &amp;&amp; key > node-&gt;right-&gt;key)
+    <span class="kw">return</span> rotate_left(node);            <span class="cm">// Single left rotation</span>
+
+<span class="cm">// Case 3: LR — Left-Right (double rotation)</span>
+<span class="kw">if</span>(balance >  <span class="num">1</span>  &amp;&amp; key > node-&gt;left-&gt;key) {
+    node-&gt;left = rotate_left(node-&gt;left);   <span class="cm">// First: left-rotate left child</span>
+    <span class="kw">return</span> rotate_right(node);               <span class="cm">// Then: right-rotate node</span>
+}
+
+<span class="cm">// Case 4: RL — Right-Left (double rotation)</span>
+<span class="kw">if</span>(balance &lt; -<span class="num">1</span>  &amp;&amp; key &lt; node-&gt;right-&gt;key) {
+    node-&gt;right = rotate_right(node-&gt;right); <span class="cm">// First: right-rotate right child</span>
+    <span class="kw">return</span> rotate_left(node);                <span class="cm">// Then: left-rotate node</span>
+}</code></pre>
+  <p><strong>Explain to faculty:</strong> "After every BST insertion, we walk back up the tree updating heights. At each ancestor, we compute the balance factor. If |BF| > 1, the tree is imbalanced and we apply the corresponding rotation. <strong>Single rotations</strong> fix LL/RR cases. <strong>Double rotations</strong> fix LR/RL cases — first rotate the child, then the node. Each rotation is O(1), and we do at most O(log n) rotations per insert."</p>
+
+  <h4>Why AVL for Stock Prices?</h4>
+  <table>
+    <thead><tr><th>Scenario</th><th>Plain BST</th><th>AVL Tree</th></tr></thead>
+    <tbody>
+      <tr><td>Insert 20 timestamps in order</td><td>Height = 20 (linked list!)</td><td>Height ≤ 5 (balanced)</td></tr>
+      <tr><td>Search for timestamp T</td><td>O(20) = O(n)</td><td>O(5) = O(log n)</td></tr>
+      <tr><td>Worst-case guarantee</td><td>None — depends on input order</td><td>Always O(log n)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="co co-g">
+    <div class="ct2">Syllabus Connection</div>
+    <p><strong>Unit 1:</strong> AVL Trees — Our project implements the complete AVL tree with all 4 rotation cases. The syllabus also covers <strong>Red-Black Trees</strong> (relaxed balance: height ≤ 2·log(n+1)), <strong>B-Trees</strong> (multi-way for disk), <strong>Splay Trees</strong> (amortized O(log n) via splaying). Explain: AVL is the <strong>strictest</strong> balanced BST (BF ≤ 1), making it ideal for demonstrating balancing concepts. Red-Black trades slightly worse balance for fewer rotations per insert.</p>
+  </div>
+</div>
+
+<hr>
+
+<!-- 7. MEMBER 4: HEAP -->
+<div class="sec" id="t4">
+  <div class="sn">Section 07 — Member 4</div>
+  <h2>Heap — <span class="g">Max/Min Ranking</span></h2>
+
+  <h3>What Is It? (Explain to Faculty)</h3>
+  <p>A <strong>Heap</strong> is a complete binary tree stored as an array where every parent satisfies the heap property. In a <strong>Max-Heap</strong>, every parent ≥ its children (root = maximum). In a <strong>Min-Heap</strong>, every parent ≤ its children (root = minimum).</p>
+  <p>Our project uses <strong>both simultaneously</strong>: a max-heap ranks top gainers and a min-heap ranks top losers. This combination implements a <strong>Double Ended Priority Queue (DEPQ)</strong> — extracting both the maximum and minimum efficiently.</p>
+
+  <h3>Where Is It Applied? (Code)</h3>
+
+  <h4>Dual-Mode Heap Insert</h4>
+  <pre data-lang="C"><code><span class="cm">// File: member4_heap.c → heap_insert()</span>
+<span class="cm">// Same function handles BOTH max-heap and min-heap via is_max_heap flag</span>
+
+<span class="kw">void</span> <span class="fn">heap_insert</span>(Heap* h, <span class="kw">const</span> <span class="type">char</span>* sym, <span class="type">double</span> price, <span class="type">double</span> chg, <span class="type">long</span> vol) {
+    <span class="type">int</span> i = h-&gt;size++;
+
+    <span class="cm">// Bubble up — direction depends on heap type</span>
+    <span class="kw">while</span>(i > <span class="num">0</span>) {
+        <span class="type">int</span> parent = (i - <span class="num">1</span>) / <span class="num">2</span>;
+        <span class="kw">if</span>(h-&gt;is_max_heap) {
+            <span class="cm">// MAX-HEAP: parent should be >= child</span>
+            <span class="kw">if</span>(h-&gt;data[parent].change &lt; h-&gt;data[i].change)
+                swap(&amp;h-&gt;data[parent], &amp;h-&gt;data[i]);
+            <span class="kw">else break</span>;
+        } <span class="kw">else</span> {
+            <span class="cm">// MIN-HEAP: parent should be <= child</span>
+            <span class="kw">if</span>(h-&gt;data[parent].change > h-&gt;data[i].change)
+                swap(&amp;h-&gt;data[parent], &amp;h-&gt;data[i]);
+            <span class="kw">else break</span>;
+        }
+        i = parent;
+    }
+}</code></pre>
+  <p><strong>Explain to faculty:</strong> "The <code>is_max_heap</code> flag controls the comparison direction. For the <strong>gainer heap</strong>, we want the biggest change_percent at the root (max-heap). For the <strong>loser heap</strong>, we want the most negative change at the root (min-heap). The same heapify logic works for both — only the comparison operator changes. This is an elegant <strong>code reuse pattern</strong>."</p>
+
+  <h4>Top-K Extraction</h4>
+  <pre data-lang="C"><code><span class="cm">// Extract root K times to get top-K gainers or losers</span>
+<span class="kw">for</span>(<span class="type">int</span> i = <span class="num">0</span>; i &lt; K &amp;&amp; heap-&gt;size > <span class="num">0</span>; i++) {
+    HeapStock top = heap_extract(heap);  <span class="cm">// O(log n) per extraction</span>
+    printf(<span class="str">"#%d: %s → %.2f%%\n"</span>, i+<span class="num">1</span>, top.symbol, top.change);
+}
+<span class="cm">// Total: O(K log n) for top-K elements</span></code></pre>
+
+  <h4>Array-Based Complete Binary Tree</h4>
+  <table>
+    <thead><tr><th>Relationship</th><th>Formula</th><th>Example (i=2)</th></tr></thead>
+    <tbody>
+      <tr><td>Parent of i</td><td><code>(i - 1) / 2</code></td><td>Parent of 2 = index 0</td></tr>
+      <tr><td>Left child of i</td><td><code>2*i + 1</code></td><td>Left of 2 = index 5</td></tr>
+      <tr><td>Right child of i</td><td><code>2*i + 2</code></td><td>Right of 2 = index 6</td></tr>
+    </tbody>
+  </table>
+  <p><strong>Explain to faculty:</strong> "Because a heap is a <strong>complete binary tree</strong>, we can store it as a flat array with no pointers. The parent-child relationships are computed via index arithmetic. This gives excellent <strong>cache locality</strong> — all data is contiguous in memory."</p>
+
+  <div class="co co-g">
+    <div class="ct2">Syllabus Connection</div>
+    <p><strong>Unit 1:</strong> Max-Heap, Min-Heap — Our project implements both. <strong>Unit 2:</strong> Double Ended Priority Queues (DEPQs) — Our dual-heap system is a DEPQ that can extract both max and min. The syllabus covers <strong>Min-Max Heaps</strong> (alternating levels), <strong>Deaps</strong> (split into min/max halves), and <strong>Leftist Trees</strong> (mergeable heaps). Explain: our approach uses <strong>two separate heaps</strong> as a simple DEPQ; a Min-Max Heap achieves the same in a single structure.</p>
+  </div>
+</div>
+
+<hr>
+
+<!-- 8. MEMBER 5: TRIE -->
+<div class="sec" id="t5">
+  <div class="sn">Section 08 — Member 5</div>
+  <h2>Trie — <span class="g">Prefix Tree</span></h2>
+
+  <h3>What Is It? (Explain to Faculty)</h3>
+  <p>A <strong>Trie</strong> (from re<em>trie</em>val, pronounced "try") is a tree-like data structure optimized for string operations. Each node represents a single character, and paths from root to leaf spell out stored keys. Unlike hash tables, tries support <strong>prefix queries</strong> — finding all words that start with a given prefix — in O(m + r) time, where m is the prefix length and r is the number of results.</p>
+  <p>In our project, the trie enables <strong>instant auto-complete</strong>: type "A" and immediately get AAPL, AMD, AMZN, ADBE, AVGO.</p>
+
+  <h3>Where Is It Applied? (Code)</h3>
+
+  <h4>Trie Node — 26-ary Branching</h4>
+  <pre data-lang="C"><code><span class="cm">// File: member5_trie.c</span>
+<span class="cm">// Each node has 26 children — one for each letter A-Z</span>
+
+<span class="kw">typedef struct</span> TrieNode {
+    <span class="kw">struct</span> TrieNode* children[<span class="num">26</span>];  <span class="cm">// 26-ary branching</span>
+    <span class="type">int</span>    is_end;                   <span class="cm">// 1 = complete word ends here</span>
+    <span class="type">double</span> price;                    <span class="cm">// Stock price at end node</span>
+    <span class="type">char</span>   symbol[MAX_SYMBOL_LEN];   <span class="cm">// Full symbol stored at end</span>
+} TrieNode;</code></pre>
+  <p><strong>Explain to faculty:</strong> "Each node has a <strong>26-element pointer array</strong> — one slot per letter. To go from 'A' to 'P', we follow <code>children[15]</code> (P is the 16th letter, index 15). The <code>is_end</code> flag marks complete words. This 26-ary branching is the <strong>key design decision</strong> — it trades space for speed."</p>
+
+  <h4>Auto-Complete — Prefix Search + DFS Collection</h4>
+  <pre data-lang="C"><code><span class="cm">// File: member5_trie.c → get_suggestions()</span>
+<span class="cm">// Step 1: Navigate to the prefix node</span>
+<span class="cm">// Step 2: DFS to collect ALL complete words below that node</span>
+
+<span class="kw">void</span> <span class="fn">get_suggestions</span>(TrieNode* root, <span class="kw">const</span> <span class="type">char</span>* prefix, ...) {
+    TrieNode* curr = root;
+
+    <span class="cm">// Step 1: Walk to prefix node — O(m)</span>
+    <span class="kw">for</span>(<span class="type">int</span> i = <span class="num">0</span>; prefix[i]; i++) {
+        <span class="type">int</span> idx = toupper(prefix[i]) - <span class="str">'A'</span>;
+        <span class="kw">if</span>(!curr-&gt;children[idx]) <span class="kw">return</span>;  <span class="cm">// Prefix not in trie</span>
+        curr = curr-&gt;children[idx];
+    }
+
+    <span class="cm">// Step 2: DFS collect all end-nodes — O(r)</span>
+    collect(curr, results, prices, count, max_results);
+}
+
+<span class="kw">static void</span> <span class="fn">collect</span>(TrieNode* node, ...) {
+    <span class="kw">if</span>(node-&gt;is_end) {
+        <span class="cm">// Found a complete word — add to results</span>
+        strcpy(results[*count], node-&gt;symbol);
+        (*count)++;
+    }
+    <span class="cm">// Recurse through all 26 children</span>
+    <span class="kw">for</span>(<span class="type">int</span> i = <span class="num">0</span>; i &lt; <span class="num">26</span>; i++)
+        <span class="kw">if</span>(node-&gt;children[i])
+            collect(node-&gt;children[i], ...);
+}</code></pre>
+  <p><strong>Explain to faculty:</strong> "Auto-complete works in two phases. <strong>Phase 1:</strong> Navigate to the prefix node by following each character — this is O(m) where m = prefix length. <strong>Phase 2:</strong> Run DFS from that node to collect all complete words below — this visits only relevant subtree nodes. For prefix 'A', we reach the 'A' node and then DFS finds AAPL, AMD, AMZN, ADBE, AVGO."</p>
+
+  <h4>Space-Time Tradeoff</h4>
+  <table>
+    <thead><tr><th>Metric</th><th>Hash Table</th><th>Trie</th></tr></thead>
+    <tbody>
+      <tr><td>Exact Search</td><td>O(1) average</td><td>O(m)</td></tr>
+      <tr><td>Prefix Search</td><td><strong>NOT POSSIBLE</strong></td><td>O(m + r) ✓</td></tr>
+      <tr><td>Space per entry</td><td>Low (one node)</td><td>High (up to m nodes, each 26 pointers)</td></tr>
+      <tr><td>Best Use Case</td><td>Key-value lookup</td><td>Auto-complete, prefix matching</td></tr>
+    </tbody>
+  </table>
+
+  <div class="co co-g">
+    <div class="ct2">Syllabus Connection</div>
+    <p><strong>Unit 3:</strong> Tries &amp; Digital Search Trees — Our project implements the standard trie with insert, search, and prefix collection. The syllabus also covers <strong>Patricia Tries</strong> (compressed tries — merge single-child chains), <strong>Suffix Trees</strong> (for substring search), and <strong>String Searching algorithms</strong> (KMP, Boyer-Moore). Explain: our trie is the <strong>foundational structure</strong> — Patricia and Suffix trees are optimizations built on the same concept.</p>
+  </div>
+</div>
+
+<hr>
+
+<!-- 9. PAGE-BY-PAGE ADS CONCEPT MAPPING -->
+<div class="sec" id="pages">
+  <div class="sn">Section 09</div>
+  <h2>Page-by-Page — <span class="g">ADS Concept Mapping</span></h2>
+  <p>For every page in the application, here is exactly <strong>which ADS concept is used, where it is applied, and why</strong>.</p>
+
+  <!-- OVERVIEW PAGE -->
+  <h3>Page 1: Overview (00 OVERVIEW)</h3>
+  <table>
+    <thead><tr><th>UI Element</th><th>ADS Concept</th><th>Where Applied</th><th>Why Used</th></tr></thead>
+    <tbody>
+      <tr><td>Stock Ticker Bar</td><td>All 5 Concepts</td><td>Scrolling ticker shows all 12 stocks from <code>stock_data.h</code></td><td>Demonstrates the shared data that all 5 modules process</td></tr>
+      <tr><td>5 Module Cards</td><td>All 5 Concepts</td><td>Each card describes one data structure: Hash Table, PQ, AVL, Heap, Trie</td><td>Navigation to individual modules — each card links to its tab</td></tr>
+      <tr><td>Statistics Bar</td><td><span class="tag t1">Hash Table</span></td><td>Shows total stocks count — computed by hash table's <code>count</code> field</td><td>The hash table is the primary data store; its metadata drives dashboard stats</td></tr>
+      <tr><td>"Run Live" Terminal</td><td>All 5 Concepts</td><td>Executes <code>./stock_market</code> and shows raw C output from any module</td><td>Direct C backend execution — proves the algorithms run in compiled C</td></tr>
+    </tbody>
+  </table>
+
+  <hr>
+
+  <!-- HASH TABLE PAGE -->
+  <h3>Page 2: Hash Table (01 HASH TABLE)</h3>
+  <table>
+    <thead><tr><th>UI Element</th><th>ADS Concept</th><th>Where Applied</th><th>Why Used</th></tr></thead>
+    <tbody>
+      <tr><td>Insert Form (Symbol, Price, Volume)</td><td><span class="tag t1">Hash Table</span></td><td><code>ht_insert()</code> — djb2 hash maps symbol to bucket, chains on collision</td><td>Demonstrates O(1) insertion with collision handling</td></tr>
+      <tr><td>Search Button</td><td><span class="tag t1">Hash Table</span></td><td><code>ht_search()</code> — hash to bucket, traverse chain to find match</td><td>O(1) average lookup by key — the core hash table operation</td></tr>
+      <tr><td>Bucket Visualization (right panel)</td><td><span class="tag t1">Hash Table</span></td><td>Shows which bucket each stock lands in, and chains where collisions occur</td><td>Visual proof of the hash function distribution and chaining mechanism</td></tr>
+      <tr><td>[COLLISION] Log Entry</td><td><span class="tag t1">Hash Table</span></td><td>Console shows "COLLISION at index 11 for AMZN" when AAPL+AMZN collide</td><td>Real-time collision detection — demonstrates why chaining exists</td></tr>
+      <tr><td>Statistics Cards (Load Factor, Max Chain)</td><td><span class="tag t1">Hash Table</span></td><td>Load factor = 12/100 = 0.12; Max chain = 2</td><td>Performance metrics that determine hash table efficiency</td></tr>
+      <tr><td>"Load Demo" Button</td><td><span class="tag t1">Hash Table</span></td><td>Inserts all 12 stocks from <code>stock_data.h</code> in one batch</td><td>Quick demonstration of bulk insertion and resulting distribution</td></tr>
+    </tbody>
+  </table>
+
+  <hr>
+
+  <!-- PRIORITY QUEUE PAGE -->
+  <h3>Page 3: Priority Queue (02 PRIORITY QUEUE)</h3>
+  <table>
+    <thead><tr><th>UI Element</th><th>ADS Concept</th><th>Where Applied</th><th>Why Used</th></tr></thead>
+    <tbody>
+      <tr><td>Alert Insert Form</td><td><span class="tag t2">Priority Queue</span></td><td><code>pq_insert()</code> + <code>heapify_up()</code> — adds alert with priority</td><td>Demonstrates min-heap insertion with automatic bubble-up</td></tr>
+      <tr><td>"Extract Next" Button</td><td><span class="tag t2">Priority Queue</span></td><td><code>pq_extract()</code> + <code>heapify_down()</code> — removes most urgent alert</td><td>Always extracts the CRITICAL alert first, regardless of insertion order</td></tr>
+      <tr><td>Priority Level Dropdown</td><td><span class="tag t2">Priority Queue</span></td><td>4 levels: CRITICAL(1), HIGH(2), MEDIUM(3), LOW(4)</td><td>Maps real-world urgency to numeric priority for heap comparison</td></tr>
+      <tr><td>Queue Visualization</td><td><span class="tag t2">Priority Queue</span></td><td>Shows alerts ordered by priority with color-coded urgency badges</td><td>Visual representation of the min-heap's current state</td></tr>
+      <tr><td>Console — Extraction Order</td><td><span class="tag t2">Priority Queue</span></td><td>Shows CRITICAL alerts always extracted before LOW, even if inserted later</td><td>Proves the priority ordering property of the min-heap</td></tr>
+    </tbody>
+  </table>
+
+  <hr>
+
+  <!-- AVL TREE PAGE -->
+  <h3>Page 4: AVL Tree (03 AVL TREE)</h3>
+  <table>
+    <thead><tr><th>UI Element</th><th>ADS Concept</th><th>Where Applied</th><th>Why Used</th></tr></thead>
+    <tbody>
+      <tr><td>"Load 20 Records" Button</td><td><span class="tag t3">AVL Tree</span></td><td><code>avl_insert()</code> × 20 — sequential timestamps with auto-rebalancing</td><td>Demonstrates that sequential inserts stay balanced (unlike plain BST)</td></tr>
+      <tr><td>Tree Height Display</td><td><span class="tag t3">AVL Tree</span></td><td>Shows current tree height — remains ~4-5 for 20 nodes</td><td>Proves O(log n) guarantee — plain BST would show height = 20</td></tr>
+      <tr><td>Rotation Count</td><td><span class="tag t3">AVL Tree</span></td><td>Console shows how many LL/RR/LR/RL rotations occurred</td><td>Demonstrates the balancing mechanism in action</td></tr>
+      <tr><td>Inorder Traversal Output</td><td><span class="tag t3">AVL Tree</span></td><td><code>avl_inorder()</code> — prints prices sorted by timestamp</td><td>BST property: inorder traversal produces sorted output</td></tr>
+    </tbody>
+  </table>
+
+  <hr>
+
+  <!-- HEAP PAGE -->
+  <h3>Page 5: Heap (04 HEAP)</h3>
+  <table>
+    <thead><tr><th>UI Element</th><th>ADS Concept</th><th>Where Applied</th><th>Why Used</th></tr></thead>
+    <tbody>
+      <tr><td>Add Stock Form</td><td><span class="tag t4">Heap</span></td><td><code>heap_insert()</code> with <code>is_max_heap</code> flag for routing</td><td>Positive change → max-heap (gainers); negative → min-heap (losers)</td></tr>
+      <tr><td>"Extract Gainer" Button</td><td><span class="tag t4">Heap</span></td><td><code>heap_extract()</code> from max-heap — gets highest change_percent</td><td>O(log n) extraction of the best-performing stock</td></tr>
+      <tr><td>"Extract Loser" Button</td><td><span class="tag t4">Heap</span></td><td><code>heap_extract()</code> from min-heap — gets most negative change</td><td>O(log n) extraction of the worst-performing stock</td></tr>
+      <tr><td>Top Gainers / Top Losers Lists</td><td><span class="tag t4">Heap</span></td><td>Dual panels showing stocks ranked by performance</td><td>Visual DEPQ — shows both extremes simultaneously</td></tr>
+      <tr><td>"Demo" Button</td><td><span class="tag t4">Heap</span></td><td>Loads all 12 stocks, splits into gainer/loser heaps automatically</td><td>Demonstrates the dual-heap routing logic</td></tr>
+    </tbody>
+  </table>
+
+  <hr>
+
+  <!-- TRIE PAGE -->
+  <h3>Page 6: Trie (05 TRIE)</h3>
+  <table>
+    <thead><tr><th>UI Element</th><th>ADS Concept</th><th>Where Applied</th><th>Why Used</th></tr></thead>
+    <tbody>
+      <tr><td>Insert Form (Symbol, Price)</td><td><span class="tag t5">Trie</span></td><td><code>trie_insert()</code> — creates nodes character-by-character</td><td>Builds the prefix tree incrementally</td></tr>
+      <tr><td>Live Auto-Complete Input</td><td><span class="tag t5">Trie</span></td><td><code>get_suggestions()</code> — navigate to prefix, DFS collect descendants</td><td>Core trie feature — prefix-based search in O(m + r)</td></tr>
+      <tr><td>Suggestion Dropdown</td><td><span class="tag t5">Trie</span></td><td>Shows all symbols matching the typed prefix (e.g., "A" → 5 results)</td><td>Real-time auto-complete as the user types</td></tr>
+      <tr><td>Exact Search</td><td><span class="tag t5">Trie</span></td><td><code>trie_search()</code> — navigate to end, check <code>is_end</code> flag</td><td>O(m) exact match — independent of number of stored symbols</td></tr>
+      <tr><td>Statistics (Symbols, Nodes, Memory)</td><td><span class="tag t5">Trie</span></td><td>18 symbols → 58 nodes → 11.8KB</td><td>Demonstrates the space-time tradeoff of 26-ary branching</td></tr>
+      <tr><td>"All Symbols in Trie" Grid</td><td><span class="tag t5">Trie</span></td><td>Shows all 18 stored symbols as clickable chips</td><td>Visual representation of the trie's contents</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<hr>
+
+<!-- 10. FULL PRESENTATION SCRIPT -->
+<div class="sec" id="script">
+  <div class="sn">Section 10</div>
+  <h2>Full Presentation <span class="g">Script for Faculty</span></h2>
+  <p>This is a complete script for presenting the project to your faculty. Each member speaks during their assigned section. Time: ~12-15 minutes total.</p>
+
+  <h3>Opening — Any Member (1 minute)</h3>
+  <div class="sb">
+    <strong>"Good morning sir/ma'am. Our project is StockADS — a Stock Market Data Aggregator using Advanced Data Structures."</strong>
+
+    "It's a real-time stock market management system that demonstrates <strong>5 core ADS concepts from our syllabus</strong>:
+    1. Hash Table with Chaining
+    2. Priority Queue using Min-Heap
+    3. AVL Tree — Self-Balancing BST
+    4. Heap — Max and Min Heap
+    5. Trie — Prefix Tree
+
+    All data structures are implemented in <strong>pure C</strong> — no external libraries. We have a Python web server that compiles and runs the C code live, and a premium frontend that visualizes each data structure in action."
+
+    "Let me show you how the system works."
+
+    <strong>[Action: Open the app in browser — show Overview page with ticker and module cards]</strong>
+  </div>
+
+  <h3>Member 1 — Hash Table (2 minutes)</h3>
+  <div class="sb">
+    <strong>"I implemented the Hash Table module for O(1) stock price lookup."</strong>
+
+    <strong>[Action: Click "01 HASH TABLE" tab, then click "Load Demo"]</strong>
+
+    "When I click 'Load Demo', all 12 stocks are inserted into a hash table with 100 buckets. Look at the console — it shows each stock being inserted with its hash index."
+
+    "The hash function is <strong>djb2</strong> — it multiplies by 33 and adds each character. For example, 'AAPL' hashes to index 11, and 'GOOGL' hashes to index 93."
+
+    "Now look at this line: <strong>[COLLISION] at index 11 for AMZN</strong>. This means AMZN also hashed to index 11, same as AAPL. This is a <strong>collision</strong>. We handle it using <strong>separate chaining</strong> — both stocks are stored in a linked list at bucket 11."
+
+    <strong>[Action: Point to the bucket visualization on the right — show bucket 11 with AAPL → AMZN chain]</strong>
+
+    "The load factor is 12 stocks / 100 buckets = 0.12. This is very low, meaning few collisions. The max chain length is 2."
+
+    "This maps to the <strong>Hashing</strong> section of our syllabus — hash functions, collision resolution, and load factor analysis."
+  </div>
+
+  <h3>Member 2 — Priority Queue (2 minutes)</h3>
+  <div class="sb">
+    <strong>"I implemented the Priority Queue using a Min-Heap for urgent stock alert processing."</strong>
+
+    <strong>[Action: Click "02 PRIORITY QUEUE" tab, then click "Load Demo"]</strong>
+
+    "In a stock market, not all alerts are equal. A <strong>CRITICAL</strong> alert like a trading halt must be processed before a routine price update. Our min-heap ensures this."
+
+    "Watch the console as demo alerts are inserted in random priority order. Now when we extract, they come out in <strong>priority order</strong> — CRITICAL first, then HIGH, then MEDIUM, then LOW — regardless of insertion order."
+
+    "The key operations are:
+    — <strong>heapify_up</strong>: after inserting at the end, bubble the element up if it has higher urgency than its parent
+    — <strong>heapify_down</strong>: after extracting the root, move the last element to the root and push it down
+
+    Both operations are <strong>O(log n)</strong> because the heap is a complete binary tree with height log(n)."
+
+    "This maps to <strong>Unit 2</strong> — Single and Double Ended Priority Queues, which includes Leftist Trees and Binomial Heaps."
+  </div>
+
+  <h3>Member 3 — AVL Tree (2.5 minutes)</h3>
+  <div class="sb">
+    <strong>"I implemented the AVL Tree for storing historical stock prices."</strong>
+
+    <strong>[Action: Click "03 AVL TREE" tab, then click "Load 20 Records"]</strong>
+
+    "An AVL tree is a self-balancing BST. The <strong>balance factor</strong> at every node — height of left subtree minus height of right subtree — must be -1, 0, or +1."
+
+    "I'm inserting 20 price records with timestamps in order. If this were a plain BST, we'd get a linked list of height 20 — O(n) search. But look at the AVL tree's height — it's only <strong>4 or 5</strong>. That's O(log n)."
+
+    "This happens because of <strong>automatic rotations</strong>. There are 4 cases:
+    — <strong>LL</strong> (Left-Left heavy) → single right rotation
+    — <strong>RR</strong> (Right-Right heavy) → single left rotation
+    — <strong>LR</strong> (Left-Right) → double rotation: left-rotate child, then right-rotate node
+    — <strong>RL</strong> (Right-Left) → double rotation: right-rotate child, then left-rotate node"
+
+    "Each rotation is O(1) — just pointer reassignment. The console shows how many rotations occurred during the 20 insertions."
+
+    "This maps to <strong>Unit 1</strong> — AVL Trees, Red-Black Trees, B-Trees, and Splay Trees. AVL is the strictest balanced tree (BF ≤ 1). Red-Black trees allow BF up to 2 but do fewer rotations."
+  </div>
+
+  <h3>Member 4 — Heap (2 minutes)</h3>
+  <div class="sb">
+    <strong>"I implemented the dual Heap module — Max-Heap for top gainers and Min-Heap for top losers."</strong>
+
+    <strong>[Action: Click "04 HEAP" tab, then click "Demo"]</strong>
+
+    "When stocks are loaded, each stock is routed based on its change_percent:
+    — Positive change → <strong>Max-Heap</strong> (gainers) — root holds the biggest gainer
+    — Negative change → <strong>Min-Heap</strong> (losers) — root holds the biggest loser"
+
+    "This is effectively a <strong>Double Ended Priority Queue (DEPQ)</strong> — we can extract the maximum from one heap and the minimum from another."
+
+    "The elegant part is code reuse: the same <code>heap_insert()</code> function handles both modes using an <code>is_max_heap</code> boolean flag that controls the comparison direction."
+
+    <strong>[Action: Click "Extract Gainer" to show the top gainer being removed, then "Extract Loser"]</strong>
+
+    "Each extraction is O(log n). To get the top-5 gainers, we just extract 5 times."
+
+    "This maps to <strong>Unit 1</strong> (Heaps) and <strong>Unit 2</strong> (DEPQs). The syllabus covers Min-Max Heaps and Deaps as alternatives — our dual-heap is a simpler but equally functional approach."
+  </div>
+
+  <h3>Member 5 — Trie (2 minutes)</h3>
+  <div class="sb">
+    <strong>"I implemented the Trie for stock symbol auto-complete."</strong>
+
+    <strong>[Action: Click "05 TRIE" tab. If not loaded, click "Load Demo". Then click on the auto-complete input]</strong>
+
+    "A trie is a <strong>26-ary tree</strong> where each node has up to 26 children — one per letter A-Z. To store 'AAPL', we create nodes A → A → P → L, marking L as an end-of-word."
+
+    <strong>[Action: Type "A" in the auto-complete field]</strong>
+
+    "When I type 'A', the trie navigates to the 'A' node, then runs a <strong>DFS</strong> to collect all complete words below it — returning AAPL, AMD, AMZN, ADBE, AVGO. This is O(m + r) — m for reaching the prefix node, r for collecting results."
+
+    <strong>[Action: Clear and type "NV"]</strong>
+
+    "Now 'NV' gives just NVDA. The search narrows instantly as I type more characters."
+
+    "The <strong>key advantage</strong> over hash tables: hash tables can do O(1) exact lookup, but they <strong>cannot do prefix queries</strong>. You can't ask a hash table 'give me all stocks starting with A'. That's what makes tries special."
+
+    "The <strong>tradeoff</strong>: each node stores 26 pointers even if most are NULL. With 18 symbols we create 58 nodes using 11.8KB. But this extra space enables instant prefix matching."
+
+    "This maps to <strong>Unit 3</strong> — Tries, Digital Search Trees, and String Searching algorithms."
+  </div>
+
+  <h3>Closing — Any Member (30 seconds)</h3>
+  <div class="sb">
+    <strong>"In summary,"</strong> our project StockADS implements 5 Advanced Data Structures:
+
+    "1. <strong>Hash Table</strong> — O(1) lookup with djb2 + separate chaining → Hashing fundamentals
+    2. <strong>Priority Queue</strong> — Min-heap with heapify_up/down for urgent-first alerts → Unit 2
+    3. <strong>AVL Tree</strong> — Self-balancing BST with LL/RR/LR/RL rotations → Unit 1
+    4. <strong>Heap</strong> — Dual max/min heap implementing DEPQ for gainers/losers → Unit 1 &amp; 2
+    5. <strong>Trie</strong> — 26-ary prefix tree with DFS auto-complete → Unit 3"
+
+    "All data structures are implemented in <strong>pure C</strong>, compiled and executed live through a Python web server, with a premium frontend for visualization. Each member independently built, tested, and can explain their module."
+
+    "Thank you. We're happy to answer any questions."
+  </div>
+</div>
+
+</div><!-- end container -->
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="brand">STOCKADS — WALKTHROUGH 2</div>
+  <p>ADS Concepts &amp; Presentation Guide</p>
+  <p style="margin-top:8px;font-size:12px;color:#555">Advanced Data Structures · Lab Project · May 2026</p>
+</div>
+
+</body>
+</html>

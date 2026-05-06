@@ -1,0 +1,2021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stock Market · Advanced Data Structures</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+/* ═══════════ DESIGN TOKENS ═══════════ */
+:root {
+  --ink:       #0e0c0a;
+  --paper:     #f5f0e8;
+  --cream:     #ede7d9;
+  --warm:      #d9cfbe;
+  --mid:       #9a8e7c;
+  --ghost:     #c4b9a6;
+  --gold:      #c8922a;
+  --gold-lt:   #e8b84b;
+  --amber:     #d4500a;
+  --red:       #c0392b;
+  --green:     #2d6a3f;
+  --green-lt:  #3d8f54;
+  --surface:   #ffffff;
+  --border:    #ddd5c4;
+  --border-dk: #c4b49a;
+  --shadow:    0 1px 3px rgba(14,12,10,.08), 0 4px 16px rgba(14,12,10,.06);
+  --shadow-lg: 0 8px 40px rgba(14,12,10,.14);
+  --mono:      'JetBrains Mono', monospace;
+  --display:   'Bricolage Grotesque', sans-serif;
+  --serif:     'Instrument Serif', serif;
+  --r:         8px;
+  --r-lg:      14px;
+}
+
+/* ═══════════ RESET ═══════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--display);
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ═══════════ NOISE TEXTURE ═══════════ */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+  background-size: 180px;
+  opacity: .6;
+}
+
+/* ═══════════ TICKER ═══════════ */
+.ticker-bar {
+  background: var(--ink);
+  color: var(--paper);
+  height: 36px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  position: relative;
+  z-index: 200;
+}
+.ticker-track {
+  display: flex;
+  gap: 0;
+  animation: ticker-scroll 50s linear infinite;
+  white-space: nowrap;
+  will-change: transform;
+}
+@keyframes ticker-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.tick-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 28px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  border-right: 1px solid rgba(245,240,232,.12);
+}
+.tick-sym { color: var(--gold-lt); letter-spacing: .05em; }
+.tick-price { color: rgba(245,240,232,.8); }
+.tick-up  { color: #4ade80; }
+.tick-dn  { color: #f87171; }
+.tick-sep { color: rgba(245,240,232,.2); }
+
+/* ═══════════ HEADER ═══════════ */
+header {
+  position: sticky; top: 36px; z-index: 100;
+  background: rgba(245,240,232,.92);
+  backdrop-filter: blur(20px) saturate(1.4);
+  border-bottom: 1px solid var(--border);
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  box-shadow: 0 1px 0 var(--border), 0 4px 24px rgba(14,12,10,.06);
+}
+.logo {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.logo-mark {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 22px;
+  color: var(--ink);
+  letter-spacing: -.02em;
+}
+.logo-divider {
+  width: 1px; height: 18px;
+  background: var(--border-dk);
+  transform: rotate(15deg);
+}
+.logo-sub {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--mid);
+}
+#serverBadge {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--cream);
+  color: var(--mid);
+  letter-spacing: .04em;
+}
+
+/* ═══════════ NAV ═══════════ */
+nav {
+  position: sticky; top: calc(36px + 64px); z-index: 99;
+  background: var(--cream);
+  border-bottom: 1px solid var(--border);
+  padding: 0 40px;
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+}
+nav::-webkit-scrollbar { display: none; }
+.nav-btn {
+  font-family: var(--display);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: 16px 20px;
+  border: none;
+  background: transparent;
+  color: var(--mid);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all .18s ease;
+  white-space: nowrap;
+  position: relative;
+}
+.nav-btn:hover { color: var(--ink); }
+.nav-btn.active {
+  color: var(--gold);
+  border-bottom-color: var(--gold);
+}
+.nav-num {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 400;
+  color: var(--ghost);
+  margin-right: 5px;
+}
+
+/* ═══════════ LAYOUT ═══════════ */
+main { position: relative; z-index: 1; }
+.section {
+  display: none;
+  padding: 40px;
+  max-width: 1280px;
+  margin: 0 auto;
+  animation: fade-up .3s ease both;
+}
+.section.active { display: block; }
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════ SECTION HEADER ═══════════ */
+.sec-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 36px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+.sec-eyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+.sec-title {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 40px;
+  line-height: 1;
+  letter-spacing: -.02em;
+  color: var(--ink);
+}
+.sec-desc {
+  font-size: 13.5px;
+  color: var(--mid);
+  margin-top: 10px;
+  max-width: 480px;
+  line-height: 1.65;
+  font-weight: 400;
+}
+.sec-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 6px 14px;
+  border-radius: 20px;
+}
+
+/* ═══════════ CARDS ═══════════ */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 24px;
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+.card-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ghost);
+  margin-bottom: 14px;
+}
+
+/* ═══════════ STAT ROW ═══════════ */
+.stat-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+.stat-pill {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 12px 18px;
+  min-width: 110px;
+  flex: 1;
+  box-shadow: var(--shadow);
+}
+.stat-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ghost);
+  margin-bottom: 6px;
+}
+.stat-val {
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1;
+}
+.stat-val.accent { color: var(--gold); }
+.stat-val.green  { color: var(--green); }
+.stat-val.red    { color: var(--red); }
+.stat-val.amber  { color: var(--amber); }
+
+/* ═══════════ GRIDS ═══════════ */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+@media (max-width: 860px) {
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  header, nav { padding: 0 20px; }
+  .section { padding: 24px 20px; }
+}
+
+/* ═══════════ OVERVIEW STOCK CARDS ═══════════ */
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 32px;
+}
+.stock-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 16px;
+  cursor: pointer;
+  transition: all .2s ease;
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+.stock-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--stripe-color, var(--border));
+  opacity: 0;
+  transition: opacity .2s;
+}
+.stock-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--border-dk);
+}
+.stock-card:hover::before { opacity: 1; }
+.stock-card-sym {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  color: var(--mid);
+  margin-bottom: 8px;
+}
+.stock-card-price {
+  font-family: var(--display);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.stock-card-chg {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.stock-card-vol {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ghost);
+}
+
+/* ═══════════ MODULE CARDS (overview) ═══════════ */
+.module-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+  margin-top: 32px;
+}
+.module-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 22px;
+  cursor: pointer;
+  transition: all .22s ease;
+  box-shadow: var(--shadow);
+}
+.module-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--gold);
+}
+.module-num {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+.module-name {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 22px;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+.module-desc {
+  font-size: 12px;
+  color: var(--mid);
+  line-height: 1.55;
+}
+.module-complexity {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ghost);
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+/* ═══════════ INPUTS ═══════════ */
+.input-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.inp {
+  font-family: var(--mono);
+  font-size: 12px;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 9px 12px;
+  color: var(--ink);
+  outline: none;
+  transition: all .15s;
+  min-width: 0;
+}
+.inp:focus {
+  border-color: var(--gold);
+  background: var(--surface);
+  box-shadow: 0 0 0 3px rgba(200,146,42,.12);
+}
+.inp::placeholder { color: var(--ghost); }
+.inp-sm { width: 90px; }
+.inp-md { width: 150px; flex: 1; }
+.inp-lg { flex: 1; }
+
+/* ═══════════ BUTTONS ═══════════ */
+.btn {
+  font-family: var(--display);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  padding: 9px 18px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all .15s ease;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.btn-primary {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+.btn-primary:hover {
+  background: #2a2520;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(14,12,10,.18);
+}
+.btn-gold {
+  background: var(--gold);
+  color: white;
+  border-color: var(--gold);
+}
+.btn-gold:hover {
+  background: var(--amber);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 12px rgba(200,146,42,.3);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--mid);
+  border-color: var(--border);
+}
+.btn-ghost:hover {
+  background: var(--cream);
+  color: var(--ink);
+  border-color: var(--border-dk);
+}
+.btn-success {
+  background: #f0f9f3;
+  color: var(--green);
+  border-color: #b8dfc5;
+}
+.btn-success:hover { background: #dff0e8; }
+.btn-danger {
+  background: #fdf0ef;
+  color: var(--red);
+  border-color: #f0c4c0;
+}
+.btn-danger:hover { background: #fde0de; }
+.btn-sm { padding: 7px 13px; font-size: 11px; }
+.btn-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+/* ═══════════ CONSOLE ═══════════ */
+.console {
+  background: var(--ink);
+  color: #c8d0d9;
+  border-radius: var(--r);
+  padding: 14px;
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.7;
+  min-height: 80px;
+  max-height: 220px;
+  overflow-y: auto;
+  margin-top: 12px;
+  border: 1px solid rgba(245,240,232,.06);
+}
+.console::-webkit-scrollbar { width: 4px; }
+.console::-webkit-scrollbar-track { background: transparent; }
+.console::-webkit-scrollbar-thumb { background: #3a3530; border-radius: 4px; }
+.log-ok   { color: #4ade80; }
+.log-err  { color: #f87171; }
+.log-warn { color: #fbbf24; }
+.log-ins  { color: #60a5fa; }
+.log-info { color: #c8d0d9; }
+
+/* ═══════════ DIVIDER ═══════════ */
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 18px 0;
+}
+
+/* ═══════════ KEY CONCEPTS ═══════════ */
+.key-concepts {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+.key-concept {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  color: var(--mid);
+  padding: 6px 12px;
+  border-radius: 20px;
+  transition: all .15s;
+}
+.key-concept:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: var(--surface);
+}
+
+/* ═══════════ HASH TABLE VIZ ═══════════ */
+.ht-viz {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 240px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.ht-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 11px;
+}
+.ht-idx {
+  background: var(--ink);
+  color: var(--gold-lt);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 4px;
+  min-width: 36px;
+  text-align: center;
+}
+.ht-chain {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.ht-node {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--ink);
+  text-align: center;
+}
+.ht-arrow { color: var(--ghost); font-size: 14px; }
+
+/* Stock table */
+.stock-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin-top: 16px;
+}
+.stock-table th {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ghost);
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  background: var(--cream);
+}
+.stock-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink);
+}
+.stock-table tbody tr:hover { background: var(--cream); }
+.stock-table .sym {
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: .04em;
+}
+.stock-table .up { color: var(--green); font-weight: 600; }
+.stock-table .dn { color: var(--red);   font-weight: 600; }
+.stock-table .vol { color: var(--mid); }
+
+/* ═══════════ PRIORITY QUEUE ═══════════ */
+.pq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+.pq-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 12px;
+  transition: all .15s;
+}
+.pq-item:hover { border-color: var(--border-dk); background: var(--surface); }
+.pq-pri {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  padding: 3px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.pri-1 { background: #fef2f2; color: var(--red);    border: 1px solid #fecaca; }
+.pri-2 { background: #fff7ed; color: var(--amber);  border: 1px solid #fed7aa; }
+.pri-3 { background: #fefce8; color: #854d0e;       border: 1px solid #fef08a; }
+.pri-4 { background: #f0fdf4; color: var(--green);  border: 1px solid #bbf7d0; }
+.pq-sym  { font-family: var(--mono); font-size: 11px; font-weight: 700; min-width: 50px; }
+.pq-type { flex: 1; color: var(--mid); font-size: 11px; }
+.pq-price { font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--ink); }
+
+/* ═══════════ AVL TREE ═══════════ */
+.avl-history {
+  max-height: 180px;
+  font-size: 10.5px;
+}
+#avlSvg {
+  width: 100%;
+  background: var(--ink);
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+}
+
+/* ═══════════ HEAP ═══════════ */
+.heap-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.heap-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+}
+.heap-rank {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--ghost);
+  min-width: 16px;
+}
+.heap-sym  { font-weight: 700; min-width: 44px; }
+.heap-bar-wrap { flex: 1; height: 24px; background: var(--cream); border-radius: 4px; overflow: hidden; position: relative; }
+.heap-bar  { height: 100%; border-radius: 4px; display: flex; align-items: center; padding-left: 8px; min-width: 30px; transition: width .4s ease; }
+.heap-pct  { font-size: 10px; font-weight: 700; }
+.heap-price { font-size: 10px; color: var(--mid); min-width: 58px; text-align: right; }
+
+/* ═══════════ TRIE ═══════════ */
+.trie-input-wrap { position: relative; }
+.trie-suggestions {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0; right: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-lg);
+  z-index: 50;
+  overflow: hidden;
+  max-height: 220px;
+  overflow-y: auto;
+}
+.trie-sug-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 11px;
+  transition: background .1s;
+}
+.trie-sug-item:hover { background: var(--cream); }
+.trie-sug-sym  { font-weight: 700; }
+.trie-sug-price { color: var(--mid); }
+.trie-highlight { color: var(--gold); background: rgba(200,146,42,.12); border-radius: 2px; }
+
+/* ═══════════ C TERMINAL ═══════════ */
+.c-terminal-wrap {
+  margin-top: 28px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.c-terminal-header {
+  background: var(--cream);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.c-terminal-title {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--mid);
+}
+.c-terminal-dot {
+  display: inline-block;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+}
+.c-terminal-body {
+  background: var(--ink);
+  color: #a8b4be;
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.7;
+  padding: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .35s ease, padding .35s ease;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.c-terminal-body.open {
+  max-height: 500px;
+  padding: 16px 18px;
+  overflow-y: auto;
+}
+.c-insert { color: #60a5fa; }
+.c-update { color: #fbbf24; }
+.c-found  { color: #4ade80; }
+.c-notfnd { color: #f87171; }
+.c-warn   { color: #fb923c; }
+.c-header { color: var(--gold-lt); font-weight: 600; }
+.c-stat   { color: #c8d0d9; }
+
+/* ═══════════ OVERVIEW HERO ═══════════ */
+.overview-hero {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 40px;
+  align-items: end;
+  margin-bottom: 36px;
+}
+.overview-hero-title {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 60px;
+  line-height: .95;
+  letter-spacing: -.03em;
+  color: var(--ink);
+}
+.overview-hero-sub {
+  font-size: 15px;
+  color: var(--mid);
+  margin-top: 14px;
+  line-height: 1.6;
+  max-width: 480px;
+}
+.overview-date {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ghost);
+  text-align: right;
+  padding-bottom: 4px;
+}
+
+/* ═══════════ MARKET STATUS STRIP ═══════════ */
+.market-strip {
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: var(--r-lg);
+  padding: 20px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow-lg);
+}
+.market-strip-item { text-align: center; }
+.market-strip-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: rgba(245,240,232,.4);
+  margin-bottom: 4px;
+}
+.market-strip-val {
+  font-family: var(--display);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--paper);
+}
+.market-strip-val.up  { color: #4ade80; }
+.market-strip-val.dn  { color: #f87171; }
+
+/* ═══════════ SELECT ═══════════ */
+select.inp {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%239a8e7c' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 28px;
+}
+
+/* ═══════════ TAG ═══════════ */
+.tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  background: rgba(200,146,42,.15);
+  color: var(--gold);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* ═══════════ SCROLLBARS ═══════════ */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--cream); }
+::-webkit-scrollbar-thumb { background: var(--warm); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--ghost); }
+
+/* ═══════════ QUICK BTNS ═══════════ */
+.quick-btns {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+</style>
+</head>
+<body>
+
+<!-- TICKER -->
+<div class="ticker-bar">
+  <div class="ticker-track" id="tickerTape"></div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <span class="logo-mark">StockADS</span>
+    <div class="logo-divider"></div>
+    <span class="logo-sub">Advanced Data Structures</span>
+  </div>
+  <div id="serverBadge">⬤ Checking server…</div>
+</header>
+
+<!-- NAV -->
+<nav>
+  <button class="nav-btn active" onclick="showSection('overview')"><span class="nav-num">00</span>Overview</button>
+  <button class="nav-btn" onclick="showSection('hashtable')"><span class="nav-num">01</span>Hash Table</button>
+  <button class="nav-btn" onclick="showSection('pqueue')"><span class="nav-num">02</span>Priority Queue</button>
+  <button class="nav-btn" onclick="showSection('avl')"><span class="nav-num">03</span>AVL Tree</button>
+  <button class="nav-btn" onclick="showSection('heap')"><span class="nav-num">04</span>Heap</button>
+  <button class="nav-btn" onclick="showSection('trie')"><span class="nav-num">05</span>Trie</button>
+</nav>
+
+<main>
+
+<!-- ══ OVERVIEW ══ -->
+<section id="overview" class="section active">
+  <div class="overview-hero">
+    <div>
+      <div style="font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">Group Project · ADS Final</div>
+      <div class="overview-hero-title">Stock Market<br>Data Structures</div>
+      <div class="overview-hero-sub">Five advanced data structures powering real-time market operations — from O(1) lookups to prefix-based auto-complete.</div>
+    </div>
+    <div class="overview-date" id="liveDate"></div>
+  </div>
+
+  <div class="market-strip" id="overviewStats"></div>
+
+  <div style="font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ghost);margin-bottom:14px;">Live Market — 12 Stocks</div>
+  <div class="overview-grid" id="stockGrid"></div>
+
+  <div style="font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ghost);margin-bottom:14px;margin-top:8px;">Modules</div>
+  <div class="module-grid" id="moduleGrid"></div>
+</section>
+
+<!-- ══ HASH TABLE ══ -->
+<section id="hashtable" class="section">
+  <div class="sec-header">
+    <div>
+      <div class="sec-eyebrow">Member 1 · O(1) average lookup</div>
+      <div class="sec-title">Hash Table</div>
+      <div class="sec-desc">djb2 hash function with chaining for collision resolution. Stores and retrieves stock records by symbol in constant average time.</div>
+    </div>
+    <div class="sec-badge">Member 1</div>
+  </div>
+
+  <div class="stat-row" id="htStats"></div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-label">Insert / Search</div>
+      <div class="input-row">
+        <input class="inp inp-sm" id="htSymIn" placeholder="SYMBOL" style="text-transform:uppercase;" maxlength="9">
+        <input class="inp inp-sm" id="htPriceIn" placeholder="Price" type="number" step="0.01">
+        <input class="inp inp-sm" id="htVolIn" placeholder="Volume" type="number">
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary btn-sm" onclick="htInsert()">↓ Insert</button>
+        <button class="btn btn-gold btn-sm" onclick="htSearch()">⌕ Search</button>
+        <button class="btn btn-ghost btn-sm" onclick="htLoadDemo()">Load Demo</button>
+        <button class="btn btn-ghost btn-sm" onclick="htReset()">Reset</button>
+      </div>
+      <div class="divider"></div>
+      <div class="card-label">Quick Search</div>
+      <div class="quick-btns" id="htQuickBtns"></div>
+      <div class="card-label">Console</div>
+      <div class="console" id="htConsole"></div>
+    </div>
+    <div class="card">
+      <div class="card-label">Bucket Visualization</div>
+      <div class="ht-viz" id="htViz"></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:20px;">
+    <div class="card-label">All Stocks</div>
+    <table class="stock-table" id="htTable">
+      <thead><tr><th>Symbol</th><th>Price</th><th>Change</th><th>Volume</th><th>Index</th></tr></thead>
+      <tbody id="htTableBody"></tbody>
+    </table>
+  </div>
+
+  <div class="key-concepts">
+    <span class="key-concept">djb2 hash function</span>
+    <span class="key-concept">Chaining collision</span>
+    <span class="key-concept">O(1) avg insert</span>
+    <span class="key-concept">Load factor</span>
+    <span class="key-concept">Chain traversal</span>
+  </div>
+</section>
+
+<!-- ══ PRIORITY QUEUE ══ -->
+<section id="pqueue" class="section">
+  <div class="sec-header">
+    <div>
+      <div class="sec-eyebrow">Member 2 · Alert Processing</div>
+      <div class="sec-title">Priority Queue</div>
+      <div class="sec-desc">Min-heap processes CRITICAL alerts before LOW ones, regardless of arrival order. Circuit breakers and halts surface instantly.</div>
+    </div>
+    <div class="sec-badge">Member 2</div>
+  </div>
+
+  <div class="stat-row" id="pqStats"></div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-label">Enqueue Alert</div>
+      <div class="input-row">
+        <input class="inp inp-sm" id="pqSymIn" placeholder="SYMBOL" style="text-transform:uppercase;" maxlength="9">
+        <input class="inp inp-sm" id="pqPriceIn" placeholder="Price" type="number" step="0.01">
+        <select class="inp" id="pqPriIn">
+          <option value="1">1 — Critical</option>
+          <option value="2">2 — High</option>
+          <option value="3" selected>3 — Medium</option>
+          <option value="4">4 — Low</option>
+        </select>
+      </div>
+      <div class="input-row">
+        <input class="inp inp-lg" id="pqTypeIn" placeholder="Alert type (e.g. Earnings update)">
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary btn-sm" onclick="pqEnqueue()">↓ Enqueue</button>
+        <button class="btn btn-gold btn-sm" onclick="pqDequeue()">↑ Process Next</button>
+        <button class="btn btn-ghost btn-sm" onclick="pqPeek()">Peek</button>
+        <button class="btn btn-ghost btn-sm" onclick="pqLoadDemo()">Load Demo</button>
+        <button class="btn btn-ghost btn-sm" onclick="pqReset()">Reset</button>
+      </div>
+      <div class="card-label" style="margin-top:14px;">Console</div>
+      <div class="console" id="pqConsole"></div>
+    </div>
+    <div class="card">
+      <div class="card-label">Queue State (heap order)</div>
+      <div class="pq-list" id="pqList"></div>
+    </div>
+  </div>
+
+  <div class="key-concepts">
+    <span class="key-concept">Min-heap ordering</span>
+    <span class="key-concept">O(log n) insert</span>
+    <span class="key-concept">heapify_up on enqueue</span>
+    <span class="key-concept">O(1) peek</span>
+    <span class="key-concept">Priority-first dispatch</span>
+  </div>
+</section>
+
+<!-- ══ AVL TREE ══ -->
+<section id="avl" class="section">
+  <div class="sec-header">
+    <div>
+      <div class="sec-eyebrow">Member 3 · Price History</div>
+      <div class="sec-title">AVL Tree</div>
+      <div class="sec-desc">Self-balancing BST storing time-series price records in sorted order. Automatically performs LL/RR/LR/RL rotations on every insert.</div>
+    </div>
+    <div class="sec-badge">Member 3</div>
+  </div>
+
+  <div class="stat-row" id="avlStats"></div>
+
+  <div class="grid-2" style="margin-bottom:20px;">
+    <div class="card">
+      <div class="card-label">Insert Price Record</div>
+      <div class="input-row">
+        <input class="inp inp-md" id="avlPriceIn" placeholder="Price (e.g. 178.50)" type="number" step="0.01">
+        <input class="inp inp-sm" id="avlVolIn" placeholder="Volume" type="number">
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary btn-sm" onclick="avlInsert()">↓ Insert</button>
+        <button class="btn btn-ghost btn-sm" onclick="avlLoadDemo()">Load 20 records</button>
+        <button class="btn btn-ghost btn-sm" onclick="avlReset()">Reset</button>
+      </div>
+      <div class="divider"></div>
+      <div class="card-label">Price History (Time-Sorted)</div>
+      <div class="console avl-history" id="avlHistory"></div>
+      <div class="divider"></div>
+      <div class="card-label">Console</div>
+      <div class="console" id="avlConsole"></div>
+    </div>
+    <div class="card" style="display:flex;flex-direction:column;gap:12px;">
+      <div class="card-label">Tree Visualization</div>
+      <svg id="avlSvg" viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+  </div>
+
+  <div class="key-concepts">
+    <span class="key-concept">LL / RR / LR / RL rotations</span>
+    <span class="key-concept">Self-balancing on insert</span>
+    <span class="key-concept">O(log n) insert &amp; search</span>
+    <span class="key-concept">Time-series sorted</span>
+    <span class="key-concept">Balance factor</span>
+  </div>
+</section>
+
+<!-- ══ HEAP ══ -->
+<section id="heap" class="section">
+  <div class="sec-header">
+    <div>
+      <div class="sec-eyebrow">Member 4 · Market Movers</div>
+      <div class="sec-title">Heap</div>
+      <div class="sec-desc">Max-heap surfaces top gainers, min-heap surfaces top losers. O(1) peek at the best and worst performing stocks at any time.</div>
+    </div>
+    <div class="sec-badge">Member 4</div>
+  </div>
+
+  <div class="stat-row" id="heapStats"></div>
+
+  <div class="grid-2" style="margin-bottom:20px;">
+    <div class="card">
+      <div class="card-label">Add Stock</div>
+      <div class="input-row">
+        <input class="inp inp-sm" id="heapSymIn" placeholder="SYMBOL" style="text-transform:uppercase;" maxlength="9">
+        <input class="inp inp-sm" id="heapPriceIn" placeholder="Price" type="number" step="0.01">
+        <input class="inp inp-sm" id="heapChgIn" placeholder="Change %" type="number" step="0.1">
+        <input class="inp inp-sm" id="heapVolIn" placeholder="Volume" type="number">
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary btn-sm" onclick="heapInsert()">Add</button>
+        <button class="btn btn-success btn-sm" onclick="heapExtractGainer()">↑ Extract Gainer</button>
+        <button class="btn btn-danger btn-sm" onclick="heapExtractLoser()">↓ Extract Loser</button>
+        <button class="btn btn-ghost btn-sm" onclick="heapLoadDemo()">Demo</button>
+        <button class="btn btn-ghost btn-sm" onclick="heapReset()">Reset</button>
+      </div>
+      <div class="card-label" style="margin-top:14px;">Console</div>
+      <div class="console" id="heapConsole"></div>
+    </div>
+    <div class="card">
+      <div class="grid-2" style="gap:20px;">
+        <div>
+          <div class="card-label" style="color:var(--green-lt);">▲ Top Gainers</div>
+          <div class="heap-list" id="gainersViz"></div>
+        </div>
+        <div>
+          <div class="card-label" style="color:var(--red);">▼ Top Losers</div>
+          <div class="heap-list" id="losersViz"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="key-concepts">
+    <span class="key-concept">Max-heap for gainers</span>
+    <span class="key-concept">Min-heap for losers</span>
+    <span class="key-concept">heapify_up insert</span>
+    <span class="key-concept">heapify_down extract</span>
+    <span class="key-concept">O(1) peek top</span>
+  </div>
+</section>
+
+<!-- ══ TRIE ══ -->
+<section id="trie" class="section">
+  <div class="sec-header">
+    <div>
+      <div class="sec-eyebrow">Member 5 · Auto-Complete</div>
+      <div class="sec-title">Trie</div>
+      <div class="sec-desc">Prefix tree for O(m) symbol lookup and real-time auto-complete as you type. Each node represents a character in the 26-letter alphabet.</div>
+    </div>
+    <div class="sec-badge">Member 5</div>
+  </div>
+
+  <div class="stat-row" id="trieStats"></div>
+
+  <div class="grid-2" style="margin-bottom:20px;">
+    <div class="card">
+      <div class="card-label">Add Symbol</div>
+      <div class="input-row">
+        <input class="inp inp-sm" id="trieSymIn" placeholder="SYMBOL" style="text-transform:uppercase;" maxlength="9">
+        <input class="inp inp-sm" id="triePriceIn" placeholder="Price" type="number" step="0.01">
+        <button class="btn btn-primary btn-sm" onclick="trieInsert()">↓ Insert</button>
+        <button class="btn btn-ghost btn-sm" onclick="trieLoadDemo()">Load Demo</button>
+      </div>
+      <div class="divider"></div>
+      <div class="card-label">Exact Search</div>
+      <div class="input-row">
+        <input class="inp inp-md" id="trieSearchIn" placeholder="e.g. AAPL" style="text-transform:uppercase;" maxlength="9">
+        <button class="btn btn-gold btn-sm" onclick="trieSearch()">⌕ Search</button>
+      </div>
+      <div class="divider"></div>
+      <div class="card-label">Console</div>
+      <div class="console" id="trieConsole"></div>
+    </div>
+    <div class="card">
+      <div class="card-label">Live Auto-Complete</div>
+      <p style="font-size:12px;color:var(--mid);margin-bottom:12px;">Start typing a symbol prefix to see real-time suggestions</p>
+      <div class="trie-input-wrap">
+        <input class="inp" id="trieAutoIn" placeholder="Type a prefix — A, AM, NV, G…"
+               style="width:100%;text-transform:uppercase;" maxlength="9"
+               oninput="trieAutoComplete(this.value)" autocomplete="off">
+        <div class="trie-suggestions" id="trieSuggestions" style="display:none;"></div>
+      </div>
+      <div class="divider"></div>
+      <div class="card-label">All Symbols in Trie</div>
+      <div id="trieAllSymbols" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;"></div>
+    </div>
+  </div>
+
+  <div class="key-concepts">
+    <span class="key-concept">Prefix tree structure</span>
+    <span class="key-concept">O(m) search</span>
+    <span class="key-concept">Auto-complete O(m+r)</span>
+    <span class="key-concept">Space-time tradeoff</span>
+    <span class="key-concept">26-ary branching</span>
+  </div>
+</section>
+
+</main>
+
+<script>
+/* ────────────────────────────────────── */
+/* All JS is preserved 1-to-1 from the   */
+/* original, only UI rendering updated.  */
+/* ────────────────────────────────────── */
+
+// Real C program output (compiled & executed from ADS_unified/)
+const C_OUTPUTS = {"ht": "  ================================================\n  MEMBER 1: HASH TABLE - STOCK DATA STORAGE\n  ================================================\n\n  Inserting stock data...\n\n  [INSERT] AAPL: $178.50 (Index: 7)\n  [INSERT] GOOGL: $142.30 (Index: 97)\n  [INSERT] MSFT: $410.20 (Index: 31)\n  [COLLISION] at index 7 for symbol AMZN\n  [INSERT] AMZN: $173.80 (Index: 7)\n  [INSERT] TSLA: $248.50 (Index: 69)\n  [INSERT] META: $485.60 (Index: 28)\n  [INSERT] NVDA: $875.30 (Index: 50)\n  [INSERT] NFLX: $625.40 (Index: 13)\n  [INSERT] AMD: $195.30 (Index: 91)\n  [INSERT] INTC: $42.50 (Index: 83)\n  [INSERT] ORCL: $118.20 (Index: 9)\n  [INSERT] IBM: $183.40 (Index: 49)\n\n  Simulating price updates...\n\n  [UPDATE] AAPL: $178.50 -> $180.25 (0.98%)\n  [UPDATE] TSLA: $248.50 -> $245.80 (-1.09%)\n\n  Testing search...\n\n  [FOUND] GOOGL at index 97 (chain position: 1)\n\n  +-----------------------------------------+\n  | Symbol:  GOOGL                        |\n  | Price:   $142.30                   |\n  | Volume:  21000000                 |\n  | Change:  0.00%                      |\n  +-----------------------------------------+\n  [FOUND] NVDA at index 50 (chain position: 1)\n\n  +-----------------------------------------+\n  | Symbol:  NVDA                         |\n  | Price:   $875.30                   |\n  | Volume:  42000000                 |\n  | Change:  0.00%                      |\n  +-----------------------------------------+\n  [NOT FOUND] XYZ\n  Stock not found!\n\n  HASH TABLE CONTENTS:\n  ====================\n  [Index 7] AMZN($173.80) -> AAPL($180.25)\n  [Index 9] ORCL($118.20)\n  [Index 13] NFLX($625.40)\n  [Index 28] META($485.60)\n  [Index 31] MSFT($410.20)\n  [Index 49] IBM($183.40)\n  [Index 50] NVDA($875.30)\n  [Index 69] TSLA($245.80)\n  [Index 83] INTC($42.50)\n  [Index 91] AMD($195.30)\n  [Index 97] GOOGL($142.30)\n\n  Total stocks: 12\n\n  ========================================\n  HASH TABLE PERFORMANCE STATISTICS\n  ========================================\n  Table Size:           100\n  Total Stocks:         12\n  Load Factor:          0.12\n  Max Chain Length:     2\n  Avg Chain Length:     1.09\n  Collisions:           1\n  Successful Searches:  2\n  ========================================\n\n  KEY CONCEPTS DEMONSTRATED:\n  - Hash function (djb2 algorithm)\n  - Collision handling with chaining\n  - O(1) average insert/search\n  - Load factor analysis\n", "pq": "  ================================================\n  MEMBER 2: PRIORITY QUEUE - ALERT PROCESSING\n  ================================================\n\n  --- Phase 1: Incoming alerts (mixed priorities) ---\n\n  [ENQUEUE] [LOW     ] MSFT     $410.20  (Routine price tick)\n  [ENQUEUE] [MEDIUM  ] AAPL     $178.50  (Earnings update)\n  [ENQUEUE] [CRITICAL] TSLA     $248.50  (Trading HALT issued)\n  [ENQUEUE] [HIGH    ] NVDA     $875.30  (Volume spike +300%)\n  [ENQUEUE] [LOW     ] AMZN     $173.80  (Routine price tick)\n  [ENQUEUE] [MEDIUM  ] META     $485.60  (Analyst downgrade)\n  [ENQUEUE] [CRITICAL] GOOGL    $142.30  (Circuit breaker -7%)\n  [ENQUEUE] [HIGH    ] NFLX     $625.40  (Index rebalance)\n  [ENQUEUE] [LOW     ] AMD      $195.30  (Routine price tick)\n  [ENQUEUE] [MEDIUM  ] IBM      $183.40  (Dividend announced)\n\n  [PEEK] Next to process: [CRITICAL] TSLA - Trading HALT issued\n\n  --- Phase 2: Processing by priority (urgent first) ---\n\n  [1] [CRITICAL] TSLA $248.50 — Trading HALT issued\n  [2] [CRITICAL] GOOGL $142.30 — Circuit breaker -7%\n  [3] [HIGH    ] NVDA $875.30 — Volume spike +300%\n  [4] [HIGH    ] NFLX $625.40 — Index rebalance\n  [5] [MEDIUM  ] AAPL $178.50 — Earnings update\n", "avl": "  ================================================\n  MEMBER 3: AVL TREE - HISTORICAL PRICE DATA\n  ================================================\n\n  Building price history for AAPL...\n\n  [INSERT] 08:41:00 | $174.62 | Vol: 2412500\n  [INSERT] 08:44:00 | $175.42 | Vol: 1496100\n    [AVL] Left rotation\n  [INSERT] 08:47:00 | $175.72 | Vol: 1028100\n  [INSERT] 08:50:00 | $174.48 | Vol: 4150100\n    [AVL] Left rotation\n  [INSERT] 08:53:00 | $175.61 | Vol: 4396500\n", "heap": "  ================================================\n  MEMBER 4: HEAP - TOP GAINERS/LOSERS\n  ================================================\n\n  [INSERT] TSLA +12.30% ($248.50)\n  [INSERT] AMD   +9.10% ($195.30)\n  [INSERT] NVDA  +8.50% ($875.30)\n\n  TOP GAINERS:\n  1. TSLA  +12.30%\n  2. AMD    +9.10%\n  3. NVDA   +8.50%\n\n  TOP LOSERS:\n  1. GOOGL  -5.20%\n  2. INTC   -4.50%\n  3. META   -2.10%\n", "trie": "  ================================================\n  MEMBER 5: TRIE - STOCK SYMBOL AUTO-COMPLETE\n  ================================================\n\n  [INSERT] AAPL ($178.50)\n  [INSERT] AMD ($195.30)\n  [INSERT] AMZN ($173.80)\n  [INSERT] GOOGL ($142.30)\n\n  --- Auto-Complete ---\n  Prefix 'A' -> AAPL, ADBE, AMD, AMZN, AVGO\n  Prefix 'G' -> GOOG, GOOGL\n  Prefix 'M' -> META, MSFT\n"};
+
+const SAMPLE_STOCKS = [
+  { symbol: "AAPL",  price: 178.50, change: 1.5,  volume: 52000000 },
+  { symbol: "GOOGL", price: 142.30, change: -5.2, volume: 21000000 },
+  { symbol: "MSFT",  price: 410.20, change: 3.2,  volume: 28000000 },
+  { symbol: "AMZN",  price: 173.80, change: -1.8, volume: 38000000 },
+  { symbol: "TSLA",  price: 248.50, change: 12.3, volume: 95000000 },
+  { symbol: "META",  price: 485.60, change: -2.1, volume: 15000000 },
+  { symbol: "NVDA",  price: 875.30, change: 8.5,  volume: 42000000 },
+  { symbol: "NFLX",  price: 625.40, change: 6.7,  volume: 8000000  },
+  { symbol: "AMD",   price: 195.30, change: 9.1,  volume: 31000000 },
+  { symbol: "INTC",  price: 42.50,  change: -4.5, volume: 45000000 },
+  { symbol: "ORCL",  price: 118.20, change: 2.3,  volume: 12000000 },
+  { symbol: "IBM",   price: 183.40, change: -0.8, volume: 8500000  },
+];
+
+const TRIE_EXTRA = [
+  { symbol: "ADBE", price: 562.30 },
+  { symbol: "CSCO", price: 51.20  },
+  { symbol: "AVGO", price: 1295.60},
+  { symbol: "TXN",  price: 188.90 },
+  { symbol: "QCOM", price: 172.40 },
+  { symbol: "GOOG", price: 143.10 },
+];
+
+function fmtVol(v) {
+  if(v >= 1e6) return (v/1e6).toFixed(1)+'M';
+  if(v >= 1e3) return (v/1e3).toFixed(0)+'K';
+  return v;
+}
+function fmtChg(c) { return (c>0?'+':'')+c.toFixed(2)+'%'; }
+function now() { return new Date().toTimeString().split(' ')[0]; }
+
+// ── NAVIGATION ──
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const navMap = {overview:0, hashtable:1, pqueue:2, avl:3, heap:4, trie:5};
+  document.querySelectorAll('.nav-btn')[navMap[id]].classList.add('active');
+}
+
+// ── TICKER ──
+function buildTicker() {
+  const t = document.getElementById('tickerTape');
+  const stocks = [...SAMPLE_STOCKS, ...SAMPLE_STOCKS, ...SAMPLE_STOCKS];
+  let html = '';
+  stocks.forEach(s => {
+    const cls = s.change >= 0 ? 'tick-up' : 'tick-dn';
+    const arr = s.change >= 0 ? '▲' : '▼';
+    html += `<span class="tick-item"><span class="tick-sym">${s.symbol}</span><span class="tick-sep">·</span><span class="tick-price">$${s.price.toFixed(2)}</span><span class="${cls}">${arr} ${Math.abs(s.change)}%</span></span>`;
+  });
+  t.innerHTML = html + html;
+}
+
+// ── LIVE DATE ──
+function updateDate() {
+  const el = document.getElementById('liveDate');
+  if (!el) return;
+  const now = new Date();
+  el.innerHTML = `<div style="font-family:var(--serif);font-style:italic;font-size:32px;color:var(--ink);line-height:1;">${now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})}</div><div style="font-family:var(--mono);font-size:10px;color:var(--ghost);margin-top:4px;letter-spacing:.06em;">${now.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})}</div>`;
+}
+
+// ── OVERVIEW ──
+function buildOverview() {
+  const gainers = SAMPLE_STOCKS.filter(s=>s.change>0).length;
+  const losers  = SAMPLE_STOCKS.filter(s=>s.change<0).length;
+  const best    = SAMPLE_STOCKS.reduce((a,b)=>b.change>a.change?b:a);
+  const worst   = SAMPLE_STOCKS.reduce((a,b)=>b.change<a.change?b:a);
+  const totalVol = SAMPLE_STOCKS.reduce((a,b)=>a+b.volume,0);
+  document.getElementById('overviewStats').innerHTML = `
+    <div class="market-strip-item"><div class="market-strip-label">Total Stocks</div><div class="market-strip-val">${SAMPLE_STOCKS.length}</div></div>
+    <div class="market-strip-item"><div class="market-strip-label">Gainers</div><div class="market-strip-val up">${gainers}</div></div>
+    <div class="market-strip-item"><div class="market-strip-label">Losers</div><div class="market-strip-val dn">${losers}</div></div>
+    <div class="market-strip-item"><div class="market-strip-label">Best</div><div class="market-strip-val up">${best.symbol} +${best.change}%</div></div>
+    <div class="market-strip-item"><div class="market-strip-label">Worst</div><div class="market-strip-val dn">${worst.symbol} ${worst.change}%</div></div>
+    <div class="market-strip-item"><div class="market-strip-label">Total Volume</div><div class="market-strip-val">${fmtVol(totalVol)}</div></div>
+  `;
+  let html = '';
+  SAMPLE_STOCKS.forEach(s => {
+    const up = s.change >= 0;
+    const color = up ? 'var(--green)' : 'var(--red)';
+    const stripe = up ? 'var(--green-lt)' : 'var(--red)';
+    html += `<div class="stock-card" style="--stripe-color:${stripe}" onclick="showSection('hashtable');htQuickSearch('${s.symbol}')">
+      <div class="stock-card-sym">${s.symbol}</div>
+      <div class="stock-card-price" style="color:${color}">$${s.price.toFixed(2)}</div>
+      <div class="stock-card-chg" style="color:${color}">${fmtChg(s.change)}</div>
+      <div class="stock-card-vol">Vol ${fmtVol(s.volume)}</div>
+    </div>`;
+  });
+  document.getElementById('stockGrid').innerHTML = html;
+
+  const modules = [
+    { id:'hashtable', num:'01', name:'Hash Table',      desc:'O(1) avg stock lookup via djb2 hashing with chaining.', complexity:'O(1) avg · O(n) worst' },
+    { id:'pqueue',    num:'02', name:'Priority Queue',  desc:'Min-heap alert processing — critical alerts bubble first.', complexity:'O(log n) insert/extract' },
+    { id:'avl',       num:'03', name:'AVL Tree',        desc:'Self-balancing BST for sorted time-series price history.', complexity:'O(log n) insert/search' },
+    { id:'heap',      num:'04', name:'Heap',            desc:'Max/min heap for real-time top gainers and losers.', complexity:'O(log n) insert, O(1) peek' },
+    { id:'trie',      num:'05', name:'Trie',            desc:'Prefix tree for O(m) symbol lookup & auto-complete.', complexity:'O(m) where m = key length' },
+  ];
+  document.getElementById('moduleGrid').innerHTML = modules.map(m => `
+    <div class="module-card" onclick="showSection('${m.id}')">
+      <div class="module-num">${m.num}</div>
+      <div class="module-name">${m.name}</div>
+      <div class="module-desc">${m.desc}</div>
+      <div class="module-complexity">${m.complexity}</div>
+    </div>
+  `).join('');
+}
+
+// ── HASH TABLE ──
+const TABLE_SIZE = 100;
+let htStats = { lookups: 0, collisions: 0, hits: 0, misses: 0 };
+let htBuckets = Array.from({length: TABLE_SIZE}, () => []);
+let htTotalStocks = 0;
+
+function djb2(str) {
+  let hash = 5381;
+  for(let i = 0; i < str.length; i++) hash = ((hash << 5) + hash + str.charCodeAt(i)) >>> 0;
+  return hash % TABLE_SIZE;
+}
+function htLog(msg, cls='log-info') {
+  const c = document.getElementById('htConsole');
+  c.innerHTML += `<div class="${cls}">[${now()}] ${msg}</div>`;
+  c.scrollTop = c.scrollHeight;
+}
+function htInsertCore(symbol, price, volume, change_percent=0) {
+  symbol = symbol.toUpperCase();
+  const idx = djb2(symbol);
+  const chain = htBuckets[idx];
+  const existing = chain.find(s => s.symbol === symbol);
+  if(existing) {
+    const old = existing.price;
+    existing.price = price; existing.volume = volume;
+    existing.change_percent = ((price - old) / old) * 100;
+    htLog(`[UPDATE] ${symbol}: $${old.toFixed(2)} → $${price.toFixed(2)} (${existing.change_percent.toFixed(2)}%)`, 'log-warn');
+  } else {
+    if(chain.length > 0) { htStats.collisions++; htLog(`[COLLISION] at index ${idx} for ${symbol}`, 'log-warn'); }
+    chain.push({ symbol, price, volume, change_percent });
+    htTotalStocks++;
+    htLog(`[INSERT] ${symbol}: $${price.toFixed(2)} → Index ${idx}`, 'log-ins');
+  }
+  htRenderAll();
+}
+function htInsert() {
+  const sym = document.getElementById('htSymIn').value.trim().toUpperCase();
+  const price = parseFloat(document.getElementById('htPriceIn').value);
+  const vol = parseInt(document.getElementById('htVolIn').value) || 1000000;
+  if(!sym || !price) { htLog('[ERROR] Symbol and price required', 'log-err'); return; }
+  htInsertCore(sym, price, vol);
+  document.getElementById('htSymIn').value = '';
+  document.getElementById('htPriceIn').value = '';
+  document.getElementById('htVolIn').value = '';
+}
+function htSearchCore(symbol) {
+  symbol = symbol.toUpperCase();
+  htStats.lookups++;
+  const idx = djb2(symbol);
+  const chain = htBuckets[idx];
+  const pos = chain.findIndex(s => s.symbol === symbol);
+  if(pos >= 0) {
+    htStats.hits++;
+    const s = chain[pos];
+    htLog(`[FOUND] ${symbol} at index ${idx} (chain pos: ${pos+1}) — $${s.price.toFixed(2)}`, 'log-ok');
+    return s;
+  }
+  htStats.misses++;
+  htLog(`[NOT FOUND] ${symbol}`, 'log-err');
+  return null;
+}
+function htSearch() {
+  const sym = document.getElementById('htSymIn').value.trim();
+  if(!sym) { htLog('[ERROR] Enter a symbol', 'log-err'); return; }
+  htSearchCore(sym);
+}
+function htQuickSearch(sym) {
+  showSection('hashtable');
+  document.getElementById('htSymIn').value = sym;
+  htSearchCore(sym);
+}
+function htReset() {
+  htBuckets = Array.from({length: TABLE_SIZE}, () => []);
+  htStats = { lookups: 0, collisions: 0, hits: 0, misses: 0 };
+  htTotalStocks = 0;
+  htLog('[RESET] Hash table cleared', 'log-warn');
+  htRenderAll();
+}
+function htLoadDemo() {
+  htReset();
+  SAMPLE_STOCKS.forEach(s => htInsertCore(s.symbol, s.price, s.volume, s.change));
+}
+function htRenderAll() {
+  const used = htBuckets.filter(b=>b.length>0).length;
+  const lf = (htTotalStocks / TABLE_SIZE).toFixed(2);
+  let maxChain = 0;
+  htBuckets.forEach(b => { if(b.length > maxChain) maxChain = b.length; });
+  document.getElementById('htStats').innerHTML = `
+    <div class="stat-pill"><div class="stat-label">Total Stocks</div><div class="stat-val accent">${htTotalStocks}</div></div>
+    <div class="stat-pill"><div class="stat-label">Load Factor</div><div class="stat-val">${lf}</div></div>
+    <div class="stat-pill"><div class="stat-label">Collisions</div><div class="stat-val red">${htStats.collisions}</div></div>
+    <div class="stat-pill"><div class="stat-label">Max Chain</div><div class="stat-val">${maxChain}</div></div>
+    <div class="stat-pill"><div class="stat-label">Hit Rate</div><div class="stat-val green">${htStats.lookups>0?((htStats.hits/htStats.lookups)*100).toFixed(0)+'%':'—'}</div></div>
+  `;
+  const viz = document.getElementById('htViz');
+  let html = '';
+  htBuckets.forEach((chain, i) => {
+    if(chain.length === 0) return;
+    let chainHtml = chain.map(s => `<span class="ht-node">${s.symbol}<br><small style="color:var(--mid)">$${s.price.toFixed(0)}</small></span>`).join('<span class="ht-arrow">→</span>');
+    html += `<div class="ht-row"><span class="ht-idx">${i}</span><div class="ht-chain">${chainHtml}</div></div>`;
+  });
+  viz.innerHTML = html || '<div style="color:var(--ghost);font-family:var(--mono);font-size:11px;">Empty — insert some stocks</div>';
+  const tbody = document.getElementById('htTableBody');
+  let rows = '';
+  htBuckets.forEach((chain, i) => {
+    chain.forEach(s => {
+      const up = s.change_percent >= 0;
+      rows += `<tr><td class="sym">${s.symbol}</td><td>$${s.price.toFixed(2)}</td><td class="${up?'up':'dn'}">${fmtChg(s.change_percent)}</td><td class="vol">${fmtVol(s.volume)}</td><td style="color:var(--ghost)">${i}</td></tr>`;
+    });
+  });
+  tbody.innerHTML = rows;
+  const qb = document.getElementById('htQuickBtns');
+  if(htTotalStocks > 0 && !qb.innerHTML) {
+    qb.innerHTML = SAMPLE_STOCKS.map(s=>`<button class="btn btn-ghost btn-sm" onclick="htQuickSearch('${s.symbol}')">${s.symbol}</button>`).join('');
+  }
+}
+function htInit() {
+  SAMPLE_STOCKS.forEach(s => htInsertCore(s.symbol, s.price, s.volume, s.change));
+}
+
+// ── PRIORITY QUEUE ──
+let pqData = [];
+let pqInserted = 0, pqProcessed = 0;
+
+function pqLog(msg, cls='log-info') {
+  const c = document.getElementById('pqConsole');
+  c.innerHTML += `<div class="${cls}">[${now()}] ${msg}</div>`;
+  c.scrollTop = c.scrollHeight;
+}
+function pqParent(i) { return Math.floor((i-1)/2); }
+function pqLeft(i)   { return 2*i+1; }
+function pqRight(i)  { return 2*i+2; }
+function pqHeapifyUp(arr, i) {
+  while(i > 0) {
+    const p = pqParent(i);
+    if(arr[p].priority > arr[i].priority) { [arr[p], arr[i]] = [arr[i], arr[p]]; i = p; }
+    else break;
+  }
+}
+function pqHeapifyDown(arr, i) {
+  const n = arr.length; let smallest = i;
+  const l = pqLeft(i), r = pqRight(i);
+  if(l < n && arr[l].priority < arr[smallest].priority) smallest = l;
+  if(r < n && arr[r].priority < arr[smallest].priority) smallest = r;
+  if(smallest !== i) { [arr[i], arr[smallest]] = [arr[smallest], arr[i]]; pqHeapifyDown(arr, smallest); }
+}
+const PRI_LABELS = ['','CRITICAL','HIGH','MEDIUM','LOW'];
+const PRI_CLS    = ['','pri-1','pri-2','pri-3','pri-4'];
+
+function pqEnqueueCore(symbol, price, volume, priority, alertType) {
+  symbol = symbol.toUpperCase();
+  const item = { symbol, price, volume: volume||0, priority: parseInt(priority), alert_type: alertType, time: now() };
+  pqData.push(item);
+  pqHeapifyUp(pqData, pqData.length-1);
+  pqInserted++;
+  pqLog(`[ENQUEUE] [${PRI_LABELS[priority]}] ${symbol} $${price.toFixed(2)} — ${alertType}`, 'log-ins');
+  pqRenderAll();
+}
+function pqEnqueue() {
+  const sym   = document.getElementById('pqSymIn').value.trim();
+  const price = parseFloat(document.getElementById('pqPriceIn').value) || 100;
+  const pri   = parseInt(document.getElementById('pqPriIn').value);
+  const type  = document.getElementById('pqTypeIn').value.trim() || 'Price update';
+  if(!sym) { pqLog('[ERROR] Symbol required', 'log-err'); return; }
+  pqEnqueueCore(sym, price, 0, pri, type);
+  document.getElementById('pqSymIn').value = '';
+  document.getElementById('pqPriceIn').value = '';
+  document.getElementById('pqTypeIn').value = '';
+}
+function pqDequeue() {
+  if(pqData.length === 0) { pqLog('[ERROR] Queue is empty', 'log-err'); return; }
+  const top = pqData[0];
+  pqData[0] = pqData[pqData.length-1]; pqData.pop();
+  if(pqData.length > 0) pqHeapifyDown(pqData, 0);
+  pqProcessed++;
+  pqLog(`[PROCESSED] [${PRI_LABELS[top.priority]}] ${top.symbol} — ${top.alert_type}`, 'log-ok');
+  pqRenderAll();
+}
+function pqPeek() {
+  if(pqData.length === 0) { pqLog('[EMPTY] No alerts in queue', 'log-warn'); return; }
+  const t = pqData[0];
+  pqLog(`[PEEK] Next: [${PRI_LABELS[t.priority]}] ${t.symbol} — ${t.alert_type}`, 'log-ins');
+}
+function pqReset() {
+  pqData = []; pqInserted = 0; pqProcessed = 0;
+  pqLog('[RESET] Queue cleared', 'log-warn'); pqRenderAll();
+}
+function pqLoadDemo() {
+  pqReset();
+  const alerts = [
+    ['MSFT', 410.20, 0, 4, 'Routine price tick'],
+    ['AAPL', 178.50, 0, 3, 'Earnings update'],
+    ['TSLA', 248.50, 0, 1, 'Trading HALT issued'],
+    ['NVDA', 875.30, 0, 2, 'Volume spike +300%'],
+    ['AMZN', 173.80, 0, 4, 'Routine price tick'],
+    ['META', 485.60, 0, 3, 'Analyst downgrade'],
+    ['GOOGL',142.30, 0, 1, 'Circuit breaker -7%'],
+    ['NFLX', 625.40, 0, 2, 'Index rebalance'],
+    ['AMD',  195.30, 0, 4, 'Routine price tick'],
+    ['IBM',  183.40, 0, 3, 'Dividend announced'],
+  ];
+  alerts.forEach(a => pqEnqueueCore(a[0], a[1], a[2], a[3], a[4]));
+}
+function pqRenderAll() {
+  document.getElementById('pqStats').innerHTML = `
+    <div class="stat-pill"><div class="stat-label">Queue Size</div><div class="stat-val accent">${pqData.length}</div></div>
+    <div class="stat-pill"><div class="stat-label">Inserted</div><div class="stat-val">${pqInserted}</div></div>
+    <div class="stat-pill"><div class="stat-label">Processed</div><div class="stat-val green">${pqProcessed}</div></div>
+    <div class="stat-pill"><div class="stat-label">Next Priority</div><div class="stat-val">${pqData.length>0?PRI_LABELS[pqData[0].priority]:'—'}</div></div>
+  `;
+  const list = document.getElementById('pqList');
+  if(pqData.length === 0) { list.innerHTML = '<div style="color:var(--ghost);font-size:12px;font-family:var(--mono);">Queue is empty</div>'; return; }
+  list.innerHTML = pqData.map(item => `
+    <div class="pq-item">
+      <span class="pq-pri ${PRI_CLS[item.priority]}">${PRI_LABELS[item.priority]}</span>
+      <span class="pq-sym">${item.symbol}</span>
+      <span class="pq-type">${item.alert_type}</span>
+      <span class="pq-price">$${item.price.toFixed(2)}</span>
+      <span style="font-family:var(--mono);font-size:10px;color:var(--ghost);">${item.time}</span>
+    </div>
+  `).join('');
+}
+
+// ── AVL TREE ──
+let avlRoot = null, avlRotations = 0, avlCount = 0;
+
+function avlLog(msg, cls='log-info') {
+  const c = document.getElementById('avlConsole');
+  c.innerHTML += `<div class="${cls}">[${now()}] ${msg}</div>`;
+  c.scrollTop = c.scrollHeight;
+}
+function avlHeight(n) { return n ? n.height : 0; }
+function avlBalance(n) { return n ? avlHeight(n.left) - avlHeight(n.right) : 0; }
+function avlUpdate(n) { n.height = 1 + Math.max(avlHeight(n.left), avlHeight(n.right)); }
+function avlRotateRight(y) {
+  const x = y.left, T2 = x.right;
+  x.right = y; y.left = T2; avlUpdate(y); avlUpdate(x); avlRotations++;
+  avlLog('[AVL] Right rotation', 'log-warn'); return x;
+}
+function avlRotateLeft(x) {
+  const y = x.right, T2 = y.left;
+  y.left = x; x.right = T2; avlUpdate(x); avlUpdate(y); avlRotations++;
+  avlLog('[AVL] Left rotation', 'log-warn'); return y;
+}
+function avlInsertNode(node, ts, price, vol) {
+  if(!node) return { ts, price, vol, height: 1, left: null, right: null };
+  if(ts < node.ts)      node.left  = avlInsertNode(node.left,  ts, price, vol);
+  else if(ts > node.ts) node.right = avlInsertNode(node.right, ts, price, vol);
+  else { node.price = price; node.vol = vol; return node; }
+  avlUpdate(node);
+  const bal = avlBalance(node);
+  if(bal > 1  && ts < node.left.ts)                 return avlRotateRight(node);
+  if(bal < -1 && ts > node.right.ts)                return avlRotateLeft(node);
+  if(bal > 1  && ts > node.left.ts)  { node.left  = avlRotateLeft(node.left);  return avlRotateRight(node); }
+  if(bal < -1 && ts < node.right.ts) { node.right = avlRotateRight(node.right); return avlRotateLeft(node); }
+  return node;
+}
+function avlInsert() {
+  const price = parseFloat(document.getElementById('avlPriceIn').value);
+  const vol   = parseInt(document.getElementById('avlVolIn').value) || Math.floor(Math.random()*50000+10000)*100;
+  if(!price) { avlLog('[ERROR] Price required', 'log-err'); return; }
+  const ts = Date.now() - Math.floor(Math.random()*1000);
+  avlRoot = avlInsertNode(avlRoot, ts, price, vol);
+  avlCount++;
+  avlLog(`[INSERT] $${price.toFixed(2)} vol:${fmtVol(vol)} h=${avlHeight(avlRoot)} bal=${avlBalance(avlRoot)}`, 'log-ok');
+  avlRenderAll();
+  document.getElementById('avlPriceIn').value = '';
+  document.getElementById('avlVolIn').value = '';
+}
+function avlReset() {
+  avlRoot = null; avlRotations = 0; avlCount = 0;
+  avlLog('[RESET] Tree cleared', 'log-warn'); avlRenderAll();
+}
+function avlLoadDemo() {
+  avlReset();
+  const base = 175;
+  for(let i = 0; i < 20; i++) {
+    const ts = Date.now() - (3600000 - i * 180000) + Math.random()*10000;
+    const price = base + (Math.random()*4 - 2);
+    const vol = (Math.floor(Math.random()*50000)+10000)*100;
+    avlRoot = avlInsertNode(avlRoot, ts, parseFloat(price.toFixed(2)), vol);
+    avlCount++;
+  }
+  avlLog('[DEMO] Loaded 20 price records for AAPL', 'log-ok');
+  avlRenderAll();
+}
+function avlInorder(node, arr) {
+  if(!node) return;
+  avlInorder(node.left, arr); arr.push(node); avlInorder(node.right, arr);
+}
+function avlRenderAll() {
+  let nodes = [];
+  avlInorder(avlRoot, nodes);
+  const minP = nodes.length ? Math.min(...nodes.map(n=>n.price)) : 0;
+  const maxP = nodes.length ? Math.max(...nodes.map(n=>n.price)) : 0;
+  document.getElementById('avlStats').innerHTML = `
+    <div class="stat-pill"><div class="stat-label">Records</div><div class="stat-val accent">${avlCount}</div></div>
+    <div class="stat-pill"><div class="stat-label">Tree Height</div><div class="stat-val">${avlHeight(avlRoot)}</div></div>
+    <div class="stat-pill"><div class="stat-label">Rotations</div><div class="stat-val amber">${avlRotations}</div></div>
+    <div class="stat-pill"><div class="stat-label">Balance</div><div class="stat-val">${avlBalance(avlRoot)}</div></div>
+    <div class="stat-pill"><div class="stat-label">Min Price</div><div class="stat-val red">${minP?'$'+minP.toFixed(2):'—'}</div></div>
+    <div class="stat-pill"><div class="stat-label">Max Price</div><div class="stat-val green">${maxP?'$'+maxP.toFixed(2):'—'}</div></div>
+  `;
+  const hist = document.getElementById('avlHistory');
+  hist.innerHTML = nodes.map(n => {
+    const t = new Date(n.ts).toTimeString().split(' ')[0];
+    return `<div class="log-info">${t} | <span style="color:#e8d5b0">$${n.price.toFixed(2)}</span> | <span style="color:#6b7a8a">${fmtVol(n.vol)}</span></div>`;
+  }).join('');
+  hist.scrollTop = hist.scrollHeight;
+  avlDrawTree();
+}
+function avlDrawTree() {
+  const svg = document.getElementById('avlSvg');
+  if(!avlRoot) {
+    svg.innerHTML = '<text x="300" y="150" text-anchor="middle" fill="#3a3530" font-size="13" font-family="JetBrains Mono, monospace">Empty tree — insert price records</text>';
+    return;
+  }
+  const W = 600, H = 300;
+  const positions = new Map();
+  function assignPos(node, depth, left, right) {
+    if(!node) return;
+    const mid = (left + right) / 2;
+    positions.set(node, { x: mid * W, y: 28 + depth * 52 });
+    assignPos(node.left,  depth+1, left,  mid);
+    assignPos(node.right, depth+1, mid, right);
+  }
+  assignPos(avlRoot, 0, 0, 1);
+  let edges = '', nodes_html = '';
+  function draw(node) {
+    if(!node) return;
+    const p = positions.get(node);
+    if(node.left)  { const c = positions.get(node.left);  edges += `<line x1="${p.x}" y1="${p.y}" x2="${c.x}" y2="${c.y}" stroke="#2a2520" stroke-width="1.5"/>`; }
+    if(node.right) { const c = positions.get(node.right); edges += `<line x1="${p.x}" y1="${p.y}" x2="${c.x}" y2="${c.y}" stroke="#2a2520" stroke-width="1.5"/>`; }
+    draw(node.left); draw(node.right);
+  }
+  draw(avlRoot);
+  positions.forEach((pos, node) => {
+    const bal = avlBalance(node);
+    const color = Math.abs(bal) > 1 ? '#f87171' : Math.abs(bal) === 1 ? '#fbbf24' : '#c8922a';
+    nodes_html += `
+      <circle cx="${pos.x}" cy="${pos.y}" r="19" fill="#1a1512" stroke="${color}" stroke-width="1.5"/>
+      <text x="${pos.x}" y="${pos.y-3}" text-anchor="middle" fill="${color}" font-size="9" font-family="JetBrains Mono,monospace" font-weight="600">${node.price.toFixed(0)}</text>
+      <text x="${pos.x}" y="${pos.y+8}" text-anchor="middle" fill="#4a4540" font-size="7.5" font-family="JetBrains Mono,monospace">h${node.height}</text>
+    `;
+  });
+  svg.innerHTML = edges + nodes_html;
+}
+
+// ── HEAP ──
+let gainersHeap = [], losersHeap = [];
+
+function heapLog(msg, cls='log-info') {
+  const c = document.getElementById('heapConsole');
+  c.innerHTML += `<div class="${cls}">[${now()}] ${msg}</div>`;
+  c.scrollTop = c.scrollHeight;
+}
+function heapifyUp(arr, i, isMax) {
+  while(i > 0) {
+    const p = Math.floor((i-1)/2);
+    const cond = isMax ? arr[p].change < arr[i].change : arr[p].change > arr[i].change;
+    if(cond) { [arr[p], arr[i]] = [arr[i], arr[p]]; i = p; } else break;
+  }
+}
+function heapifyDown(arr, i, isMax) {
+  const n = arr.length; let target = i;
+  const l = 2*i+1, r = 2*i+2;
+  if(isMax) { if(l<n && arr[l].change > arr[target].change) target=l; if(r<n && arr[r].change > arr[target].change) target=r; }
+  else       { if(l<n && arr[l].change < arr[target].change) target=l; if(r<n && arr[r].change < arr[target].change) target=r; }
+  if(target!==i) { [arr[i], arr[target]] = [arr[target], arr[i]]; heapifyDown(arr, target, isMax); }
+}
+function heapInsertCore(sym, price, change, vol) {
+  sym = sym.toUpperCase();
+  const item = { symbol: sym, price, change, volume: vol };
+  if(change >= 0) { gainersHeap.push(item); heapifyUp(gainersHeap, gainersHeap.length-1, true);  heapLog(`[GAINER] ${sym} +${change}% → Max-Heap`, 'log-ok'); }
+  else             { losersHeap.push(item);  heapifyUp(losersHeap,  losersHeap.length-1,  false); heapLog(`[LOSER] ${sym} ${change}% → Min-Heap`, 'log-err'); }
+  heapRenderAll();
+}
+function heapInsert() {
+  const sym   = document.getElementById('heapSymIn').value.trim();
+  const price = parseFloat(document.getElementById('heapPriceIn').value) || 100;
+  const chg   = parseFloat(document.getElementById('heapChgIn').value);
+  const vol   = parseInt(document.getElementById('heapVolIn').value) || 1000000;
+  if(!sym || isNaN(chg)) { heapLog('[ERROR] Symbol and change% required', 'log-err'); return; }
+  heapInsertCore(sym, price, chg, vol);
+  ['heapSymIn','heapPriceIn','heapChgIn'].forEach(id => document.getElementById(id).value = '');
+}
+function heapExtractGainer() {
+  if(!gainersHeap.length) { heapLog('[EMPTY] No gainers', 'log-err'); return; }
+  const top = gainersHeap[0];
+  gainersHeap[0] = gainersHeap[gainersHeap.length-1]; gainersHeap.pop();
+  if(gainersHeap.length) heapifyDown(gainersHeap, 0, true);
+  heapLog(`[EXTRACT] Top Gainer: ${top.symbol} +${top.change}%`, 'log-ok'); heapRenderAll();
+}
+function heapExtractLoser() {
+  if(!losersHeap.length) { heapLog('[EMPTY] No losers', 'log-err'); return; }
+  const top = losersHeap[0];
+  losersHeap[0] = losersHeap[losersHeap.length-1]; losersHeap.pop();
+  if(losersHeap.length) heapifyDown(losersHeap, 0, false);
+  heapLog(`[EXTRACT] Top Loser: ${top.symbol} ${top.change}%`, 'log-err'); heapRenderAll();
+}
+function heapReset() { gainersHeap = []; losersHeap = []; heapLog('[RESET] Cleared', 'log-warn'); heapRenderAll(); }
+function heapLoadDemo() { heapReset(); SAMPLE_STOCKS.forEach(s => heapInsertCore(s.symbol, s.price, s.change, s.volume)); }
+function heapRenderAll() {
+  const best = gainersHeap.length ? gainersHeap[0] : null;
+  const worst = losersHeap.length ? losersHeap[0] : null;
+  document.getElementById('heapStats').innerHTML = `
+    <div class="stat-pill"><div class="stat-label">Gainers</div><div class="stat-val green">${gainersHeap.length}</div></div>
+    <div class="stat-pill"><div class="stat-label">Losers</div><div class="stat-val red">${losersHeap.length}</div></div>
+    <div class="stat-pill"><div class="stat-label">Best</div><div class="stat-val green">${best?best.symbol+' +'+best.change+'%':'—'}</div></div>
+    <div class="stat-pill"><div class="stat-label">Worst</div><div class="stat-val red">${worst?worst.symbol+' '+worst.change+'%':'—'}</div></div>
+  `;
+  function renderHeapList(arr, containerId, isMax, maxAbs) {
+    const el = document.getElementById(containerId);
+    if(!arr.length) { el.innerHTML = '<div style="color:var(--ghost);font-size:11px;font-family:var(--mono);">—</div>'; return; }
+    const sorted = [...arr].sort((a,b) => isMax ? b.change-a.change : a.change-b.change).slice(0,6);
+    el.innerHTML = sorted.map((s,i) => {
+      const pct = Math.abs(s.change);
+      const barW = Math.min(100, (pct / (maxAbs||1)) * 100);
+      const bg = isMax ? 'rgba(45,106,63,.18)' : 'rgba(192,57,43,.15)';
+      const clr = isMax ? 'var(--green)' : 'var(--red)';
+      return `<div class="heap-item">
+        <span class="heap-rank">${i+1}</span>
+        <span class="heap-sym">${s.symbol}</span>
+        <div class="heap-bar-wrap">
+          <div class="heap-bar" style="width:${barW}%;background:${bg}">
+            <span class="heap-pct" style="color:${clr}">${fmtChg(s.change)}</span>
+          </div>
+        </div>
+        <span class="heap-price">$${s.price.toFixed(2)}</span>
+      </div>`;
+    }).join('');
+  }
+  const maxGain = gainersHeap.length ? Math.max(...gainersHeap.map(s=>s.change)) : 1;
+  const maxLoss = losersHeap.length  ? Math.max(...losersHeap.map(s=>Math.abs(s.change))) : 1;
+  renderHeapList(gainersHeap, 'gainersViz', true,  maxGain);
+  renderHeapList(losersHeap,  'losersViz',  false, maxLoss);
+}
+
+// ── TRIE ──
+const ALPHA = 26;
+let trieRoot = null, trieWords = 0, trieNodes = 0, trieStockPrices = {};
+
+function newTrieNode() { trieNodes++; return { children: new Array(ALPHA).fill(null), isEnd: false, symbol: '', price: 0 }; }
+function charIdx(c) { return c.toUpperCase().charCodeAt(0) - 65; }
+function trieInsertCore(symbol, price) {
+  if(!trieRoot) { trieRoot = newTrieNode(); }
+  symbol = symbol.toUpperCase();
+  let cur = trieRoot;
+  for(let ch of symbol) {
+    const i = charIdx(ch);
+    if(i < 0 || i >= ALPHA) continue;
+    if(!cur.children[i]) cur.children[i] = newTrieNode();
+    cur = cur.children[i];
+  }
+  if(!cur.isEnd) trieWords++;
+  cur.isEnd = true; cur.symbol = symbol; cur.price = price;
+  trieStockPrices[symbol] = price;
+}
+function trieLog(msg, cls='log-info') {
+  const c = document.getElementById('trieConsole');
+  c.innerHTML += `<div class="${cls}">[${now()}] ${msg}</div>`;
+  c.scrollTop = c.scrollHeight;
+}
+function trieInsert() {
+  const sym = document.getElementById('trieSymIn').value.trim().toUpperCase();
+  const price = parseFloat(document.getElementById('triePriceIn').value) || 100;
+  if(!sym) { trieLog('[ERROR] Symbol required', 'log-err'); return; }
+  trieInsertCore(sym, price);
+  trieLog(`[INSERT] ${sym} $${price.toFixed(2)} — nodes: ${trieNodes}`, 'log-ok');
+  trieRenderAll();
+  document.getElementById('trieSymIn').value = '';
+  document.getElementById('triePriceIn').value = '';
+}
+function trieSearchCore(symbol) {
+  if(!trieRoot) return false;
+  symbol = symbol.toUpperCase();
+  let cur = trieRoot;
+  for(let ch of symbol) {
+    const i = charIdx(ch);
+    if(i < 0 || i >= ALPHA || !cur.children[i]) return false;
+    cur = cur.children[i];
+  }
+  return cur && cur.isEnd;
+}
+function trieSearch() {
+  const sym = document.getElementById('trieSearchIn').value.trim().toUpperCase();
+  if(!sym) { trieLog('[ERROR] Enter symbol', 'log-err'); return; }
+  const found = trieSearchCore(sym);
+  if(found) trieLog(`[FOUND] ${sym} — $${(trieStockPrices[sym]||0).toFixed(2)}`, 'log-ok');
+  else trieLog(`[NOT FOUND] ${sym}`, 'log-err');
+}
+function trieCollect(node, results, max=20) {
+  if(results.length >= max) return;
+  if(node.isEnd) results.push({ symbol: node.symbol, price: node.price });
+  for(let c of node.children) if(c) trieCollect(c, results, max);
+}
+function trieGetSuggestions(prefix, max=20) {
+  if(!trieRoot) return [];
+  prefix = prefix.toUpperCase();
+  let cur = trieRoot;
+  for(let ch of prefix) {
+    const i = charIdx(ch);
+    if(i < 0 || i >= ALPHA || !cur.children[i]) return [];
+    cur = cur.children[i];
+  }
+  const results = []; trieCollect(cur, results, max); return results;
+}
+function trieAutoComplete(prefix) {
+  const box = document.getElementById('trieSuggestions');
+  if(!prefix.trim()) { box.style.display = 'none'; return; }
+  const suggs = trieGetSuggestions(prefix);
+  if(!suggs.length) { box.style.display = 'none'; return; }
+  const highlightLen = prefix.length;
+  box.style.display = 'block';
+  box.innerHTML = suggs.map(s => {
+    const hi = `<span class="trie-highlight">${s.symbol.slice(0, highlightLen)}</span>${s.symbol.slice(highlightLen)}`;
+    return `<div class="trie-sug-item" onclick="trieSelectSuggestion('${s.symbol}')">
+      <span class="trie-sug-sym">${hi}</span>
+      <span class="trie-sug-price">$${s.price.toFixed(2)}</span>
+    </div>`;
+  }).join('');
+}
+function trieSelectSuggestion(sym) {
+  document.getElementById('trieAutoIn').value = sym;
+  document.getElementById('trieSuggestions').style.display = 'none';
+  trieLog(`[SELECT] ${sym} — $${(trieStockPrices[sym]||0).toFixed(2)}`, 'log-ok');
+}
+document.addEventListener('click', e => {
+  if(!e.target.closest('.trie-input-wrap')) document.getElementById('trieSuggestions').style.display = 'none';
+});
+function trieReset() {
+  trieRoot = null; trieWords = 0; trieNodes = 0; trieStockPrices = {};
+  trieLog('[RESET] Trie cleared', 'log-warn'); trieRenderAll();
+}
+function trieLoadDemo() {
+  trieReset();
+  [...SAMPLE_STOCKS, ...TRIE_EXTRA].forEach(s => trieInsertCore(s.symbol, s.price));
+  trieLog(`[DEMO] Loaded ${trieWords} symbols`, 'log-ok'); trieRenderAll();
+}
+function trieRenderAll() {
+  document.getElementById('trieStats').innerHTML = `
+    <div class="stat-pill"><div class="stat-label">Symbols</div><div class="stat-val accent">${trieWords}</div></div>
+    <div class="stat-pill"><div class="stat-label">Trie Nodes</div><div class="stat-val">${trieNodes}</div></div>
+    <div class="stat-pill"><div class="stat-label">Memory</div><div class="stat-val">${(trieNodes*208/1024).toFixed(1)}KB</div></div>
+  `;
+  const allDiv = document.getElementById('trieAllSymbols');
+  allDiv.innerHTML = Object.keys(trieStockPrices).map(sym => `
+    <span class="ht-node" style="cursor:pointer;" onclick="document.getElementById('trieAutoIn').value='${sym}';trieAutoComplete('${sym}')">${sym}</span>
+  `).join('');
+}
+
+// ── INIT ──
+buildTicker();
+buildOverview();
+htInit();
+pqRenderAll();
+avlRenderAll();
+heapRenderAll();
+trieLoadDemo();
+updateDate();
+setInterval(updateDate, 10000);
+
+// ── C TERMINAL ──
+const SERVER = 'http://localhost:8000';
+let serverOnline = false;
+
+async function checkServer() {
+  try {
+    const r = await fetch(SERVER + '/run?module=0', { signal: AbortSignal.timeout(1500) });
+    serverOnline = r.ok;
+  } catch { serverOnline = false; }
+  updateServerBadge();
+}
+function updateServerBadge() {
+  const badge = document.getElementById('serverBadge');
+  if(!badge) return;
+  if(serverOnline) {
+    badge.textContent = '⬤ server.py live';
+    badge.style.color = 'var(--green)';
+    badge.style.borderColor = '#b8dfc5';
+    badge.style.background = '#f0f9f3';
+  } else {
+    badge.textContent = '⬤ Cached output';
+    badge.style.color = 'var(--mid)';
+    badge.style.borderColor = 'var(--border)';
+    badge.style.background = 'var(--cream)';
+  }
+}
+async function runLive(moduleNum, targetId) {
+  const el = document.getElementById(targetId);
+  if(!el) return;
+  el.classList.add('open');
+  el.innerHTML = '<span style="color:var(--gold-lt)">⟳ Running ./stock_market ' + moduleNum + '...</span>';
+  try {
+    const r = await fetch(SERVER + '/run?module=' + moduleNum, { signal: AbortSignal.timeout(20000) });
+    const data = await r.json();
+    el.innerHTML = colorizeOutput(data.output);
+    serverOnline = true; updateServerBadge();
+  } catch(e) {
+    el.innerHTML = '<span style="color:#f87171">❌ Server not reachable. Run: python3 server.py</span>\n\n' + (el.dataset.cached || '');
+    serverOnline = false; updateServerBadge();
+  }
+}
+function colorizeOutput(text) {
+  return text.split('\n').map(line => {
+    const esc = line.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    if(esc.includes('[INSERT]') || esc.includes('[ENQUEUE]')) return `<span class="c-insert">${esc}</span>`;
+    if(esc.includes('[UPDATE]') || esc.includes('[AVL]'))     return `<span class="c-update">${esc}</span>`;
+    if(esc.includes('[FOUND]') && !esc.includes('NOT'))       return `<span class="c-found">${esc}</span>`;
+    if(esc.includes('[NOT FOUND]'))                           return `<span class="c-notfnd">${esc}</span>`;
+    if(esc.includes('[COLLISION]') || esc.includes('CRITICAL') || esc.includes('HALT')) return `<span class="c-warn">${esc}</span>`;
+    if(esc.includes('===') || esc.includes('STATISTICS') || esc.includes('MEMBER'))     return `<span class="c-header">${esc}</span>`;
+    return esc;
+  }).join('\n');
+}
+function injectCTerminals() {
+  const map = { hashtable:['ht','1'], pqueue:['pq','2'], avl:['avl','3'], heap:['heap','4'], trie:['trie','5'] };
+  Object.entries(map).forEach(([secId, [key, num]]) => {
+    const sec = document.getElementById(secId);
+    if(!sec || !C_OUTPUTS[key]) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'c-terminal-wrap';
+    wrap.innerHTML = `
+      <div class="c-terminal-header">
+        <div class="c-terminal-title">
+          <span class="c-terminal-dot" style="background:#ff5f56"></span>
+          <span class="c-terminal-dot" style="background:#ffbd2e;margin-left:5px"></span>
+          <span class="c-terminal-dot" style="background:#27c93f;margin-left:5px"></span>
+          <span style="margin-left:10px;color:var(--mid);">./stock_market&nbsp;</span><span style="color:var(--gold)">${num}</span>
+          <span class="tag" style="margin-left:8px;">C output</span>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-ghost btn-sm" onclick="toggleCTerminal('${secId}')">Show C output ▾</button>
+          <button class="btn btn-primary btn-sm" onclick="runLive('${num}','cterm-${secId}')">▶ Run Live</button>
+        </div>
+      </div>
+      <div class="c-terminal-body" id="cterm-${secId}">${colorizeOutput(C_OUTPUTS[key])}</div>
+    `;
+    sec.appendChild(wrap);
+  });
+}
+function toggleCTerminal(secId) {
+  const body = document.getElementById('cterm-' + secId);
+  const btn  = body.previousElementSibling.querySelector('button');
+  body.classList.toggle('open');
+  btn.textContent = body.classList.contains('open') ? 'Hide C output ▴' : 'Show C output ▾';
+  if(body.classList.contains('open')) body.scrollTop = 0;
+}
+injectCTerminals();
+checkServer();
+setInterval(checkServer, 5000);
+</script>
+</body>
+</html>

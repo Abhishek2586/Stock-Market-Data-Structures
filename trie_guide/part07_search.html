@@ -1,0 +1,92 @@
+<!-- PART 7: LINES 48-56 — TRIE SEARCH -->
+
+<hr>
+<div class="section" id="search">
+  <div class="section-number">Section 07</div>
+  <h2>Lines 48–56: <span class="green">trie_search()</span> — Exact Lookup</h2>
+
+  <p>This function checks if a COMPLETE symbol exists in the trie. Returns 1 (true) if found, 0 (false) if not.</p>
+
+  <pre data-lang="C"><code><span class="kw">static int</span> <span class="fn">trie_search</span>(<span class="type">TrieNode</span>* root, <span class="kw">const</span> <span class="type">char</span>* symbol) {
+    <span class="type">TrieNode</span>* cur = root;
+    <span class="kw">for</span>(<span class="type">int</span> i = <span class="num">0</span>; symbol[i]; i++) {
+        <span class="type">int</span> idx = char_idx(symbol[i]);
+        <span class="kw">if</span>(idx < <span class="num">0</span> || idx >= <span class="num">ALPHABET_SIZE</span> || !cur->children[idx]) <span class="kw">return</span> <span class="num">0</span>;
+        cur = cur->children[idx];
+    }
+    <span class="kw">return</span> cur && cur->is_end;
+}</code></pre>
+
+  <div class="line-box">
+    <div class="line-num">Line 48</div>
+    <div class="line-code">static int trie_search(TrieNode* root, const char* symbol) {</div>
+    <div class="line-explain">
+      Returns <code>int</code> — will return 1 (found) or 0 (not found). Takes the root pointer and the symbol string to search for.
+    </div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Line 49</div>
+    <div class="line-code">TrieNode* cur = root;</div>
+    <div class="line-explain">
+      Same as insert — create a cursor starting at root to walk down the trie.
+    </div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Lines 50–53</div>
+    <div class="line-code">for(int i = 0; symbol[i]; i++) {<br>    int idx = char_idx(symbol[i]);<br>    if(idx < 0 || idx >= ALPHABET_SIZE || !cur->children[idx]) return 0;<br>    cur = cur->children[idx];<br>}</div>
+    <div class="line-explain">
+      Similar loop as insert, BUT with one key difference on <strong>Line 52</strong>:<br><br>
+      <code>if(idx < 0 || idx >= ALPHABET_SIZE || !cur->children[idx]) return 0;</code><br><br>
+      Three conditions checked with <code>||</code> (OR):<br>
+      1. <code>idx < 0</code> — invalid character (below 'A')<br>
+      2. <code>idx >= ALPHABET_SIZE</code> — invalid character (above 'Z')<br>
+      3. <code>!cur->children[idx]</code> — <strong>the child doesn't exist!</strong> This means the word is NOT in the trie.<br><br>
+      If ANY of these is true → immediately return 0 (NOT FOUND). No need to continue.<br><br>
+      <strong>Key difference from insert:</strong> In insert, if child is NULL, we CREATE a new node. In search, if child is NULL, we GIVE UP — the word isn't there.<br><br>
+      <strong>Faculty Answer:</strong> "The search loop navigates the trie character by character. If at any point the required child pointer is NULL, it means the search key doesn't exist in the trie, and we return 0 immediately. This is an early termination optimization — we don't need to check the remaining characters."
+    </div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Line 55</div>
+    <div class="line-code">return cur && cur->is_end;</div>
+    <div class="line-explain">
+      <strong>THIS LINE IS TRICKY — FACULTY FAVORITE! 🎯</strong><br><br>
+      After the loop, <code>cur</code> points to the node of the last character. But we need TWO checks:<br><br>
+      1. <code>cur</code> — is the pointer not NULL? (safety check)<br>
+      2. <code>cur->is_end</code> — is this node marked as end of a word?<br><br>
+      <strong>WHY do we need is_end check?</strong><br>
+      Imagine "AMD" is in the trie. If someone searches for "AM":<br>
+      - Loop follows A→M successfully ✅<br>
+      - But <code>cur->is_end</code> is 0 at M node (because "AM" is NOT a valid stock symbol)<br>
+      - Returns 0 (NOT FOUND) — correct!<br><br>
+      Without <code>is_end</code> check, "AM" would falsely return as found just because the path exists.<br><br>
+      <code>&&</code> is logical AND — BOTH conditions must be true to return 1.<br><br>
+      <strong>Faculty Answer:</strong> "The final return statement checks two conditions: (1) cur is not NULL (safety), and (2) cur->is_end is 1 (the node marks a complete word). This distinction is crucial — a prefix like 'AM' would navigate the trie successfully but would fail the is_end check since 'AM' is not a stored key, only 'AMD' is."
+    </div>
+  </div>
+
+  <h4>🎬 Visual: Search for "GOOGL" (EXISTS) vs "GOO" (DOESN'T EXIST)</h4>
+  <div class="flow-box">
+Search "GOOGL":
+  i=0: 'G'→idx=6, children[6] exists ✅, move down
+  i=1: 'O'→idx=14, children[14] exists ✅, move down
+  i=2: 'O'→idx=14, children[14] exists ✅, move down
+  i=3: 'G'→idx=6, children[6] exists ✅, move down
+  i=4: 'L'→idx=11, children[11] exists ✅, move down
+  Loop ends → cur->is_end = 1 ✅ → return 1 (FOUND!)
+
+Search "GOO":
+  i=0: 'G'→idx=6, children[6] exists ✅, move down
+  i=1: 'O'→idx=14, children[14] exists ✅, move down
+  i=2: 'O'→idx=14, children[14] exists ✅, move down
+  Loop ends → cur->is_end = 0 ❌ → return 0 (NOT FOUND!)
+  (The path exists but "GOO" is not a complete word)</div>
+
+  <div class="callout callout-green">
+    <div class="callout-title">⏱️ Time Complexity: O(m)</div>
+    <p>Search takes O(m) time where m = length of the search key. For "GOOGL" (5 chars), exactly 5 steps. This is <strong>independent of how many total words</strong> are in the trie! Even with 1 million stocks, searching "GOOGL" still takes only 5 steps.</p>
+  </div>
+</div>

@@ -1,0 +1,109 @@
+<!-- ═══════════ PART 4: PAGE-BY-PAGE WALKTHROUGH ═══════════ -->
+
+<div class="section" id="pages">
+  <div class="section-number">Section 06</div>
+  <h2>Page-by-Page <span class="gold">Walkthrough</span></h2>
+
+  <!-- OVERVIEW PAGE -->
+  <h3>Page 1: Overview — Market Dashboard</h3>
+  <p>The Overview page serves as the <strong>landing dashboard</strong> showing the complete stock market data loaded from <code>stock_data.h</code>. It demonstrates how the shared data flows into all 5 modules.</p>
+  <ul>
+    <li><strong>Live Ticker Bar</strong> — Scrolling stock prices across the top (AAPL, GOOGL, MSFT...) with green/red indicators for gains/losses</li>
+    <li><strong>Stock Grid</strong> — All 12 sample stocks displayed as interactive cards with symbol, price, change%, and volume</li>
+    <li><strong>Module Cards</strong> — Navigation cards for each of the 5 data structures with descriptions and complexity badges</li>
+    <li><strong>Server Status Badge</strong> — Shows "server.py live" when the Python server is connected</li>
+  </ul>
+  <div class="callout callout-note">
+    <div class="callout-title">ADS Concepts on This Page</div>
+    <p>The Overview page loads all 12 <code>StockRecord</code> entries from the shared <code>SAMPLE_STOCKS[]</code> array defined in <code>stock_data.h</code>. This demonstrates the <strong>shared data model</strong> — the same dataset is used by the Hash Table for storage, the Priority Queue for alerts, the AVL Tree for time-series, the Heap for ranking, and the Trie for search.</p>
+  </div>
+
+  <hr>
+
+  <!-- HASH TABLE PAGE -->
+  <h3>Page 2: Hash Table — Stock Data Storage</h3>
+  <p>This page demonstrates the <strong>Hash Table with Chaining</strong> data structure. Users can insert stock symbols and see them hashed into buckets with collision chains visualized.</p>
+  <ul>
+    <li><strong>Stat Pills</strong> — Total stocks, table size (100), load factor, max chain length, collisions count</li>
+    <li><strong>Insert/Search Form</strong> — Enter stock symbol and price to insert; search by symbol to find</li>
+    <li><strong>Hash Bucket Visualization</strong> — Visual grid showing which buckets are occupied, with linked-list chains for collisions</li>
+    <li><strong>Stock Table</strong> — Tabular view of all inserted stocks with symbol, price, volume, hash index</li>
+    <li><strong>Console</strong> — Real-time log of INSERT, COLLISION, SEARCH operations</li>
+    <li><strong>C Terminal</strong> — "Run Live" executes the actual C code and shows terminal output</li>
+  </ul>
+  <div class="callout callout-note">
+    <div class="callout-title">ADS Concepts on This Page</div>
+    <p><span class="tag tag-ht">Hash Table</span> — djb2 hash function maps stock symbols to bucket indices. <span class="tag tag-ht">Separate Chaining</span> — Collisions are resolved using linked lists at each bucket. <strong>Load Factor</strong> = total_stocks / TABLE_SIZE. <strong>Key Concept Tags:</strong> DJB2 HASH, SEPARATE CHAINING, O(1) AVG LOOKUP, LOAD FACTOR, COLLISION HANDLING.</p>
+  </div>
+
+  <hr>
+
+  <!-- PRIORITY QUEUE PAGE -->
+  <h3>Page 3: Priority Queue — Alert Processing</h3>
+  <p>This page demonstrates the <strong>Min-Heap Priority Queue</strong>. Stock alerts arrive in random order but are processed by <strong>urgency</strong>, not arrival time.</p>
+  <ul>
+    <li><strong>Stat Pills</strong> — Queue size, total inserted, total processed, next priority</li>
+    <li><strong>Enqueue Alert Form</strong> — Enter symbol, price, priority level (1=CRITICAL to 4=LOW), alert type</li>
+    <li><strong>Queue State</strong> — Visual list showing all alerts in heap order, color-coded by priority level</li>
+    <li><strong>Action Buttons</strong> — Enqueue, Process Next (extract-min), Peek, Load Demo, Reset</li>
+    <li><strong>Console</strong> — Shows ENQUEUE and PROCESS operations with timestamps</li>
+  </ul>
+  <div class="callout callout-note">
+    <div class="callout-title">ADS Concepts on This Page</div>
+    <p><span class="tag tag-pq">Min-Heap Priority Queue</span> — Lower priority number = higher urgency. <code>heapify_up()</code> after insert, <code>heapify_down()</code> after extract. CRITICAL alerts (priority 1) always processed before LOW alerts (priority 4), regardless of insertion order. <strong>Key Concept Tags:</strong> MIN-HEAP ORDERING, O(LOG N) INSERT, HEAPIFY_UP ON ENQUEUE, O(1) PEEK, PRIORITY-FIRST DISPATCH.</p>
+  </div>
+
+  <hr>
+
+  <!-- AVL TREE PAGE -->
+  <h3>Page 4: AVL Tree — Historical Price Data</h3>
+  <p>This page demonstrates the <strong>Self-Balancing AVL Tree</strong>. Stock prices are inserted with timestamps and the tree automatically balances itself using rotations.</p>
+  <ul>
+    <li><strong>Stat Pills</strong> — Records count, tree height, rotations performed, balance factor, min/max price</li>
+    <li><strong>Insert Form</strong> — Enter price and volume; timestamp is auto-generated</li>
+    <li><strong>Load 20 Records</strong> — Bulk insert 20 price records to demonstrate balancing</li>
+    <li><strong>Price History</strong> — Time-sorted inorder traversal showing all prices chronologically</li>
+    <li><strong>Tree Visualization</strong> — SVG rendering of the AVL tree structure with nodes and edges</li>
+    <li><strong>Console</strong> — Shows INSERT and ROTATION events (Left rotation, Right rotation)</li>
+  </ul>
+  <div class="callout callout-note">
+    <div class="callout-title">ADS Concepts on This Page</div>
+    <p><span class="tag tag-avl">AVL Tree</span> — Self-balancing BST where |balance factor| &le; 1 at every node. Four rotation cases: <strong>LL (Right Rotation)</strong>, <strong>RR (Left Rotation)</strong>, <strong>LR (Left-Right)</strong>, <strong>RL (Right-Left)</strong>. Inorder traversal gives time-sorted prices. <strong>Key Concept Tags:</strong> LL/RR/LR/RL ROTATIONS, SELF-BALANCING ON INSERT, O(LOG N) INSERT &amp; SEARCH, TIME-SERIES SORTED, BALANCE FACTOR.</p>
+  </div>
+
+  <hr>
+
+  <!-- HEAP PAGE -->
+  <h3>Page 5: Heap — Top Gainers/Losers Ranking</h3>
+  <p>This page demonstrates <strong>Max-Heap and Min-Heap</strong> used simultaneously for dual-direction ranking — top gainers and top losers.</p>
+  <ul>
+    <li><strong>Stat Pills</strong> — Gainers count, losers count, best stock, worst stock</li>
+    <li><strong>Add Stock Form</strong> — Enter symbol, price, change%, volume</li>
+    <li><strong>Action Buttons</strong> — Add, Extract Gainer (extract-max), Extract Loser (extract-min), Demo, Reset</li>
+    <li><strong>Top Gainers List</strong> — Bar chart visualization ranked by +change% (max-heap order)</li>
+    <li><strong>Top Losers List</strong> — Bar chart visualization ranked by -change% (min-heap order)</li>
+    <li><strong>Console</strong> — Shows INSERT, EXTRACT operations with heapify details</li>
+  </ul>
+  <div class="callout callout-note">
+    <div class="callout-title">ADS Concepts on This Page</div>
+    <p><span class="tag tag-heap">Dual Heap Architecture</span> — Positive change% stocks go into the <strong>max-heap</strong> (gainers), negative change% stocks go into the <strong>min-heap</strong> (losers). This implements a <strong>Double Ended Priority Queue</strong> concept from Unit 2. Extract top-K elements from each heap to display leaderboards. <strong>Key Concept Tags:</strong> MAX-HEAP FOR GAINERS, MIN-HEAP FOR LOSERS, HEAPIFY_UP INSERT, HEAPIFY_DOWN EXTRACT, O(1) PEEK TOP.</p>
+  </div>
+
+  <hr>
+
+  <!-- TRIE PAGE -->
+  <h3>Page 6: Trie — Stock Symbol Auto-Complete</h3>
+  <p>This page demonstrates the <strong>Trie (Prefix Tree)</strong> for fast prefix-based search and auto-complete functionality.</p>
+  <ul>
+    <li><strong>Stat Pills</strong> — Symbols stored (18), trie nodes created (58), memory usage (~11.8KB)</li>
+    <li><strong>Add Symbol Form</strong> — Insert new stock symbols with prices into the trie</li>
+    <li><strong>Exact Search</strong> — Search for a specific symbol (AAPL, GOOGL, etc.)</li>
+    <li><strong>Live Auto-Complete</strong> — Type a prefix (A, AM, NV, G...) and see real-time suggestions with highlighted matching prefix</li>
+    <li><strong>All Symbols Display</strong> — Grid of all 18 symbols stored in the trie (AAPL, GOOGL, MSFT, AMZN, TSLA, META, NVDA, NFLX, AMD, INTC, ORCL, IBM, ADBE, CSCO, AVGO, TXN, QCOM, GOOG)</li>
+    <li><strong>Console</strong> — Shows INSERT, SEARCH, and SUGGEST operations</li>
+  </ul>
+  <div class="callout callout-note">
+    <div class="callout-title">ADS Concepts on This Page</div>
+    <p><span class="tag tag-trie">Trie (Prefix Tree)</span> — 26-ary tree where each node represents a character. Insertion follows the path character-by-character. Search is O(m) where m = key length. <strong>Auto-complete</strong> traverses to the prefix node, then collects all descendants — O(m + number of results). <strong>Space-time tradeoff:</strong> uses more memory (26 pointers per node) but achieves faster lookups than hash tables for prefix queries. <strong>Key Concept Tags:</strong> PREFIX TREE STRUCTURE, O(M) SEARCH, AUTO-COMPLETE O(M+R), SPACE-TIME TRADEOFF, 26-ARY BRANCHING.</p>
+  </div>
+</div>

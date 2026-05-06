@@ -1,0 +1,80 @@
+<!-- 6. MEMBER 3: AVL TREE -->
+<div class="sec" id="t3">
+  <div class="sn">Section 06 — Member 3</div>
+  <h2>AVL Tree — <span class="g">Self-Balancing BST</span></h2>
+
+  <h3>What Is It? (Explain to Faculty)</h3>
+  <p>An <strong>AVL Tree</strong> (Adelson-Velsky and Landis, 1962) is a Binary Search Tree that <strong>automatically rebalances</strong> after every insertion or deletion. The <strong>balance factor</strong> at every node — defined as height(left subtree) - height(right subtree) — must be in {-1, 0, +1}. If an operation causes |BF| > 1, one or two <strong>rotations</strong> restore balance.</p>
+  <p>This guarantees <strong>O(log n) worst-case</strong> for all operations — unlike a plain BST which can degrade to O(n) with sorted input.</p>
+
+  <h3>Where Is It Applied? (Code)</h3>
+
+  <h4>Rotation Cases — The Core of AVL</h4>
+  <pre data-lang="C"><code><span class="cm">// File: member3_avltree.c</span>
+<span class="cm">// RIGHT ROTATION (for LL imbalance — left-left heavy)</span>
+PriceNode* <span class="fn">rotate_right</span>(PriceNode* y) {
+    PriceNode* x  = y-&gt;left;        <span class="cm">// x becomes new root</span>
+    PriceNode* T2 = x-&gt;right;       <span class="cm">// T2 = x's right subtree</span>
+    x-&gt;right = y;                   <span class="cm">// y drops down to x's right</span>
+    y-&gt;left  = T2;                  <span class="cm">// T2 attaches to y's left</span>
+    <span class="cm">// Update heights</span>
+    y-&gt;height = <span class="num">1</span> + MAX(avl_height(y-&gt;left), avl_height(y-&gt;right));
+    x-&gt;height = <span class="num">1</span> + MAX(avl_height(x-&gt;left), avl_height(x-&gt;right));
+    <span class="kw">return</span> x;  <span class="cm">// x is the new root of this subtree</span>
+}
+
+<span class="cm">// LEFT ROTATION (for RR imbalance — mirror of above)</span>
+PriceNode* <span class="fn">rotate_left</span>(PriceNode* x) {
+    PriceNode* y  = x-&gt;right;
+    PriceNode* T2 = y-&gt;left;
+    y-&gt;left  = x;
+    x-&gt;right = T2;
+    x-&gt;height = <span class="num">1</span> + MAX(avl_height(x-&gt;left), avl_height(x-&gt;right));
+    y-&gt;height = <span class="num">1</span> + MAX(avl_height(y-&gt;left), avl_height(y-&gt;right));
+    <span class="kw">return</span> y;
+}</code></pre>
+
+  <h4>AVL Insert with Auto-Rebalancing</h4>
+  <pre data-lang="C"><code><span class="cm">// File: member3_avltree.c → avl_insert()</span>
+<span class="cm">// After standard BST insert, check balance factor and rotate if needed</span>
+
+<span class="type">int</span> balance = avl_balance(node);
+
+<span class="cm">// Case 1: LL — Left-Left heavy</span>
+<span class="kw">if</span>(balance >  <span class="num">1</span>  &amp;&amp; key &lt; node-&gt;left-&gt;key)
+    <span class="kw">return</span> rotate_right(node);           <span class="cm">// Single right rotation</span>
+
+<span class="cm">// Case 2: RR — Right-Right heavy</span>
+<span class="kw">if</span>(balance &lt; -<span class="num">1</span>  &amp;&amp; key > node-&gt;right-&gt;key)
+    <span class="kw">return</span> rotate_left(node);            <span class="cm">// Single left rotation</span>
+
+<span class="cm">// Case 3: LR — Left-Right (double rotation)</span>
+<span class="kw">if</span>(balance >  <span class="num">1</span>  &amp;&amp; key > node-&gt;left-&gt;key) {
+    node-&gt;left = rotate_left(node-&gt;left);   <span class="cm">// First: left-rotate left child</span>
+    <span class="kw">return</span> rotate_right(node);               <span class="cm">// Then: right-rotate node</span>
+}
+
+<span class="cm">// Case 4: RL — Right-Left (double rotation)</span>
+<span class="kw">if</span>(balance &lt; -<span class="num">1</span>  &amp;&amp; key &lt; node-&gt;right-&gt;key) {
+    node-&gt;right = rotate_right(node-&gt;right); <span class="cm">// First: right-rotate right child</span>
+    <span class="kw">return</span> rotate_left(node);                <span class="cm">// Then: left-rotate node</span>
+}</code></pre>
+  <p><strong>Explain to faculty:</strong> "After every BST insertion, we walk back up the tree updating heights. At each ancestor, we compute the balance factor. If |BF| > 1, the tree is imbalanced and we apply the corresponding rotation. <strong>Single rotations</strong> fix LL/RR cases. <strong>Double rotations</strong> fix LR/RL cases — first rotate the child, then the node. Each rotation is O(1), and we do at most O(log n) rotations per insert."</p>
+
+  <h4>Why AVL for Stock Prices?</h4>
+  <table>
+    <thead><tr><th>Scenario</th><th>Plain BST</th><th>AVL Tree</th></tr></thead>
+    <tbody>
+      <tr><td>Insert 20 timestamps in order</td><td>Height = 20 (linked list!)</td><td>Height ≤ 5 (balanced)</td></tr>
+      <tr><td>Search for timestamp T</td><td>O(20) = O(n)</td><td>O(5) = O(log n)</td></tr>
+      <tr><td>Worst-case guarantee</td><td>None — depends on input order</td><td>Always O(log n)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="co co-g">
+    <div class="ct2">Syllabus Connection</div>
+    <p><strong>Unit 1:</strong> AVL Trees — Our project implements the complete AVL tree with all 4 rotation cases. The syllabus also covers <strong>Red-Black Trees</strong> (relaxed balance: height ≤ 2·log(n+1)), <strong>B-Trees</strong> (multi-way for disk), <strong>Splay Trees</strong> (amortized O(log n) via splaying). Explain: AVL is the <strong>strictest</strong> balanced BST (BF ≤ 1), making it ideal for demonstrating balancing concepts. Red-Black trades slightly worse balance for fewer rotations per insert.</p>
+  </div>
+</div>
+
+<hr>

@@ -1,0 +1,73 @@
+<!-- 8. MEMBER 5: TRIE -->
+<div class="sec" id="t5">
+  <div class="sn">Section 08 — Member 5</div>
+  <h2>Trie — <span class="g">Prefix Tree</span></h2>
+
+  <h3>What Is It? (Explain to Faculty)</h3>
+  <p>A <strong>Trie</strong> (from re<em>trie</em>val, pronounced "try") is a tree-like data structure optimized for string operations. Each node represents a single character, and paths from root to leaf spell out stored keys. Unlike hash tables, tries support <strong>prefix queries</strong> — finding all words that start with a given prefix — in O(m + r) time, where m is the prefix length and r is the number of results.</p>
+  <p>In our project, the trie enables <strong>instant auto-complete</strong>: type "A" and immediately get AAPL, AMD, AMZN, ADBE, AVGO.</p>
+
+  <h3>Where Is It Applied? (Code)</h3>
+
+  <h4>Trie Node — 26-ary Branching</h4>
+  <pre data-lang="C"><code><span class="cm">// File: member5_trie.c</span>
+<span class="cm">// Each node has 26 children — one for each letter A-Z</span>
+
+<span class="kw">typedef struct</span> TrieNode {
+    <span class="kw">struct</span> TrieNode* children[<span class="num">26</span>];  <span class="cm">// 26-ary branching</span>
+    <span class="type">int</span>    is_end;                   <span class="cm">// 1 = complete word ends here</span>
+    <span class="type">double</span> price;                    <span class="cm">// Stock price at end node</span>
+    <span class="type">char</span>   symbol[MAX_SYMBOL_LEN];   <span class="cm">// Full symbol stored at end</span>
+} TrieNode;</code></pre>
+  <p><strong>Explain to faculty:</strong> "Each node has a <strong>26-element pointer array</strong> — one slot per letter. To go from 'A' to 'P', we follow <code>children[15]</code> (P is the 16th letter, index 15). The <code>is_end</code> flag marks complete words. This 26-ary branching is the <strong>key design decision</strong> — it trades space for speed."</p>
+
+  <h4>Auto-Complete — Prefix Search + DFS Collection</h4>
+  <pre data-lang="C"><code><span class="cm">// File: member5_trie.c → get_suggestions()</span>
+<span class="cm">// Step 1: Navigate to the prefix node</span>
+<span class="cm">// Step 2: DFS to collect ALL complete words below that node</span>
+
+<span class="kw">void</span> <span class="fn">get_suggestions</span>(TrieNode* root, <span class="kw">const</span> <span class="type">char</span>* prefix, ...) {
+    TrieNode* curr = root;
+
+    <span class="cm">// Step 1: Walk to prefix node — O(m)</span>
+    <span class="kw">for</span>(<span class="type">int</span> i = <span class="num">0</span>; prefix[i]; i++) {
+        <span class="type">int</span> idx = toupper(prefix[i]) - <span class="str">'A'</span>;
+        <span class="kw">if</span>(!curr-&gt;children[idx]) <span class="kw">return</span>;  <span class="cm">// Prefix not in trie</span>
+        curr = curr-&gt;children[idx];
+    }
+
+    <span class="cm">// Step 2: DFS collect all end-nodes — O(r)</span>
+    collect(curr, results, prices, count, max_results);
+}
+
+<span class="kw">static void</span> <span class="fn">collect</span>(TrieNode* node, ...) {
+    <span class="kw">if</span>(node-&gt;is_end) {
+        <span class="cm">// Found a complete word — add to results</span>
+        strcpy(results[*count], node-&gt;symbol);
+        (*count)++;
+    }
+    <span class="cm">// Recurse through all 26 children</span>
+    <span class="kw">for</span>(<span class="type">int</span> i = <span class="num">0</span>; i &lt; <span class="num">26</span>; i++)
+        <span class="kw">if</span>(node-&gt;children[i])
+            collect(node-&gt;children[i], ...);
+}</code></pre>
+  <p><strong>Explain to faculty:</strong> "Auto-complete works in two phases. <strong>Phase 1:</strong> Navigate to the prefix node by following each character — this is O(m) where m = prefix length. <strong>Phase 2:</strong> Run DFS from that node to collect all complete words below — this visits only relevant subtree nodes. For prefix 'A', we reach the 'A' node and then DFS finds AAPL, AMD, AMZN, ADBE, AVGO."</p>
+
+  <h4>Space-Time Tradeoff</h4>
+  <table>
+    <thead><tr><th>Metric</th><th>Hash Table</th><th>Trie</th></tr></thead>
+    <tbody>
+      <tr><td>Exact Search</td><td>O(1) average</td><td>O(m)</td></tr>
+      <tr><td>Prefix Search</td><td><strong>NOT POSSIBLE</strong></td><td>O(m + r) ✓</td></tr>
+      <tr><td>Space per entry</td><td>Low (one node)</td><td>High (up to m nodes, each 26 pointers)</td></tr>
+      <tr><td>Best Use Case</td><td>Key-value lookup</td><td>Auto-complete, prefix matching</td></tr>
+    </tbody>
+  </table>
+
+  <div class="co co-g">
+    <div class="ct2">Syllabus Connection</div>
+    <p><strong>Unit 3:</strong> Tries &amp; Digital Search Trees — Our project implements the standard trie with insert, search, and prefix collection. The syllabus also covers <strong>Patricia Tries</strong> (compressed tries — merge single-child chains), <strong>Suffix Trees</strong> (for substring search), and <strong>String Searching algorithms</strong> (KMP, Boyer-Moore). Explain: our trie is the <strong>foundational structure</strong> — Patricia and Suffix trees are optimizations built on the same concept.</p>
+  </div>
+</div>
+
+<hr>

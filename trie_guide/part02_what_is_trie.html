@@ -1,0 +1,89 @@
+<!-- PART 2: WHAT IS A TRIE -->
+
+<div class="section" id="what-is-trie">
+  <div class="section-number">Section 01</div>
+  <h2>What is a <span class="green">Trie</span>? — The Big Picture</h2>
+
+  <p>A <strong>Trie</strong> (pronounced "try") comes from the word re<em>TRIE</em>val. It's a <strong>tree-like data structure</strong> where each node represents a single character. Paths from the root to marked nodes spell out complete words/keys.</p>
+
+  <div class="callout callout-green">
+    <div class="callout-title">🧠 Simple Analogy — Phone Ka Contacts</div>
+    <p>Jaise aapke phone mein "A" type karo to Amit, Ankit, Aman sab suggest hota hai — <strong>wahi kaam Trie karta hai!</strong> Trie ek tree hai jismein har node ek letter store karta hai. Root se kisi bhi leaf tak ka path ek complete word banata hai.</p>
+  </div>
+
+  <h4>Visual Example — How "AAPL", "AMD", "AMZN" are stored:</h4>
+  <div class="flow-box">
+         [ROOT]
+          |
+         [A]  ← First letter of all 3 words
+        /   \
+      [A]   [M]  ← Second letter branches
+       |    / \
+      [P] [D] [Z]  ← AMD ends here (is_end=1)
+       |       |
+      [L]     [N]  ← AAPL ends here, AMZN ends here
+  
+  Path ROOT→A→A→P→L = "AAPL" ✓
+  Path ROOT→A→M→D   = "AMD"  ✓  
+  Path ROOT→A→M→Z→N = "AMZN" ✓</div>
+
+  <h4>Key Properties of a Trie</h4>
+  <table>
+    <thead><tr><th>Property</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Root Node</strong></td><td>Always empty — represents the starting point, no character stored in it</td></tr>
+      <tr><td><strong>Each Edge</strong></td><td>Represents one character (A-Z in our case = 26 possible children)</td></tr>
+      <tr><td><strong>Each Node</strong></td><td>Has an array of 26 child pointers (one per letter A through Z)</td></tr>
+      <tr><td><strong>is_end flag</strong></td><td>Marks whether a complete word ends at this node (1 = yes, 0 = no)</td></tr>
+      <tr><td><strong>Shared Prefixes</strong></td><td>"AAPL" and "AMD" share the "A" node — memory efficient for common prefixes!</td></tr>
+      <tr><td><strong>No Hashing</strong></td><td>Unlike hash tables, tries don't use hash functions — they use character-by-character navigation</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-gold">
+    <div class="callout-title">⚡ Trie vs Hash Table vs Binary Search Tree</div>
+    <p><strong>Hash Table:</strong> O(1) lookup but CANNOT do prefix search. "A" se start hone wale sab stocks nahi mil sakte.<br>
+    <strong>BST/AVL:</strong> O(log n) lookup, can do range queries but not prefix matching efficiently.<br>
+    <strong>Trie:</strong> O(m) lookup where m = key length. <strong>CAN do prefix search!</strong> Type "A" and instantly get all stocks starting with A. This is WHY we use Trie for auto-complete.</p>
+  </div>
+</div>
+
+<hr>
+
+<!-- SECTION 2: WHY TRIE -->
+<div class="section" id="why-trie">
+  <div class="section-number">Section 02</div>
+  <h2>Why <span class="green">Trie</span> for Stock Symbols?</h2>
+
+  <p>In a real stock market application, users search for stocks by typing partial symbols. When a user types <code>"A"</code>, the system should instantly suggest <strong>AAPL, AMD, AMZN, ADBE, AVGO</strong> — all symbols starting with "A".</p>
+
+  <h4>Real-World Use Case</h4>
+  <div class="flow-box">
+User types: "A"   → Suggestions: AAPL, ADBE, AMD, AMZN, AVGO
+User types: "AA"  → Suggestions: AAPL
+User types: "AAP" → Suggestions: AAPL
+User types: "AAPL"→ Exact match found! Price: $178.50</div>
+
+  <h4>Our Implementation Stores</h4>
+  <table>
+    <thead><tr><th>Stock Symbol</th><th>Price</th><th>Purpose in Trie</th></tr></thead>
+    <tbody>
+      <tr><td>AAPL</td><td>$178.50</td><td>Shares prefix "A" with AMD, AMZN, ADBE, AVGO</td></tr>
+      <tr><td>AMD</td><td>$195.30</td><td>Shares prefix "AM" with AMZN</td></tr>
+      <tr><td>AMZN</td><td>$173.80</td><td>Shares prefix "AM" with AMD</td></tr>
+      <tr><td>GOOGL</td><td>$142.30</td><td>Shares prefix "GOO" with GOOG</td></tr>
+      <tr><td>GOOG</td><td>$143.10</td><td>GOOG is a prefix OF GOOGL!</td></tr>
+      <tr><td>META</td><td>$485.60</td><td>Shares prefix "M" with MSFT</td></tr>
+      <tr><td>MSFT</td><td>$410.20</td><td>Shares prefix "M" with META</td></tr>
+      <tr><td>NVDA</td><td>$875.30</td><td>Shares prefix "N" with NFLX</td></tr>
+      <tr><td>NFLX</td><td>$625.40</td><td>Shares prefix "N" with NVDA</td></tr>
+      <tr><td>TSLA</td><td>$248.50</td><td>Shares prefix "T" with TXN</td></tr>
+      <tr><td>+ 8 more</td><td>...</td><td>IBM, INTC, ORCL, ADBE, CSCO, AVGO, TXN, QCOM</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-blue">
+    <div class="callout-title">📌 Syllabus Connection — Unit 3: String Data Structures</div>
+    <p><strong>Tries are part of Unit 3</strong> in the ADS syllabus. This implementation directly demonstrates: (1) Prefix tree construction, (2) O(m) character-by-character insertion and search, (3) Auto-complete via DFS traversal, (4) Space-time tradeoff with 26-ary branching. It also connects to <strong>String Searching algorithms (KMP, Boyer-Moore)</strong> from the same unit.</p>
+  </div>
+</div>

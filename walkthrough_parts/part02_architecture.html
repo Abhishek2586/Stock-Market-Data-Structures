@@ -1,0 +1,83 @@
+<!-- ═══════════ PART 2: SYSTEM ARCHITECTURE ═══════════ -->
+
+<!-- 2. SYSTEM ARCHITECTURE -->
+<div class="section" id="architecture">
+  <div class="section-number">Section 02</div>
+  <h2>System <span class="gold">Architecture</span></h2>
+
+  <h3>Three-Layer Architecture</h3>
+  <p>The system follows a <strong>three-layer architecture</strong>: a premium web frontend communicates with a Python server, which compiles and executes the C data structure modules on demand.</p>
+
+  <div class="mermaid">
+graph TB
+    subgraph Frontend["Frontend — HTML/CSS/JS (6 Pages)"]
+        OV["Overview Dashboard"]
+        HT["Hash Table Page"]
+        PQ["Priority Queue Page"]
+        AVL["AVL Tree Page"]
+        HP["Heap Page"]
+        TR["Trie Page"]
+    end
+    subgraph Server["Python Web Server — server.py"]
+        HTTP["HTTP Handler<br/>GET /run?module=N"]
+        COMPILE["GCC Compiler<br/>gcc -o stock_market *.c"]
+        EXEC["Process Executor<br/>subprocess.run()"]
+    end
+    subgraph CBackend["C Backend — 5 Data Structure Modules"]
+        M1["member1_hashtable.c<br/>Hash Table + Chaining"]
+        M2["member2_priority_queue.c<br/>Min-Heap Priority Queue"]
+        M3["member3_avltree.c<br/>AVL Tree + Rotations"]
+        M4["member4_heap.c<br/>Max/Min Heap Ranking"]
+        M5["member5_trie.c<br/>Trie Auto-Complete"]
+    end
+    subgraph Data["Shared Data — stock_data.h"]
+        SD["12 StockRecords<br/>AAPL, GOOGL, MSFT, ..."]
+    end
+    Frontend -->|"HTTP GET /run?module=1"| HTTP
+    HTTP --> COMPILE
+    COMPILE --> EXEC
+    EXEC -->|"stdin: choice"| M1
+    EXEC -->|"stdin: choice"| M2
+    EXEC -->|"stdin: choice"| M3
+    EXEC -->|"stdin: choice"| M4
+    EXEC -->|"stdin: choice"| M5
+    M1 -->|"stdout: results"| HTTP
+    HTTP -->|"JSON response"| Frontend
+    SD --> M1
+    SD --> M2
+    SD --> M3
+    SD --> M4
+    SD --> M5
+  </div>
+
+  <h3>Data Flow — What Happens When You Click "Run Live"</h3>
+  <div class="mermaid">
+sequenceDiagram
+    participant U as Browser (Frontend)
+    participant S as Python Server
+    participant G as GCC Compiler
+    participant C as C Binary (stock_market)
+
+    U->>S: GET /run?module=1 (Hash Table)
+    S->>G: gcc -o stock_market *.c -lm
+    G-->>S: Compiled binary
+    S->>C: Execute with stdin "1\n0\n"
+    C->>C: run_hashtable() executes
+    C-->>S: stdout: Insert/Search/Stats output
+    S-->>U: JSON {"output": "...", "module": "1"}
+    U->>U: Parse output, render in console + visualizations
+  </div>
+
+  <h3>How the Frontend Renders Data Structures</h3>
+  <p>Each page in the frontend has <strong>two modes</strong> of operation:</p>
+  <ol>
+    <li><strong>Interactive JavaScript Mode</strong> — The frontend implements each data structure in JavaScript for real-time UI interaction (insert, search, visualize)</li>
+    <li><strong>Live C Execution Mode</strong> — Click "Run Live" to compile and execute the actual C code on the server, showing raw terminal output</li>
+  </ol>
+  <p>This dual approach lets users <strong>interact visually</strong> with the data structures while also seeing the <strong>actual C implementation output</strong>.</p>
+
+  <div class="callout callout-note">
+    <div class="callout-title">Architecture Highlights</div>
+    <p><strong>Real-time C compilation:</strong> The Python server compiles all 5 C files + main.c into a single binary using GCC. Each module is executed by sending the menu choice via stdin. <strong>CORS-enabled API:</strong> The server exposes <code>/run?module=N</code> and <code>/compile</code> endpoints. <strong>No external dependencies:</strong> Pure C with standard libraries only (stdio, stdlib, string, time, math).</p>
+  </div>
+</div>

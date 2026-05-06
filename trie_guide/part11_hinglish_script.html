@@ -1,0 +1,166 @@
+<!-- PART 11: HINGLISH FUN EXPLANATORY SCRIPT -->
+
+<hr>
+<div class="section" id="script">
+  <div class="section-number">Section 12</div>
+  <h2>🎬 Hinglish <span class="green">Explanatory Script</span> — Fun & Easy!</h2>
+
+  <p>Isko padho aur code yaad kar lo. Jab mam pooche, confidently bol dena. 😎</p>
+
+  <div class="script-box">
+    <strong>🎬 SCENE 1: TRIE KYA HAI? — The Phone Contacts Analogy</strong><br><br>
+
+    Bhai, Trie ko samjhne ka sabse easy tarika hai — <strong>apna phone kholo!</strong> 📱<br><br>
+
+    Jab tum contacts mein "A" type karte ho, to kya hota hai? Amit, Ankit, Aman — sab suggestions aa jaate hain. Ab "AM" type karo — sirf Amit aur Aman dikhega. "AMA" type karo — sirf Aman!<br><br>
+
+    <strong>YAHI TO TRIE HAI!</strong> 🌳 Ek aisa tree jismein har node ek letter hai. Root se kisi bhi leaf tak ka path ek complete word spell karta hai. Aur prefix type karo — usse related saare words mil jaate hain. <strong>Bina poore contacts ko scan kiye!</strong><br><br>
+
+    Trie ka naam aaya hai "re-TRIE-val" se. Pronounce karte hain "TRY" — like "let's give it a try!" 😄<br><br>
+
+    <hr style="border:none;border-top:1px dashed rgba(201,168,76,0.3);margin:20px 0">
+
+    <strong>🎬 SCENE 2: STRUCT — Har Node Kya Store Karta Hai?</strong><br><br>
+
+    Socho ek dabba hai. <strong>Har dabbe mein 26 chhote drawers hain</strong> — A se Z tak. 🗄️<br><br>
+
+    <code>children[26]</code> — Yeh hai 26 drawers! Har drawer mein ya to <strong>NULL hai</strong> (drawer khaali) ya <strong>ek aur dabba hai</strong> (agla node). Agar "AAPL" daalte ho, to:<br>
+    Root ke drawer 'A' mein ek naya dabba → uske drawer 'A' mein ek naya dabba → uske drawer 'P' mein ek naya dabba → uske drawer 'L' mein ek naya dabba.<br><br>
+
+    <code>is_end</code> — Yeh ek <strong>flag hai, jaise chhoti si jhandi</strong> 🚩. Agar jhandi lagi hai (is_end=1) to "bhai yahan ek complete word khatam hota hai!" Agar nahi lagi (is_end=0) to "yeh sirf raasta hai, yahan koi word khatam nahi hota."<br><br>
+
+    <code>symbol[]</code> — Last waale dabbe mein ek <strong>chit rakhi hai</strong> jismein poora naam likha hai — "AAPL". Taaki baad mein easily padh sakein.<br><br>
+
+    <code>last_price</code> — Chit ke saath <strong>price tag bhi hai</strong> — $178.50. 💰<br><br>
+
+    <hr style="border:none;border-top:1px dashed rgba(201,168,76,0.3);margin:20px 0">
+
+    <strong>🎬 SCENE 3: CALLOC vs MALLOC — Safaai Waala Memory</strong><br><br>
+
+    <code>calloc(1, sizeof(TrieNode))</code> — Yeh hai <strong>safaai waala memory</strong>! 🧹<br><br>
+
+    <strong>malloc</strong> = Ek naya kamra deta hai but kamra GANDA hai — kachra pada hai (garbage values). Tumhe khud saaf karna padega.<br><br>
+
+    <strong>calloc</strong> = Ek naya kamra deta hai aur <strong>pehle se SAAF karke deta hai!</strong> Sab zero. Sab pointers NULL. Sab numbers 0. Clean slate! ✨<br><br>
+
+    Isliye calloc use karte hain — 26 children pointers automatically NULL ho jaate hain. Warna 26 baar <code>children[i] = NULL;</code> likhna padta! Kaun itna kaam karega bhai? 😂<br><br>
+
+    <hr style="border:none;border-top:1px dashed rgba(201,168,76,0.3);margin:20px 0">
+
+    <strong>🎬 SCENE 4: CHAR_IDX — Letter Ko Number Mein Badlo</strong><br><br>
+
+    <code>toupper(c) - 'A'</code> — Yeh hai <strong>letter-to-number converter</strong>! 🔢<br><br>
+
+    ASCII mein 'A'=65, 'B'=66, ... 'Z'=90. Agar hum 'A' minus karte hain:<br>
+    'A'-'A' = 65-65 = <strong>0</strong> → children[0]<br>
+    'B'-'A' = 66-65 = <strong>1</strong> → children[1]<br>
+    'M'-'A' = 77-65 = <strong>12</strong> → children[12]<br>
+    'Z'-'A' = 90-65 = <strong>25</strong> → children[25]<br><br>
+
+    <code>toupper()</code> pehle small ko capital bana deta hai. Taaki 'a' aur 'A' dono same jagah jaayein. <strong>Case-insensitive search!</strong> 🎯<br><br>
+
+    <hr style="border:none;border-top:1px dashed rgba(201,168,76,0.3);margin:20px 0">
+
+    <strong>🎬 SCENE 5: INSERT — Ek-Ek Letter Se Raasta Banao</strong><br><br>
+
+    Socho tum <strong>jungle mein raasta bana rahe ho</strong> 🌿:<br><br>
+
+    <strong>"AAPL" insert karna hai:</strong><br>
+    1. Root pe khade ho. 'A' ka drawer check karo — khaali? Naya dabba banao, andar jaao ✅<br>
+    2. Naye dabbe mein. 'A' ka drawer check karo — khaali? Naya dabba banao, andar jaao ✅<br>
+    3. Naye dabbe mein. 'P' ka drawer check karo — khaali? Naya dabba banao, andar jaao ✅<br>
+    4. Naye dabbe mein. 'L' ka drawer check karo — khaali? Naya dabba banao, andar jaao ✅<br>
+    5. Word khatam! Jhandi lagao 🚩 (is_end=1), chit rakho ("AAPL"), price tag lagao ($178.50)<br><br>
+
+    <strong>Ab "AMD" insert karo:</strong><br>
+    1. Root pe khade ho. 'A' ka drawer check karo — <strong>ALREADY FILLED!</strong> Naya banane ki zaroorat nahi, seedha andar jaao ✅ (PREFIX SHARING!)<br>
+    2. 'A' waale dabbe mein. 'M' ka drawer check karo — khaali? Naya dabba banao ✅<br>
+    3. 'M' waale dabbe mein. 'D' ka drawer check karo — khaali? Naya dabba banao ✅<br>
+    4. Jhandi lagao 🚩, chit rakho, price tag lagao!<br><br>
+
+    <strong>Dekha?</strong> "AAPL" aur "AMD" dono 'A' share karte hain. Yeh hai Trie ki taaqat — <strong>common prefixes share hote hain!</strong> Memory bachti hai! 💪<br><br>
+
+    <hr style="border:none;border-top:1px dashed rgba(201,168,76,0.3);margin:20px 0">
+
+    <strong>🎬 SCENE 6: SEARCH — Raaste Pe Chalo, Jhandi Dhundo</strong><br><br>
+
+    <strong>"GOOGL" search karo:</strong><br>
+    1. Root pe khade ho. 'G' ka drawer check — hai? ✅ andar jaao<br>
+    2. 'O' ka drawer — hai? ✅ andar jaao<br>
+    3. 'O' ka drawer — hai? ✅ andar jaao<br>
+    4. 'G' ka drawer — hai? ✅ andar jaao<br>
+    5. 'L' ka drawer — hai? ✅ andar jaao<br>
+    6. Jhandi hai? ✅ (is_end=1) → <strong>FOUND!</strong> 🎉<br><br>
+
+    <strong>"XYZ" search karo:</strong><br>
+    1. Root pe khade ho. 'X' ka drawer check — <strong>KHAALI! NULL!</strong> ❌<br>
+    2. TATA BYE BYE → return 0 → <strong>NOT FOUND!</strong><br><br>
+
+    <strong>"AM" search karo (TRICKY!):</strong><br>
+    1. Root → 'A' ✅ → 'M' ✅<br>
+    2. Jhandi check — <strong>NAHI HAI!</strong> (is_end=0) ❌<br>
+    3. "AM" sirf raasta hai, word nahi → <strong>NOT FOUND!</strong><br><br>
+
+    Isliye <code>is_end</code> flag zaroori hai — bina iske "AM" bhi found show hota! 🚩<br><br>
+
+    <hr style="border:none;border-top:1px dashed rgba(201,168,76,0.3);margin:20px 0">
+
+    <strong>🎬 SCENE 7: AUTO-COMPLETE — DFS Ka Jaadu</strong><br><br>
+
+    <strong>Prefix "A" ke liye suggestions chahiye:</strong><br><br>
+
+    Step 1: <strong>Pehle "A" tak pahuncho</strong> — Root se 'A' waale dabbe mein jaao. Bas ek step.<br><br>
+
+    Step 2: <strong>Ab DFS karo — har drawer kholo, andar jaao, jhandi dhundo!</strong> 🔍<br><br>
+
+    "A" ke andar 'A' drawer kholo → andar jaao → 'P' kholo → andar jaao → 'L' kholo → <strong>JHANDI MILI! "AAPL"!</strong> ✅ Wapas jaao...<br>
+    'D' drawer kholo → andar jaao → 'B' kholo → 'E' kholo → <strong>JHANDI! "ADBE"!</strong> ✅ Wapas...<br>
+    'M' drawer kholo → 'D' kholo → <strong>JHANDI! "AMD"!</strong> ✅<br>
+    'M' drawer se wapas jaao → 'Z' kholo → 'N' kholo → <strong>JHANDI! "AMZN"!</strong> ✅<br>
+    Aur aise hi... "AVGO" bhi mil jaayega! ✅<br><br>
+
+    <strong>Result:</strong> Prefix "A" → AAPL, ADBE, AMD, AMZN, AVGO — <strong>Alphabetical order mein!</strong> 🔤<br>
+    (Kyunki hum 0 se 25 tak loop karte hain, 'A' pehle aata hai, fir 'B', fir 'C'...)<br><br>
+
+    <hr style="border:none;border-top:1px dashed rgba(201,168,76,0.3);margin:20px 0">
+
+    <strong>🎬 SCENE 8: TYPING SIMULATION — Real Auto-Complete!</strong><br><br>
+
+    User type kar raha hai "AAPL" ek-ek letter se:<br><br>
+
+    Type "A" → <strong>5 suggestions!</strong> AAPL, ADBE, AMD, AMZN, AVGO 📱<br>
+    Type "AA" → <strong>1 suggestion!</strong> AAPL (narrowed down!) 🎯<br>
+    Type "AAP" → <strong>1 suggestion!</strong> AAPL 🎯<br>
+    Type "AAPL" → <strong>Exact match!</strong> Show price $178.50 💰<br><br>
+
+    Jaise Google Search mein type karte ho aur suggestions narrow hoti jaati hain — <strong>EXACTLY wahi concept!</strong> 🔥<br><br>
+
+    <hr style="border:none;border-top:1px dashed rgba(201,168,76,0.3);margin:20px 0">
+
+    <strong>🎬 SCENE 9: SPACE-TIME TRADEOFF — Memory vs Speed</strong><br><br>
+
+    <strong>Hash Table:</strong> Chhota sa kamra (2KB), but auto-complete nahi kar sakta 🏠<br>
+    <strong>Trie:</strong> Bada ghar (13KB), but instant auto-complete! 🏰<br><br>
+
+    Trie mein har node ke 26 drawers mein se zyaadatar <strong>khaali</strong> rehte hain. Jaise ek bada almari kharida but sirf 2-3 drawers use kar rahe — <strong>space waste!</strong> But jab zaroorat padti hai, <strong>instant access!</strong><br><br>
+
+    Yeh hai <strong>space-time tradeoff</strong> — zyaada memory do, zyaada speed lo! ⚡<br><br>
+
+    <hr style="border:none;border-top:1px dashed rgba(201,168,76,0.3);margin:20px 0">
+
+    <strong>🎬 SCENE 10: FINAL SUMMARY — 30 Second Revision</strong><br><br>
+
+    ✅ <strong>Trie</strong> = Tree jismein har node ek letter, root to leaf = word<br>
+    ✅ <strong>26 children</strong> = A to Z, har node mein 26 pointers<br>
+    ✅ <strong>is_end flag</strong> = "Yahan word khatam hota hai ya nahi"<br>
+    ✅ <strong>Insert</strong> = Ek-ek letter ka raasta banao, end pe jhandi lagao (O(m))<br>
+    ✅ <strong>Search</strong> = Raaste pe chalo, jhandi dhundo (O(m))<br>
+    ✅ <strong>Auto-complete</strong> = Prefix tak jaao + DFS se sab jhandi waale dhundo (O(m+r))<br>
+    ✅ <strong>calloc</strong> = Saaf memory, malloc = gandi memory<br>
+    ✅ <strong>static</strong> = Private function, sirf is file mein use hoga<br>
+    ✅ <strong>char_idx</strong> = toupper(c) - 'A' = letter to 0-25 index<br>
+    ✅ <strong>Space-time tradeoff</strong> = Zyaada memory, zyaada speed! 🔥<br><br>
+
+    <strong>Ab jao aur mam ko impress karo! 🚀 Koi bhi line pooche — READY HO!</strong>
+  </div>
+</div>

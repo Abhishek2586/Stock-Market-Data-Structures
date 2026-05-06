@@ -1,0 +1,82 @@
+<!-- ═══════════ PART 11: TEAM DIVISION + PRESENTATION GUIDE ═══════════ -->
+
+<div class="section" id="team">
+  <div class="section-number">Section 13</div>
+  <h2>Team Division &amp; <span class="gold">Presentation Guide</span></h2>
+
+  <div class="member">
+    <div class="member-head">
+      <div class="member-avatar" style="background:linear-gradient(135deg,#ef4444,#dc2626)">1</div>
+      <div><div class="member-name">Member 1 — Hash Table Specialist</div><div class="member-role">File: member1_hashtable.c · Data Structure: Hash Table with Chaining</div></div>
+    </div>
+    <h4>Presentation Script</h4>
+    <div class="script-box">
+      <strong>"I implemented the Hash Table module which provides O(1) average-time stock lookup."</strong><br><br>
+      "My module uses the <strong>djb2 hash function</strong> — a well-known algorithm by Daniel Bernstein that multiplies the hash by 33 and adds each character. This maps stock symbols like 'AAPL' to bucket indices in a 100-element array."<br><br>
+      "When two symbols hash to the same bucket — a <strong>collision</strong> — I use <strong>separate chaining</strong> with linked lists. Each bucket is the head of a linked list that stores all stocks at that index."<br><br>
+      "The <strong>load factor</strong> is total_stocks / table_size. With 12 stocks in 100 buckets, it's 0.12 — very low, meaning few collisions. In the demo, I insert all 12 stocks, perform lookups, and display the chain distribution."<br><br>
+      <strong>Key concepts I can explain:</strong> djb2 hash function, separate chaining, collision handling, load factor, O(1) amortized complexity.
+    </div>
+  </div>
+
+  <div class="member">
+    <div class="member-head">
+      <div class="member-avatar" style="background:linear-gradient(135deg,#3b82f6,#2563eb)">2</div>
+      <div><div class="member-name">Member 2 — Priority Queue Specialist</div><div class="member-role">File: member2_priority_queue.c · Data Structure: Min-Heap Priority Queue</div></div>
+    </div>
+    <h4>Presentation Script</h4>
+    <div class="script-box">
+      <strong>"I implemented the Priority Queue module using a Min-Heap for urgent stock alert processing."</strong><br><br>
+      "In a stock market, CRITICAL alerts like trading halts must be processed before routine price updates. My <strong>min-heap priority queue</strong> ensures the most urgent alert (lowest priority number) is always at the root."<br><br>
+      "When an alert is inserted, <strong>heapify_up</strong> bubbles it upward if it has higher urgency than its parent. When the top alert is extracted, <strong>heapify_down</strong> pushes the replacement element to the correct position."<br><br>
+      "The demo inserts 10 alerts in random priority order, then extracts them all — you can see CRITICAL alerts always come out first, regardless of when they were inserted. Both insert and extract are <strong>O(log n)</strong>."<br><br>
+      <strong>Key concepts I can explain:</strong> Min-heap property, heapify_up, heapify_down, O(log n) insert/extract, O(1) peek, parent/child index formulas.
+    </div>
+  </div>
+
+  <div class="member">
+    <div class="member-head">
+      <div class="member-avatar" style="background:linear-gradient(135deg,#f97316,#ea580c)">3</div>
+      <div><div class="member-name">Member 3 — AVL Tree Specialist</div><div class="member-role">File: member3_avltree.c · Data Structure: AVL Tree (Self-Balancing BST)</div></div>
+    </div>
+    <h4>Presentation Script</h4>
+    <div class="script-box">
+      <strong>"I implemented the AVL Tree module for storing historical stock prices in a self-balancing binary search tree."</strong><br><br>
+      "An AVL tree maintains the <strong>balance factor</strong> — the height difference between left and right subtrees — at every node within {-1, 0, +1}. If insertion causes an imbalance, automatic <strong>rotations</strong> restore balance."<br><br>
+      "There are <strong>four rotation cases:</strong> LL (right rotation), RR (left rotation), LR (left-right double rotation), and RL (right-left double rotation). Each rotation takes O(1) time."<br><br>
+      "In the demo, I insert 20 price records with timestamps. The tree rebalances itself through rotations, maintaining O(log n) height. The inorder traversal shows prices sorted by timestamp."<br><br>
+      <strong>Key concepts I can explain:</strong> Balance factor, LL/RR/LR/RL rotations, O(log n) guaranteed worst-case, height update after insertion, inorder traversal for sorted output.
+    </div>
+  </div>
+
+  <div class="member">
+    <div class="member-head">
+      <div class="member-avatar" style="background:linear-gradient(135deg,#a855f7,#9333ea)">4</div>
+      <div><div class="member-name">Member 4 — Heap Specialist</div><div class="member-role">File: member4_heap.c · Data Structure: Max-Heap &amp; Min-Heap (Dual)</div></div>
+    </div>
+    <h4>Presentation Script</h4>
+    <div class="script-box">
+      <strong>"I implemented the dual Heap module — a Max-Heap for top gainers and a Min-Heap for top losers."</strong><br><br>
+      "Stocks with positive change go into the <strong>max-heap</strong> (gainers), where the root always holds the biggest gainer. Stocks with negative change go into the <strong>min-heap</strong> (losers), where the root holds the biggest loser."<br><br>
+      "This effectively implements a <strong>Double Ended Priority Queue (DEPQ)</strong> — we can extract the maximum from one heap and the minimum from another in O(log n) each."<br><br>
+      "The <strong>heapify_up</strong> function uses a boolean flag <code>is_max_heap</code> to decide comparison direction. The same code handles both max and min heaps with a single flag."<br><br>
+      <strong>Key concepts I can explain:</strong> Max-heap vs min-heap, DEPQ, heapify_up/down, top-K extraction, array-based complete binary tree, parent-child index formulas.
+    </div>
+  </div>
+
+  <div class="member">
+    <div class="member-head">
+      <div class="member-avatar" style="background:linear-gradient(135deg,#22c55e,#16a34a)">5</div>
+      <div><div class="member-name">Member 5 — Trie Specialist</div><div class="member-role">File: member5_trie.c · Data Structure: Trie (Prefix Tree)</div></div>
+    </div>
+    <h4>Presentation Script</h4>
+    <div class="script-box">
+      <strong>"I implemented the Trie module for stock symbol auto-complete functionality."</strong><br><br>
+      "A trie is a <strong>26-ary tree</strong> where each node has up to 26 children (one per letter). To insert 'AAPL', we create nodes A → A → P → L, marking L as an end-of-word."<br><br>
+      "For <strong>auto-complete</strong>, we traverse to the prefix node (e.g., 'A'), then run a DFS to collect all complete words below it — returning AAPL, AMD, AMZN, ADBE, AVGO."<br><br>
+      "Search is <strong>O(m)</strong> where m is the key length — independent of how many symbols are stored. This is the key advantage over hash tables for prefix queries."<br><br>
+      "The <strong>space-time tradeoff</strong> is important: each node uses 26 pointers (even if most are NULL), but this enables instant prefix matching. With 18 symbols, we create 58 nodes using about 11.8KB."<br><br>
+      <strong>Key concepts I can explain:</strong> 26-ary branching, O(m) search, prefix matching, DFS collection, space-time tradeoff, is_end flag.
+    </div>
+  </div>
+</div>

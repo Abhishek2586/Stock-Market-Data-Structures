@@ -1,0 +1,57 @@
+<!-- 4. MEMBER 1: HASH TABLE -->
+<div class="sec" id="t1">
+  <div class="sn">Section 04 — Member 1</div>
+  <h2>Hash Table with <span class="g">Chaining</span></h2>
+
+  <h3>What Is It? (Explain to Faculty)</h3>
+  <p>A <strong>Hash Table</strong> is a data structure that maps keys to values using a hash function. The hash function converts a key (e.g., stock symbol "AAPL") into an array index. This enables <strong>O(1) average-time</strong> insert, search, and delete — the fastest possible lookup for key-value data.</p>
+  <p>When two keys map to the same index (a <strong>collision</strong>), we need a strategy. Our project uses <strong>separate chaining</strong> — each bucket stores a linked list of all elements that hash to that index.</p>
+
+  <h3>Where Is It Applied? (Code)</h3>
+
+  <h4>The djb2 Hash Function</h4>
+  <pre data-lang="C"><code><span class="cm">// File: member1_hashtable.c → hash_function()</span>
+<span class="cm">// Daniel Bernstein's djb2 — one of the most effective string hash algorithms</span>
+
+<span class="type">unsigned int</span> <span class="fn">hash_function</span>(<span class="kw">const</span> <span class="type">char</span>* key) {
+    <span class="type">unsigned long</span> hash = <span class="num">5381</span>;         <span class="cm">// Magic starting value</span>
+    <span class="type">int</span> c;
+    <span class="kw">while</span>((c = *key++))
+        hash = ((hash &lt;&lt; <span class="num">5</span>) + hash) + c;  <span class="cm">// hash * 33 + c</span>
+    <span class="kw">return</span> hash % TABLE_SIZE;           <span class="cm">// Modulo 100 → bucket index</span>
+}</code></pre>
+  <p><strong>Explain to faculty:</strong> "This is the <strong>djb2 hash function</strong> by Daniel Bernstein. It starts with 5381, then for each character: multiplies the hash by 33 (via bit shift + addition) and adds the character's ASCII value. The modulo operation maps the result to one of our 100 buckets. This produces a <strong>uniform distribution</strong> — minimizing collisions."</p>
+
+  <h4>Collision Handling — Separate Chaining</h4>
+  <pre data-lang="C"><code><span class="cm">// File: member1_hashtable.c → ht_insert()</span>
+<span class="cm">// When AAPL hashes to index 11 and AMZN also hashes to 11 → COLLISION</span>
+
+<span class="kw">void</span> <span class="fn">ht_insert</span>(HashTable* ht, StockRecord stock) {
+    <span class="type">int</span> index = hash_function(stock.symbol);  <span class="cm">// Get bucket index</span>
+
+    <span class="cm">// Check if already exists — traverse the chain</span>
+    HashNode* curr = ht-&gt;buckets[index];
+    <span class="kw">while</span>(curr) {
+        <span class="kw">if</span>(strcmp(curr-&gt;stock.symbol, stock.symbol) == <span class="num">0</span>) {
+            curr-&gt;stock = stock;  <span class="cm">// Update existing entry</span>
+            <span class="kw">return</span>;
+        }
+        curr = curr-&gt;next;
+    }
+
+    <span class="cm">// New entry — prepend to linked list at this bucket</span>
+    HashNode* node = malloc(<span class="kw">sizeof</span>(HashNode));
+    node-&gt;stock = stock;
+    node-&gt;next = ht-&gt;buckets[index];  <span class="cm">// Point to old head</span>
+    ht-&gt;buckets[index] = node;          <span class="cm">// New head</span>
+    ht-&gt;count++;
+}</code></pre>
+  <p><strong>Explain to faculty:</strong> "When two symbols hash to the same index — like AAPL and AMZN both mapping to index 11 — we have a <strong>collision</strong>. Instead of finding another slot (open addressing), we use <strong>separate chaining</strong>: each bucket is a linked list. New collisions are prepended in O(1). Search traverses the chain — O(1) average with a good hash function and low load factor."</p>
+
+  <div class="co co-g">
+    <div class="ct2">Syllabus Connection</div>
+    <p><strong>Foundation:</strong> Hashing fundamentals — hash functions, collision resolution strategies. Our project implements <strong>separate chaining</strong> (linked list at each bucket). The syllabus also covers <strong>open addressing</strong> (linear/quadratic probing, double hashing) — explain the tradeoff: chaining is simpler and handles high load factors better; open addressing has better cache performance but degrades past ~70% load factor.</p>
+  </div>
+</div>
+
+<hr>

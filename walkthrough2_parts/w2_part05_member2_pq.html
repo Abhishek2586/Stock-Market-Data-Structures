@@ -1,0 +1,67 @@
+<!-- 5. MEMBER 2: PRIORITY QUEUE -->
+<div class="sec" id="t2">
+  <div class="sn">Section 05 — Member 2</div>
+  <h2>Priority Queue — <span class="g">Min-Heap</span></h2>
+
+  <h3>What Is It? (Explain to Faculty)</h3>
+  <p>A <strong>Priority Queue</strong> is an abstract data type where each element has a priority. Unlike a regular queue (FIFO), elements are dequeued in <strong>priority order</strong> — the highest-priority element comes out first, regardless of when it was inserted.</p>
+  <p>We implement it using a <strong>Min-Heap</strong> — a complete binary tree where every parent node has a priority value ≤ its children. The root always holds the minimum (most urgent) element.</p>
+
+  <h3>Where Is It Applied? (Code)</h3>
+
+  <h4>Heapify Up — Restoring Heap After Insert</h4>
+  <pre data-lang="C"><code><span class="cm">// File: member2_priority_queue.c → heapify_up()</span>
+<span class="cm">// After inserting at the end, bubble the element UP until heap property holds</span>
+
+<span class="kw">void</span> <span class="fn">heapify_up</span>(PriorityQueue* pq, <span class="type">int</span> idx) {
+    <span class="kw">while</span>(idx > <span class="num">0</span>) {
+        <span class="type">int</span> parent = (idx - <span class="num">1</span>) / <span class="num">2</span>;          <span class="cm">// Parent index formula</span>
+        <span class="kw">if</span>(pq-&gt;heap[parent].priority > pq-&gt;heap[idx].priority) {
+            swap(&amp;pq-&gt;heap[parent], &amp;pq-&gt;heap[idx]);  <span class="cm">// Parent is bigger → swap</span>
+            idx = parent;                               <span class="cm">// Continue up</span>
+        } <span class="kw">else break</span>;                               <span class="cm">// Heap property satisfied</span>
+    }
+}</code></pre>
+  <p><strong>Explain to faculty:</strong> "After inserting a new alert at the end of the array, <code>heapify_up</code> compares it with its parent. If the new element has <strong>higher urgency</strong> (lower priority number), it swaps upward. This continues until the root is reached or the heap property is satisfied. This is O(log n) — the height of the tree."</p>
+
+  <h4>Heapify Down — Restoring Heap After Extract</h4>
+  <pre data-lang="C"><code><span class="cm">// File: member2_priority_queue.c → heapify_down()</span>
+<span class="cm">// After extracting root and moving last element to root, push it DOWN</span>
+
+<span class="kw">void</span> <span class="fn">heapify_down</span>(PriorityQueue* pq, <span class="type">int</span> idx) {
+    <span class="type">int</span> size = pq-&gt;size;
+    <span class="kw">while</span>(<span class="num">1</span>) {
+        <span class="type">int</span> smallest = idx;
+        <span class="type">int</span> left  = <span class="num">2</span> * idx + <span class="num">1</span>;              <span class="cm">// Left child index</span>
+        <span class="type">int</span> right = <span class="num">2</span> * idx + <span class="num">2</span>;              <span class="cm">// Right child index</span>
+
+        <span class="kw">if</span>(left &lt; size &amp;&amp; pq-&gt;heap[left].priority &lt; pq-&gt;heap[smallest].priority)
+            smallest = left;
+        <span class="kw">if</span>(right &lt; size &amp;&amp; pq-&gt;heap[right].priority &lt; pq-&gt;heap[smallest].priority)
+            smallest = right;
+
+        <span class="kw">if</span>(smallest == idx) <span class="kw">break</span>;           <span class="cm">// Heap property satisfied</span>
+        swap(&amp;pq-&gt;heap[idx], &amp;pq-&gt;heap[smallest]);
+        idx = smallest;
+    }
+}</code></pre>
+  <p><strong>Explain to faculty:</strong> "After extracting the root (most urgent alert), we move the last element to the root position. <code>heapify_down</code> then pushes it to the correct position by comparing with both children and swapping with the <strong>smaller child</strong>. This maintains the min-heap invariant in O(log n)."</p>
+
+  <h4>Priority Levels in Our System</h4>
+  <table>
+    <thead><tr><th>Priority</th><th>Value</th><th>Example Alert</th><th>Processing Order</th></tr></thead>
+    <tbody>
+      <tr><td><strong style="color:#ef4444">CRITICAL</strong></td><td>1</td><td>Trading halt detected for TSLA</td><td>Processed FIRST</td></tr>
+      <tr><td><strong style="color:#f97316">HIGH</strong></td><td>2</td><td>Price dropped 10% — circuit breaker</td><td>Processed SECOND</td></tr>
+      <tr><td><strong style="color:#eab308">MEDIUM</strong></td><td>3</td><td>Volume spike — unusual activity</td><td>Processed THIRD</td></tr>
+      <tr><td><strong style="color:#22c55e">LOW</strong></td><td>4</td><td>Daily closing price update</td><td>Processed LAST</td></tr>
+    </tbody>
+  </table>
+
+  <div class="co co-g">
+    <div class="ct2">Syllabus Connection</div>
+    <p><strong>Unit 2:</strong> Single &amp; Double Ended Priority Queues — Our min-heap directly implements a Single Ended PQ. The syllabus extends to <strong>Leftist Trees</strong> (mergeable heaps), <strong>Binomial Heaps</strong> (efficient merge in O(log n)), and <strong>Fibonacci Heaps</strong> (amortized O(1) decrease-key). Explain: our min-heap is the <strong>foundational building block</strong> — all advanced PQ implementations build on the same heapify-up/down logic.</p>
+  </div>
+</div>
+
+<hr>

@@ -1,0 +1,127 @@
+<!-- PART 4: LINES 13-24 — STRUCT & GLOBALS -->
+
+<hr>
+<div class="section" id="struct">
+  <div class="section-number">Section 04</div>
+  <h2>Lines 13–24: <span class="green">Data Structure & Global Variables</span></h2>
+
+  <p>These lines define THE most important thing — the <strong>TrieNode structure</strong> and tracking variables.</p>
+
+  <h4>Line 13: ALPHABET_SIZE constant</h4>
+  <pre data-lang="C"><code>#<span class="kw">define</span> <span class="num">ALPHABET_SIZE</span> <span class="num">26</span></code></pre>
+
+  <div class="line-box">
+    <div class="line-num">Line 13</div>
+    <div class="line-code">#define ALPHABET_SIZE 26</div>
+    <div class="line-explain">
+      <strong>#define</strong> is a preprocessor macro. Before compilation, the compiler replaces EVERY occurrence of <code>ALPHABET_SIZE</code> with <code>26</code> in the code. It's like a find-and-replace.<br><br>
+      <strong>Why 26?</strong> Because English alphabet has 26 letters (A to Z). Our stock symbols only contain uppercase English letters, so each trie node needs exactly 26 child pointers — one for each letter.<br><br>
+      <strong>Faculty Answer:</strong> "ALPHABET_SIZE is defined as 26 because we're working with uppercase English letters A-Z. Each trie node will have an array of 26 child pointers, one for each possible character. This is a compile-time constant defined using a preprocessor macro."
+    </div>
+  </div>
+
+  <h4>Lines 15–20: The TrieNode Structure</h4>
+  <pre data-lang="C"><code><span class="kw">typedef struct</span> <span class="type">TrieNode</span> {
+    <span class="kw">struct</span> <span class="type">TrieNode</span>* children[<span class="num">ALPHABET_SIZE</span>];  <span class="cm">// 26 child pointers</span>
+    <span class="type">int</span> is_end;                              <span class="cm">// is this a complete word?</span>
+    <span class="type">char</span> symbol[<span class="num">MAX_SYMBOL_LEN</span>];             <span class="cm">// full symbol name</span>
+    <span class="type">double</span> last_price;                       <span class="cm">// stock price</span>
+} <span class="type">TrieNode</span>;</code></pre>
+
+  <div class="line-box">
+    <div class="line-num">Line 15</div>
+    <div class="line-code">typedef struct TrieNode {</div>
+    <div class="line-explain">
+      <strong>typedef</strong> = "type definition" — lets us create a custom name for a data type. Instead of writing <code>struct TrieNode</code> everywhere, we can just write <code>TrieNode</code>.<br><br>
+      <strong>struct TrieNode</strong> = we're defining a structure (a group of related variables bundled together). The name <code>TrieNode</code> after <code>struct</code> is needed because this struct is <strong>self-referential</strong> — it contains pointers to itself (children are TrieNode pointers).<br><br>
+      <strong>Faculty Answer:</strong> "This is a self-referential structure definition using typedef. The struct tag 'TrieNode' is necessary because the children array inside the struct needs to reference the same struct type, creating a recursive data structure."
+    </div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Line 16</div>
+    <div class="line-code">struct TrieNode* children[ALPHABET_SIZE];</div>
+    <div class="line-explain">
+      <strong>YEH SABSE IMPORTANT LINE HAI!</strong> 🔥<br><br>
+      This declares an array of 26 pointers. Each pointer can point to another TrieNode (child node).<br><br>
+      <code>children[0]</code> = pointer to child for letter 'A'<br>
+      <code>children[1]</code> = pointer to child for letter 'B'<br>
+      <code>children[2]</code> = pointer to child for letter 'C'<br>
+      ... <br>
+      <code>children[25]</code> = pointer to child for letter 'Z'<br><br>
+      If <code>children[i]</code> is <code>NULL</code>, it means no word passes through that letter at this level.<br>
+      If <code>children[i]</code> is NOT NULL, it points to the next node in the path.<br><br>
+      <strong>Memory Impact:</strong> Each node stores 26 pointers × 8 bytes (64-bit) = <strong>208 bytes per node</strong> just for the children array! This is the "space" cost of trie's fast speed.<br><br>
+      <strong>Faculty Answer:</strong> "This is a fixed-size array of 26 child pointers, implementing a 26-ary branching factor. Each index maps to a letter: index 0 for 'A', index 1 for 'B', through index 25 for 'Z'. A NULL pointer at index i means no word continues through that letter from this node. This design enables O(1) child lookup per character but uses more memory than alternatives like linked lists of children."
+    </div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Line 17</div>
+    <div class="line-code">int is_end;</div>
+    <div class="line-explain">
+      <strong>is_end</strong> is a flag (0 or 1) that marks whether a complete word ends at this node.<br><br>
+      <strong>Why is this needed?</strong> Consider "AMD" and "AMZN". After inserting "AMD", the node at D has <code>is_end = 1</code>. But the node at M (in the A→M path) has <code>is_end = 0</code> because "AM" is NOT a valid stock symbol — it's just a prefix.<br><br>
+      Without this flag, we couldn't tell if "AM" is an actual word or just a path to other words.<br><br>
+      <strong>Faculty Answer:</strong> "The is_end flag differentiates between nodes that merely form part of a path (prefix) and nodes that mark the completion of a stored key. For example, in the path A→M→D for 'AMD', the 'M' node has is_end=0 (just a prefix) while the 'D' node has is_end=1 (complete word)."
+    </div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Line 18</div>
+    <div class="line-code">char symbol[MAX_SYMBOL_LEN];</div>
+    <div class="line-explain">
+      Stores the FULL stock symbol string at the end node. When <code>is_end = 1</code>, this field contains the complete symbol like "AAPL" or "MSFT".<br><br>
+      <code>MAX_SYMBOL_LEN</code> is defined in <code>stock_data.h</code> (typically 10). So this is a character array that can hold up to 9 characters + 1 null terminator.<br><br>
+      <strong>Why store the full symbol?</strong> Because when we do auto-complete, we collect results from end nodes. Instead of reconstructing the word by walking back up the tree, we simply read <code>node->symbol</code>. Much simpler!<br><br>
+      <strong>Faculty Answer:</strong> "We store the complete symbol string at each end node for efficient retrieval during auto-complete. This avoids the need to reconstruct the word by tracing back from the leaf to the root, trading a small amount of extra storage for simpler collection logic."
+    </div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Line 19</div>
+    <div class="line-code">double last_price;</div>
+    <div class="line-explain">
+      Stores the stock price as a <strong>double</strong> (decimal number). Only meaningful at end nodes where <code>is_end = 1</code>.<br><br>
+      <code>double</code> = 64-bit floating point number, can store values like 178.50, 875.30, 1295.60 with decimal precision.<br><br>
+      <strong>Faculty Answer:</strong> "The last_price field stores the stock's price at end nodes, making the trie a key-value store — the key is the symbol (encoded in the path), and the value is the associated price data."
+    </div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Line 20</div>
+    <div class="line-code">} TrieNode;</div>
+    <div class="line-explain">
+      Closes the struct definition. The <code>TrieNode</code> after the closing brace is the typedef name — now we can use <code>TrieNode</code> as a type name directly instead of <code>struct TrieNode</code>.
+    </div>
+  </div>
+
+  <h4>Lines 22–23: Global Tracking Variables</h4>
+  <pre data-lang="C"><code><span class="kw">static</span> <span class="type">int</span> trie_nodes = <span class="num">0</span>;
+<span class="kw">static</span> <span class="type">int</span> trie_words = <span class="num">0</span>;</code></pre>
+
+  <div class="line-box">
+    <div class="line-num">Lines 22–23</div>
+    <div class="line-code">static int trie_nodes = 0;<br>static int trie_words = 0;</div>
+    <div class="line-explain">
+      Two counter variables to track trie statistics:<br><br>
+      <code>trie_nodes</code> — counts total number of TrieNode objects created (incremented in <code>trie_new_node()</code>)<br>
+      <code>trie_words</code> — counts total number of complete words inserted (incremented in <code>trie_insert()</code>)<br><br>
+      <strong>static keyword:</strong> Makes these variables <em class="hi">file-scoped</em> — they can only be accessed within this .c file. Other files (like member1_hashtable.c) cannot see or modify these variables. This prevents naming conflicts.<br><br>
+      <strong>Initialized to 0</strong> — they start fresh and get reset in <code>run_trie()</code>.<br><br>
+      <strong>Faculty Answer:</strong> "These are file-scope static variables used for tracking trie statistics. The static keyword limits their visibility to this translation unit, providing encapsulation. trie_nodes tracks total nodes created for memory analysis, and trie_words tracks total keys inserted."
+    </div>
+  </div>
+
+  <div class="callout callout-purple">
+    <div class="callout-title">📐 Memory Layout of One TrieNode</div>
+    <p>
+      <code>children[26]</code> = 26 × 8 bytes = <strong>208 bytes</strong> (pointers on 64-bit system)<br>
+      <code>is_end</code> = <strong>4 bytes</strong> (int)<br>
+      <code>symbol[10]</code> = <strong>10 bytes</strong> (char array)<br>
+      <code>last_price</code> = <strong>8 bytes</strong> (double)<br>
+      <strong>Total ≈ 230+ bytes per node</strong> (with padding for alignment)<br><br>
+      With 58 nodes for 18 stock symbols → approximately <strong>13.3 KB</strong> total memory.
+    </p>
+  </div>
+</div>

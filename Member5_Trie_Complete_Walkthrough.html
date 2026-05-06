@@ -1,0 +1,1265 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Member 5: TRIE — Complete Code Walkthrough & Faculty Guide</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+:root{--bg:#0a0e1a;--surface:#111827;--surface2:#1a2236;--border:#1e2a42;--gold:#c9a84c;--gold-dim:#a08535;--text:#e8e6e1;--text-dim:#9ca3af;--accent-blue:#3b82f6;--accent-green:#22c55e;--accent-red:#ef4444;--accent-purple:#a855f7;--accent-cyan:#06b6d4;--accent-orange:#f97316}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.75;font-size:15px}
+.cover{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#0a0e1a 0%,#0f1729 40%,#1a1a2e 100%);position:relative;overflow:hidden;text-align:center;padding:40px}
+.cover::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:repeating-linear-gradient(45deg,transparent,transparent 35px,rgba(34,197,94,0.02) 35px,rgba(34,197,94,0.02) 70px)}
+.cover-badge{background:rgba(34,197,94,0.1);border:1px solid var(--accent-green);color:var(--accent-green);padding:8px 24px;border-radius:100px;font-size:12px;letter-spacing:3px;text-transform:uppercase;font-weight:600;margin-bottom:40px}
+.cover h1{font-size:clamp(42px,6vw,72px);font-weight:900;color:var(--accent-green);letter-spacing:8px;text-transform:uppercase;margin-bottom:12px}
+.cover .subtitle{font-size:clamp(16px,2vw,22px);color:var(--text-dim);letter-spacing:6px;text-transform:uppercase;font-weight:300;margin-bottom:20px}
+.cover .tagline{font-size:18px;color:var(--gold);font-weight:500;margin-bottom:60px;font-style:italic}
+.cover-line{width:80px;height:2px;background:linear-gradient(90deg,transparent,var(--accent-green),transparent);margin-bottom:60px}
+.cover-meta{display:flex;gap:40px;flex-wrap:wrap;justify-content:center}
+.cover-meta-item{text-align:center}
+.cover-meta-item .label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--accent-green);opacity:0.7;margin-bottom:4px}
+.cover-meta-item .value{font-size:16px;color:var(--text);font-weight:600}
+.container{max-width:1100px;margin:0 auto;padding:60px 40px}
+.toc{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:40px 48px;margin-bottom:60px}
+.toc h2{font-size:24px;color:var(--accent-green);margin-bottom:24px;letter-spacing:2px}
+.toc ol{list-style:none;counter-reset:toc}.toc ol li{counter-increment:toc;margin-bottom:10px}
+.toc ol li::before{content:counter(toc,decimal-leading-zero) ".";color:var(--accent-green);font-weight:700;margin-right:12px;font-family:'JetBrains Mono',monospace;font-size:13px}
+.toc a{color:var(--text);text-decoration:none;font-weight:500;transition:color 0.2s}.toc a:hover{color:var(--accent-green)}
+.section{margin-bottom:72px;page-break-inside:avoid}
+.section-number{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--accent-green);letter-spacing:2px;text-transform:uppercase;font-weight:600;margin-bottom:8px}
+h2{font-size:32px;font-weight:800;color:var(--text);margin-bottom:32px;padding-bottom:16px;border-bottom:2px solid var(--border)}
+h2 .green{color:var(--accent-green)} h2 .gold{color:var(--gold)}
+h3{font-size:22px;font-weight:700;color:var(--text);margin:40px 0 20px}
+h4{font-size:16px;font-weight:600;color:var(--accent-green);margin:24px 0 12px;letter-spacing:1px}
+p{margin-bottom:16px;color:var(--text-dim)}strong{color:var(--text);font-weight:600}
+em.hi{color:var(--gold);font-style:normal;font-weight:600}
+table{width:100%;border-collapse:collapse;margin:20px 0 32px;font-size:14px}
+thead th{background:var(--surface2);color:var(--accent-green);padding:12px 16px;text-align:left;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;border-bottom:2px solid var(--accent-green)}
+tbody td{padding:12px 16px;border-bottom:1px solid var(--border);color:var(--text-dim);vertical-align:top}
+tbody tr:hover{background:rgba(34,197,94,0.03)}
+pre{background:#0d1117;border:1px solid var(--border);border-radius:12px;padding:24px;overflow-x:auto;margin:16px 0 28px;position:relative}
+pre::before{content:attr(data-lang);position:absolute;top:8px;right:12px;font-size:10px;color:var(--accent-green);opacity:0.5;letter-spacing:1px;text-transform:uppercase;font-family:'JetBrains Mono',monospace}
+code{font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.7}
+pre code{color:#c9d1d9}
+.kw{color:#ff7b72}.fn{color:#d2a8ff}.str{color:#a5d6ff}.cm{color:#8b949e;font-style:italic}.num{color:#79c0ff}.type{color:#7ee787}.op{color:#ff7b72}
+p code,li code,td code{background:rgba(34,197,94,0.1);color:var(--accent-green);padding:2px 7px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:12px}
+.callout{border-radius:12px;padding:20px 24px;margin:20px 0 28px;border-left:4px solid}
+.callout-green{background:rgba(34,197,94,0.06);border-color:var(--accent-green)}.callout-green .callout-title{color:var(--accent-green)}
+.callout-gold{background:rgba(201,168,76,0.06);border-color:var(--gold)}.callout-gold .callout-title{color:var(--gold)}
+.callout-blue{background:rgba(59,130,246,0.06);border-color:var(--accent-blue)}.callout-blue .callout-title{color:var(--accent-blue)}
+.callout-red{background:rgba(239,68,68,0.06);border-color:var(--accent-red)}.callout-red .callout-title{color:var(--accent-red)}
+.callout-purple{background:rgba(168,85,247,0.06);border-color:var(--accent-purple)}.callout-purple .callout-title{color:var(--accent-purple)}
+.callout-title{font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.callout p{margin-bottom:0;font-size:14px}
+.line-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin:12px 0 20px}
+.line-box .line-num{font-family:'JetBrains Mono',monospace;color:var(--accent-green);font-weight:700;font-size:13px;margin-bottom:4px}
+.line-box .line-code{font-family:'JetBrains Mono',monospace;color:var(--accent-cyan);font-size:13px;margin-bottom:8px;background:#0d1117;padding:8px 12px;border-radius:6px}
+.line-box .line-explain{color:var(--text-dim);font-size:14px;line-height:1.7}
+.flow-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px 32px;margin:20px 0 28px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.8;white-space:pre;overflow-x:auto;color:var(--text-dim)}
+.script-box{background:linear-gradient(135deg,rgba(34,197,94,0.05),rgba(201,168,76,0.05));border:1px solid var(--border);border-radius:12px;padding:28px 32px;margin:20px 0 28px;font-size:15px;line-height:2;color:var(--text-dim)}
+.script-box strong{color:var(--gold)}
+.script-box .emoji{font-size:18px}
+ul,ol{margin:12px 0 20px 24px;color:var(--text-dim)}li{margin-bottom:6px}
+hr{border:none;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:48px 0}
+.footer{text-align:center;padding:60px 40px;border-top:1px solid var(--border);color:var(--text-dim);font-size:14px}
+</style>
+</head>
+<body>
+
+<!-- COVER PAGE -->
+<div class="cover">
+  <div class="cover-badge">Member 5 — Complete Faculty-Ready Walkthrough</div>
+  <h1>TRIE</h1>
+  <div class="subtitle">Prefix Tree — Stock Symbol Auto-Complete</div>
+  <div class="tagline">"Har line samjho, Mam koi bhi line pooch le — ready rahoge!"</div>
+  <div class="cover-line"></div>
+  <div class="cover-meta">
+    <div class="cover-meta-item"><div class="label">File</div><div class="value">member5_trie.c</div></div>
+    <div class="cover-meta-item"><div class="label">Lines</div><div class="value">141 Lines of C</div></div>
+    <div class="cover-meta-item"><div class="label">Functions</div><div class="value">6 Functions</div></div>
+    <div class="cover-meta-item"><div class="label">Data Structure</div><div class="value">Trie (Prefix Tree)</div></div>
+    <div class="cover-meta-item"><div class="label">Complexity</div><div class="value">O(m) search</div></div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- TABLE OF CONTENTS -->
+<div class="toc">
+  <h2>📑 Table of Contents</h2>
+  <ol>
+    <li><a href="#what-is-trie">What is a Trie? — The Big Picture</a></li>
+    <li><a href="#why-trie">Why Trie for Stock Symbols?</a></li>
+    <li><a href="#includes">Lines 1–11: Headers & Includes — Line by Line</a></li>
+    <li><a href="#struct">Lines 13–24: Data Structure & Global Variables</a></li>
+    <li><a href="#newnode">Lines 25–31: Helper Functions (trie_new_node, char_idx)</a></li>
+    <li><a href="#insert">Lines 33–46: trie_insert() — Full Breakdown</a></li>
+    <li><a href="#search">Lines 48–56: trie_search() — Exact Lookup</a></li>
+    <li><a href="#collect">Lines 58–76: collect() & get_suggestions() — Auto-Complete</a></li>
+    <li><a href="#runtrie">Lines 78–140: run_trie() — Main Driver Function</a></li>
+    <li><a href="#complexity">Complexity Analysis & Space-Time Tradeoff</a></li>
+    <li><a href="#faq">Faculty FAQ — Tricky Questions & Answers</a></li>
+    <li><a href="#script">🎬 Hinglish Explanatory Script — Fun & Easy</a></li>
+  </ol>
+</div>
+<!-- PART 2: WHAT IS A TRIE -->
+
+<div class="section" id="what-is-trie">
+  <div class="section-number">Section 01</div>
+  <h2>What is a <span class="green">Trie</span>? — The Big Picture</h2>
+
+  <p>A <strong>Trie</strong> (pronounced "try") comes from the word re<em>TRIE</em>val. It's a <strong>tree-like data structure</strong> where each node represents a single character. Paths from the root to marked nodes spell out complete words/keys.</p>
+
+  <div class="callout callout-green">
+    <div class="callout-title">🧠 Simple Analogy — Phone Ka Contacts</div>
+    <p>Jaise aapke phone mein "A" type karo to Amit, Ankit, Aman sab suggest hota hai — <strong>wahi kaam Trie karta hai!</strong> Trie ek tree hai jismein har node ek letter store karta hai. Root se kisi bhi leaf tak ka path ek complete word banata hai.</p>
+  </div>
+
+  <h4>Visual Example — How "AAPL", "AMD", "AMZN" are stored:</h4>
+  <div class="flow-box">
+         [ROOT]
+          |
+         [A]  ← First letter of all 3 words
+        /   \
+      [A]   [M]  ← Second letter branches
+       |    / \
+      [P] [D] [Z]  ← AMD ends here (is_end=1)
+       |       |
+      [L]     [N]  ← AAPL ends here, AMZN ends here
+  
+  Path ROOT→A→A→P→L = "AAPL" ✓
+  Path ROOT→A→M→D   = "AMD"  ✓  
+  Path ROOT→A→M→Z→N = "AMZN" ✓</div>
+
+  <h4>Key Properties of a Trie</h4>
+  <table>
+    <thead><tr><th>Property</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Root Node</strong></td><td>Always empty — represents the starting point, no character stored in it</td></tr>
+      <tr><td><strong>Each Edge</strong></td><td>Represents one character (A-Z in our case = 26 possible children)</td></tr>
+      <tr><td><strong>Each Node</strong></td><td>Has an array of 26 child pointers (one per letter A through Z)</td></tr>
+      <tr><td><strong>is_end flag</strong></td><td>Marks whether a complete word ends at this node (1 = yes, 0 = no)</td></tr>
+      <tr><td><strong>Shared Prefixes</strong></td><td>"AAPL" and "AMD" share the "A" node — memory efficient for common prefixes!</td></tr>
+      <tr><td><strong>No Hashing</strong></td><td>Unlike hash tables, tries don't use hash functions — they use character-by-character navigation</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-gold">
+    <div class="callout-title">⚡ Trie vs Hash Table vs Binary Search Tree</div>
+    <p><strong>Hash Table:</strong> O(1) lookup but CANNOT do prefix search. "A" se start hone wale sab stocks nahi mil sakte.<br>
+    <strong>BST/AVL:</strong> O(log n) lookup, can do range queries but not prefix matching efficiently.<br>
+    <strong>Trie:</strong> O(m) lookup where m = key length. <strong>CAN do prefix search!</strong> Type "A" and instantly get all stocks starting with A. This is WHY we use Trie for auto-complete.</p>
+  </div>
+</div>
+
+<hr>
+
+<!-- SECTION 2: WHY TRIE -->
+<div class="section" id="why-trie">
+  <div class="section-number">Section 02</div>
+  <h2>Why <span class="green">Trie</span> for Stock Symbols?</h2>
+
+  <p>In a real stock market application, users search for stocks by typing partial symbols. When a user types <code>"A"</code>, the system should instantly suggest <strong>AAPL, AMD, AMZN, ADBE, AVGO</strong> — all symbols starting with "A".</p>
+
+  <h4>Real-World Use Case</h4>
+  <div class="flow-box">
+User types: "A"   → Suggestions: AAPL, ADBE, AMD, AMZN, AVGO
+User types: "AA"  → Suggestions: AAPL
+User types: "AAP" → Suggestions: AAPL
+User types: "AAPL"→ Exact match found! Price: $178.50</div>
+
+  <h4>Our Implementation Stores</h4>
+  <table>
+    <thead><tr><th>Stock Symbol</th><th>Price</th><th>Purpose in Trie</th></tr></thead>
+    <tbody>
+      <tr><td>AAPL</td><td>$178.50</td><td>Shares prefix "A" with AMD, AMZN, ADBE, AVGO</td></tr>
+      <tr><td>AMD</td><td>$195.30</td><td>Shares prefix "AM" with AMZN</td></tr>
+      <tr><td>AMZN</td><td>$173.80</td><td>Shares prefix "AM" with AMD</td></tr>
+      <tr><td>GOOGL</td><td>$142.30</td><td>Shares prefix "GOO" with GOOG</td></tr>
+      <tr><td>GOOG</td><td>$143.10</td><td>GOOG is a prefix OF GOOGL!</td></tr>
+      <tr><td>META</td><td>$485.60</td><td>Shares prefix "M" with MSFT</td></tr>
+      <tr><td>MSFT</td><td>$410.20</td><td>Shares prefix "M" with META</td></tr>
+      <tr><td>NVDA</td><td>$875.30</td><td>Shares prefix "N" with NFLX</td></tr>
+      <tr><td>NFLX</td><td>$625.40</td><td>Shares prefix "N" with NVDA</td></tr>
+      <tr><td>TSLA</td><td>$248.50</td><td>Shares prefix "T" with TXN</td></tr>
+      <tr><td>+ 8 more</td><td>...</td><td>IBM, INTC, ORCL, ADBE, CSCO, AVGO, TXN, QCOM</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-blue">
+    <div class="callout-title">📌 Syllabus Connection — Unit 3: String Data Structures</div>
+    <p><strong>Tries are part of Unit 3</strong> in the ADS syllabus. This implementation directly demonstrates: (1) Prefix tree construction, (2) O(m) character-by-character insertion and search, (3) Auto-complete via DFS traversal, (4) Space-time tradeoff with 26-ary branching. It also connects to <strong>String Searching algorithms (KMP, Boyer-Moore)</strong> from the same unit.</p>
+  </div>
+</div>
+<!-- PART 3: LINES 1-11 — HEADERS & INCLUDES -->
+
+<hr>
+<div class="section" id="includes">
+  <div class="section-number">Section 03</div>
+  <h2>Lines 1–11: <span class="green">Headers & Includes</span> — Line by Line</h2>
+
+  <p>Let's go through the very first lines of <code>member5_trie.c</code>. Every single line explained.</p>
+
+  <h4>Lines 1–8: The Comment Block</h4>
+  <pre data-lang="C"><code><span class="cm">/*
+ * MEMBER 5: TRIE FOR STOCK SYMBOL AUTO-COMPLETE
+ * ==============================================
+ *
+ * Implements: Trie (Prefix Tree)
+ * Purpose: Fast prefix-based search for stock symbols
+ * Real-world use: Search suggestions as user types
+ */</span></code></pre>
+
+  <div class="line-box">
+    <div class="line-num">Lines 1–8</div>
+    <div class="line-code">/* ... */</div>
+    <div class="line-explain">
+      <strong>Yeh ek multi-line comment hai.</strong> <code>/*</code> se start hota hai, <code>*/</code> pe end. C mein <code>/* */</code> ke andar kuch bhi likho — compiler ignore karega. Yeh documentation purpose ke liye hai — batata hai ki yeh file kya karti hai.
+      <br><br>
+      <strong>Faculty Answer:</strong> "This is a block comment describing the module. It tells us this file implements a Trie data structure for stock symbol auto-complete functionality. The comment follows standard C multi-line comment syntax <code>/* ... */</code>."
+    </div>
+  </div>
+
+  <h4>Line 10: Including the shared header</h4>
+  <pre data-lang="C"><code>#<span class="kw">include</span> <span class="str">"stock_data.h"</span></code></pre>
+
+  <div class="line-box">
+    <div class="line-num">Line 10</div>
+    <div class="line-code">#include "stock_data.h"</div>
+    <div class="line-explain">
+      <strong>#include</strong> is a <em class="hi">preprocessor directive</em> — compiler ko bolta hai ki "is file ka saara content yahan paste kar do compile se pehle".<br><br>
+      <strong>Double quotes <code>"stock_data.h"</code></strong> means look in the CURRENT directory first (not system folders). This is our project's shared header file.<br><br>
+      <strong>What does stock_data.h contain?</strong><br>
+      • <code>#include &lt;stdio.h&gt;</code> — for printf, scanf<br>
+      • <code>#include &lt;stdlib.h&gt;</code> — for malloc, calloc, free<br>
+      • <code>#include &lt;string.h&gt;</code> — for strcmp, strcpy, strncpy<br>
+      • <code>#include &lt;time.h&gt;</code> — for time functions<br>
+      • <code>#define MAX_SYMBOL_LEN 10</code> — max length of stock symbol string<br>
+      • Common struct definitions used across all 5 member files<br><br>
+      <strong>Faculty Answer:</strong> "This includes our shared project header which provides common definitions like MAX_SYMBOL_LEN, standard library includes (stdio, stdlib, string), and shared data structures used across all five modules."
+    </div>
+  </div>
+
+  <h4>Line 11: Including ctype.h</h4>
+  <pre data-lang="C"><code>#<span class="kw">include</span> <span class="str">&lt;ctype.h&gt;</span></code></pre>
+
+  <div class="line-box">
+    <div class="line-num">Line 11</div>
+    <div class="line-code">#include &lt;ctype.h&gt;</div>
+    <div class="line-explain">
+      <strong>Angle brackets <code>&lt;ctype.h&gt;</code></strong> means look in SYSTEM include directories (not our project folder).<br><br>
+      <strong>ctype.h</strong> stands for "Character TYPE Header". It provides functions to check and convert characters:<br>
+      • <code>toupper(c)</code> — converts lowercase 'a' to uppercase 'A' (we use THIS one!)<br>
+      • <code>tolower(c)</code> — converts uppercase to lowercase<br>
+      • <code>isalpha(c)</code> — checks if character is a letter<br>
+      • <code>isdigit(c)</code> — checks if character is a digit<br><br>
+      <strong>Why do we need it?</strong> Because our <code>char_idx()</code> function uses <code>toupper()</code> to convert any character to uppercase before mapping it to an array index (0-25). This makes our trie <strong>case-insensitive</strong>.<br><br>
+      <strong>Faculty Answer:</strong> "We include ctype.h for the <code>toupper()</code> function, which ensures case-insensitive character handling. Whether the user types 'aapl' or 'AAPL', it gets converted to uppercase before trie operations."
+    </div>
+  </div>
+
+  <div class="callout callout-red">
+    <div class="callout-title">⚠️ Difference: "quotes" vs &lt;angle brackets&gt;</div>
+    <p><code>#include "file.h"</code> — Searches in YOUR project directory first, then system directories. Used for YOUR OWN header files.<br>
+    <code>#include &lt;file.h&gt;</code> — Searches ONLY in system/standard library directories. Used for STANDARD C library headers like stdio.h, stdlib.h, ctype.h.</p>
+  </div>
+</div>
+<!-- PART 4: LINES 13-24 — STRUCT & GLOBALS -->
+
+<hr>
+<div class="section" id="struct">
+  <div class="section-number">Section 04</div>
+  <h2>Lines 13–24: <span class="green">Data Structure & Global Variables</span></h2>
+
+  <p>These lines define THE most important thing — the <strong>TrieNode structure</strong> and tracking variables.</p>
+
+  <h4>Line 13: ALPHABET_SIZE constant</h4>
+  <pre data-lang="C"><code>#<span class="kw">define</span> <span class="num">ALPHABET_SIZE</span> <span class="num">26</span></code></pre>
+
+  <div class="line-box">
+    <div class="line-num">Line 13</div>
+    <div class="line-code">#define ALPHABET_SIZE 26</div>
+    <div class="line-explain">
+      <strong>#define</strong> is a preprocessor macro. Before compilation, the compiler replaces EVERY occurrence of <code>ALPHABET_SIZE</code> with <code>26</code> in the code. It's like a find-and-replace.<br><br>
+      <strong>Why 26?</strong> Because English alphabet has 26 letters (A to Z). Our stock symbols only contain uppercase English letters, so each trie node needs exactly 26 child pointers — one for each letter.<br><br>
+      <strong>Faculty Answer:</strong> "ALPHABET_SIZE is defined as 26 because we're working with uppercase English letters A-Z. Each trie node will have an array of 26 child pointers, one for each possible character. This is a compile-time constant defined using a preprocessor macro."
+    </div>
+  </div>
+
+  <h4>Lines 15–20: The TrieNode Structure</h4>
+  <pre data-lang="C"><code><span class="kw">typedef struct</span> <span class="type">TrieNode</span> {
+    <span class="kw">struct</span> <span class="type">TrieNode</span>* children[<span class="num">ALPHABET_SIZE</span>];  <span class="cm">// 26 child pointers</span>
+    <span class="type">int</span> is_end;                              <span class="cm">// is this a complete word?</span>
+    <span class="type">char</span> symbol[<span class="num">MAX_SYMBOL_LEN</span>];             <span class="cm">// full symbol name</span>
+    <span class="type">double</span> last_price;                       <span class="cm">// stock price</span>
+} <span class="type">TrieNode</span>;</code></pre>
+
+  <div class="line-box">
+    <div class="line-num">Line 15</div>
+    <div class="line-code">typedef struct TrieNode {</div>
+    <div class="line-explain">
+      <strong>typedef</strong> = "type definition" — lets us create a custom name for a data type. Instead of writing <code>struct TrieNode</code> everywhere, we can just write <code>TrieNode</code>.<br><br>
+      <strong>struct TrieNode</strong> = we're defining a structure (a group of related variables bundled together). The name <code>TrieNode</code> after <code>struct</code> is needed because this struct is <strong>self-referential</strong> — it contains pointers to itself (children are TrieNode pointers).<br><br>
+      <strong>Faculty Answer:</strong> "This is a self-referential structure definition using typedef. The struct tag 'TrieNode' is necessary because the children array inside the struct needs to reference the same struct type, creating a recursive data structure."
+    </div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Line 16</div>
+    <div class="line-code">struct TrieNode* children[ALPHABET_SIZE];</div>
+    <div class="line-explain">
+      <strong>YEH SABSE IMPORTANT LINE HAI!</strong> 🔥<br><br>
+      This declares an array of 26 pointers. Each pointer can point to another TrieNode (child node).<br><br>
+      <code>children[0]</code> = pointer to child for letter 'A'<br>
+      <code>children[1]</code> = pointer to child for letter 'B'<br>
+      <code>children[2]</code> = pointer to child for letter 'C'<br>
+      ... <br>
+      <code>children[25]</code> = pointer to child for letter 'Z'<br><br>
+      If <code>children[i]</code> is <code>NULL</code>, it means no word passes through that letter at this level.<br>
+      If <code>children[i]</code> is NOT NULL, it points to the next node in the path.<br><br>
+      <strong>Memory Impact:</strong> Each node stores 26 pointers × 8 bytes (64-bit) = <strong>208 bytes per node</strong> just for the children array! This is the "space" cost of trie's fast speed.<br><br>
+      <strong>Faculty Answer:</strong> "This is a fixed-size array of 26 child pointers, implementing a 26-ary branching factor. Each index maps to a letter: index 0 for 'A', index 1 for 'B', through index 25 for 'Z'. A NULL pointer at index i means no word continues through that letter from this node. This design enables O(1) child lookup per character but uses more memory than alternatives like linked lists of children."
+    </div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Line 17</div>
+    <div class="line-code">int is_end;</div>
+    <div class="line-explain">
+      <strong>is_end</strong> is a flag (0 or 1) that marks whether a complete word ends at this node.<br><br>
+      <strong>Why is this needed?</strong> Consider "AMD" and "AMZN". After inserting "AMD", the node at D has <code>is_end = 1</code>. But the node at M (in the A→M path) has <code>is_end = 0</code> because "AM" is NOT a valid stock symbol — it's just a prefix.<br><br>
+      Without this flag, we couldn't tell if "AM" is an actual word or just a path to other words.<br><br>
+      <strong>Faculty Answer:</strong> "The is_end flag differentiates between nodes that merely form part of a path (prefix) and nodes that mark the completion of a stored key. For example, in the path A→M→D for 'AMD', the 'M' node has is_end=0 (just a prefix) while the 'D' node has is_end=1 (complete word)."
+    </div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Line 18</div>
+    <div class="line-code">char symbol[MAX_SYMBOL_LEN];</div>
+    <div class="line-explain">
+      Stores the FULL stock symbol string at the end node. When <code>is_end = 1</code>, this field contains the complete symbol like "AAPL" or "MSFT".<br><br>
+      <code>MAX_SYMBOL_LEN</code> is defined in <code>stock_data.h</code> (typically 10). So this is a character array that can hold up to 9 characters + 1 null terminator.<br><br>
+      <strong>Why store the full symbol?</strong> Because when we do auto-complete, we collect results from end nodes. Instead of reconstructing the word by walking back up the tree, we simply read <code>node->symbol</code>. Much simpler!<br><br>
+      <strong>Faculty Answer:</strong> "We store the complete symbol string at each end node for efficient retrieval during auto-complete. This avoids the need to reconstruct the word by tracing back from the leaf to the root, trading a small amount of extra storage for simpler collection logic."
+    </div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Line 19</div>
+    <div class="line-code">double last_price;</div>
+    <div class="line-explain">
+      Stores the stock price as a <strong>double</strong> (decimal number). Only meaningful at end nodes where <code>is_end = 1</code>.<br><br>
+      <code>double</code> = 64-bit floating point number, can store values like 178.50, 875.30, 1295.60 with decimal precision.<br><br>
+      <strong>Faculty Answer:</strong> "The last_price field stores the stock's price at end nodes, making the trie a key-value store — the key is the symbol (encoded in the path), and the value is the associated price data."
+    </div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Line 20</div>
+    <div class="line-code">} TrieNode;</div>
+    <div class="line-explain">
+      Closes the struct definition. The <code>TrieNode</code> after the closing brace is the typedef name — now we can use <code>TrieNode</code> as a type name directly instead of <code>struct TrieNode</code>.
+    </div>
+  </div>
+
+  <h4>Lines 22–23: Global Tracking Variables</h4>
+  <pre data-lang="C"><code><span class="kw">static</span> <span class="type">int</span> trie_nodes = <span class="num">0</span>;
+<span class="kw">static</span> <span class="type">int</span> trie_words = <span class="num">0</span>;</code></pre>
+
+  <div class="line-box">
+    <div class="line-num">Lines 22–23</div>
+    <div class="line-code">static int trie_nodes = 0;<br>static int trie_words = 0;</div>
+    <div class="line-explain">
+      Two counter variables to track trie statistics:<br><br>
+      <code>trie_nodes</code> — counts total number of TrieNode objects created (incremented in <code>trie_new_node()</code>)<br>
+      <code>trie_words</code> — counts total number of complete words inserted (incremented in <code>trie_insert()</code>)<br><br>
+      <strong>static keyword:</strong> Makes these variables <em class="hi">file-scoped</em> — they can only be accessed within this .c file. Other files (like member1_hashtable.c) cannot see or modify these variables. This prevents naming conflicts.<br><br>
+      <strong>Initialized to 0</strong> — they start fresh and get reset in <code>run_trie()</code>.<br><br>
+      <strong>Faculty Answer:</strong> "These are file-scope static variables used for tracking trie statistics. The static keyword limits their visibility to this translation unit, providing encapsulation. trie_nodes tracks total nodes created for memory analysis, and trie_words tracks total keys inserted."
+    </div>
+  </div>
+
+  <div class="callout callout-purple">
+    <div class="callout-title">📐 Memory Layout of One TrieNode</div>
+    <p>
+      <code>children[26]</code> = 26 × 8 bytes = <strong>208 bytes</strong> (pointers on 64-bit system)<br>
+      <code>is_end</code> = <strong>4 bytes</strong> (int)<br>
+      <code>symbol[10]</code> = <strong>10 bytes</strong> (char array)<br>
+      <code>last_price</code> = <strong>8 bytes</strong> (double)<br>
+      <strong>Total ≈ 230+ bytes per node</strong> (with padding for alignment)<br><br>
+      With 58 nodes for 18 stock symbols → approximately <strong>13.3 KB</strong> total memory.
+    </p>
+  </div>
+</div>
+<!-- PART 5: LINES 25-31 — HELPER FUNCTIONS -->
+
+<hr>
+<div class="section" id="newnode">
+  <div class="section-number">Section 05</div>
+  <h2>Lines 25–31: <span class="green">Helper Functions</span></h2>
+
+  <h4>Lines 25–29: trie_new_node() — Creating a New Node</h4>
+  <pre data-lang="C"><code><span class="kw">static</span> <span class="type">TrieNode</span>* <span class="fn">trie_new_node</span>() {
+    <span class="type">TrieNode</span>* n = (<span class="type">TrieNode</span>*)calloc(<span class="num">1</span>, <span class="kw">sizeof</span>(<span class="type">TrieNode</span>));
+    trie_nodes++;
+    <span class="kw">return</span> n;
+}</code></pre>
+
+  <div class="line-box">
+    <div class="line-num">Line 25</div>
+    <div class="line-code">static TrieNode* trie_new_node() {</div>
+    <div class="line-explain">
+      <strong>static</strong> = this function is only visible within this file (file-scope, private function).<br>
+      <strong>TrieNode*</strong> = return type is a POINTER to a TrieNode (it returns the address of a newly created node).<br>
+      <strong>trie_new_node()</strong> = function name. Takes no parameters <code>()</code>.<br><br>
+      <strong>Faculty Answer:</strong> "This is a static factory function that creates and returns a new TrieNode. The static keyword ensures it's only accessible within this translation unit, providing encapsulation."
+    </div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Line 26</div>
+    <div class="line-code">TrieNode* n = (TrieNode*)calloc(1, sizeof(TrieNode));</div>
+    <div class="line-explain">
+      <strong>YEH LINE BOHOT IMPORTANT HAI!</strong> 🔥 Yahan memory allocate ho rahi hai.<br><br>
+      <strong>calloc(1, sizeof(TrieNode))</strong> does TWO things:<br>
+      1. Allocates memory for 1 TrieNode on the HEAP (dynamic memory)<br>
+      2. <strong>Initializes ALL bytes to ZERO</strong> — this is KEY!<br><br>
+      <strong>Why calloc and NOT malloc?</strong><br>
+      • <code>malloc(sizeof(TrieNode))</code> — allocates memory but leaves it UNINITIALIZED (garbage values)<br>
+      • <code>calloc(1, sizeof(TrieNode))</code> — allocates AND sets everything to 0<br><br>
+      Because of calloc:<br>
+      • All 26 <code>children[]</code> pointers become <code>NULL</code> (0 = NULL for pointers) ✅<br>
+      • <code>is_end</code> becomes <code>0</code> (not an end node) ✅<br>
+      • <code>last_price</code> becomes <code>0.0</code> ✅<br>
+      • <code>symbol</code> becomes empty string ✅<br><br>
+      Without calloc, we'd need 26 lines to manually set each child to NULL!<br><br>
+      <strong>(TrieNode*)</strong> — this is a <em class="hi">type cast</em>. calloc returns <code>void*</code> (generic pointer), we cast it to <code>TrieNode*</code> (pointer to TrieNode).<br><br>
+      <strong>Faculty Answer:</strong> "We use calloc instead of malloc because calloc zero-initializes all allocated memory. This automatically sets all 26 child pointers to NULL, is_end to 0, and all other fields to their zero values — eliminating the need for manual initialization of each field."
+    </div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Line 27</div>
+    <div class="line-code">trie_nodes++;</div>
+    <div class="line-explain">
+      Increments the global counter. Every time a new node is created, we track it for statistics. At the end, we can report "Total Nodes: 58" for 18 stock symbols.<br><br>
+      <strong>++</strong> is the post-increment operator. <code>trie_nodes++</code> is same as <code>trie_nodes = trie_nodes + 1;</code>
+    </div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Line 28</div>
+    <div class="line-code">return n;</div>
+    <div class="line-explain">
+      Returns the pointer to the newly created node. The caller (trie_insert function) receives this pointer and connects it into the trie structure.
+    </div>
+  </div>
+
+  <h4>Line 31: char_idx() — Character to Index Mapping</h4>
+  <pre data-lang="C"><code><span class="kw">static</span> <span class="type">int</span> <span class="fn">char_idx</span>(<span class="type">char</span> c) { <span class="kw">return</span> toupper(c) - <span class="str">'A'</span>; }</code></pre>
+
+  <div class="line-box">
+    <div class="line-num">Line 31</div>
+    <div class="line-code">static int char_idx(char c) { return toupper(c) - 'A'; }</div>
+    <div class="line-explain">
+      <strong>This is the MAPPING function — converts a letter to an array index (0-25).</strong><br><br>
+      <strong>How it works step by step:</strong><br>
+      1. <code>toupper(c)</code> — converts character to uppercase. 'a'→'A', 'B'→'B' (already uppercase stays same)<br>
+      2. <code>- 'A'</code> — subtracts ASCII value of 'A' (which is 65)<br><br>
+      <strong>Examples:</strong><br>
+      • <code>char_idx('A')</code> = toupper('A') - 'A' = 65 - 65 = <strong>0</strong> → children[0]<br>
+      • <code>char_idx('B')</code> = toupper('B') - 'A' = 66 - 65 = <strong>1</strong> → children[1]<br>
+      • <code>char_idx('M')</code> = toupper('M') - 'A' = 77 - 65 = <strong>12</strong> → children[12]<br>
+      • <code>char_idx('Z')</code> = toupper('Z') - 'A' = 90 - 65 = <strong>25</strong> → children[25]<br><br>
+      <strong>This is a one-liner function</strong> — the entire function body is on one line with curly braces. It's equivalent to writing it in 3 lines.<br><br>
+      <strong>Faculty Answer:</strong> "char_idx maps a character to its corresponding array index using ASCII arithmetic. toupper() ensures case-insensitivity, and subtracting 'A' maps the uppercase letter to the range 0-25, which directly indexes into the children array."
+    </div>
+  </div>
+
+  <div class="callout callout-gold">
+    <div class="callout-title">💡 ASCII Value Table (Important for Viva)</div>
+    <p>
+      'A' = 65, 'B' = 66, 'C' = 67 ... 'Z' = 90<br>
+      'a' = 97, 'b' = 98, 'c' = 99 ... 'z' = 122<br>
+      '0' = 48, '1' = 49 ... '9' = 57<br><br>
+      So <code>'M' - 'A'</code> = 77 - 65 = 12. This trick works because ASCII values for letters are <strong>contiguous</strong> (no gaps between A and Z).
+    </p>
+  </div>
+</div>
+<!-- PART 6: LINES 33-46 — TRIE INSERT -->
+
+<hr>
+<div class="section" id="insert">
+  <div class="section-number">Section 06</div>
+  <h2>Lines 33–46: <span class="green">trie_insert()</span> — Full Breakdown</h2>
+
+  <p>This function inserts a stock symbol into the trie, character by character. This is THE core operation.</p>
+
+  <pre data-lang="C"><code><span class="kw">static void</span> <span class="fn">trie_insert</span>(<span class="type">TrieNode</span>* root, <span class="kw">const</span> <span class="type">char</span>* symbol, <span class="type">double</span> price) {
+    <span class="type">TrieNode</span>* cur = root;
+    printf(<span class="str">"  [INSERT] %s ($%.2f)\n"</span>, symbol, price);
+    <span class="kw">for</span>(<span class="type">int</span> i = <span class="num">0</span>; symbol[i]; i++) {
+        <span class="type">int</span> idx = char_idx(symbol[i]);
+        <span class="kw">if</span>(idx < <span class="num">0</span> || idx >= <span class="num">ALPHABET_SIZE</span>) <span class="kw">continue</span>;
+        <span class="kw">if</span>(!cur->children[idx]) cur->children[idx] = trie_new_node();
+        cur = cur->children[idx];
+    }
+    cur->is_end = <span class="num">1</span>;
+    strncpy(cur->symbol, symbol, <span class="num">MAX_SYMBOL_LEN</span> - <span class="num">1</span>);
+    cur->last_price = price;
+    trie_words++;
+}</code></pre>
+
+  <div class="line-box">
+    <div class="line-num">Line 33</div>
+    <div class="line-code">static void trie_insert(TrieNode* root, const char* symbol, double price) {</div>
+    <div class="line-explain">
+      <strong>Function signature breakdown:</strong><br>
+      • <code>static</code> — file-private function<br>
+      • <code>void</code> — returns nothing<br>
+      • <code>TrieNode* root</code> — pointer to root of trie (starting point)<br>
+      • <code>const char* symbol</code> — the stock symbol string to insert ("AAPL", "MSFT", etc.). <code>const</code> means we promise NOT to modify this string<br>
+      • <code>double price</code> — stock price to store at the end node<br><br>
+      <strong>Faculty Answer:</strong> "trie_insert takes three parameters: a pointer to the trie root, a const string for the symbol (const ensures we don't modify the input), and the price. It returns void as it modifies the trie in-place through pointers."
+    </div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Line 34</div>
+    <div class="line-code">TrieNode* cur = root;</div>
+    <div class="line-explain">
+      Creates a <strong>cursor pointer</strong> starting at root. We'll walk this pointer down the trie. We don't want to modify <code>root</code> itself (we need root to stay at the top), so we use a separate pointer <code>cur</code> to traverse.<br><br>
+      Think of it as: root = ghar ka address (permanent), cur = aapka GPS location (moves as you walk).
+    </div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Line 35</div>
+    <div class="line-code">printf("  [INSERT] %s ($%.2f)\n", symbol, price);</div>
+    <div class="line-explain">
+      Prints a log message showing what's being inserted. <code>%s</code> = string (symbol), <code>$%.2f</code> = dollar sign + float with 2 decimal places (price). <code>\n</code> = newline. This is just for visual output, not part of the algorithm.
+    </div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Line 36</div>
+    <div class="line-code">for(int i = 0; symbol[i]; i++) {</div>
+    <div class="line-explain">
+      <strong>THE MAIN LOOP — iterates through each character of the symbol.</strong><br><br>
+      • <code>int i = 0</code> — start from first character<br>
+      • <code>symbol[i]</code> — this is the CONDITION. In C, strings end with a <strong>null terminator</strong> <code>'\0'</code> (ASCII 0). When we reach <code>'\0'</code>, the condition becomes 0 (false) and the loop stops!<br>
+      • <code>i++</code> — move to next character<br><br>
+      For "AAPL": i=0→'A', i=1→'A', i=2→'P', i=3→'L', i=4→'\0' (STOP)<br><br>
+      <strong>Faculty Answer:</strong> "This iterates over each character of the symbol string. The loop condition <code>symbol[i]</code> evaluates to false (0) when it encounters the null terminator '\\0', which marks the end of the C string. This is a standard C idiom for string traversal."
+    </div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Line 37</div>
+    <div class="line-code">int idx = char_idx(symbol[i]);</div>
+    <div class="line-explain">
+      Converts the current character to an array index (0-25). For 'A'→0, for 'P'→15, for 'L'→11. This index tells us WHICH child pointer to follow.
+    </div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Line 38</div>
+    <div class="line-code">if(idx < 0 || idx >= ALPHABET_SIZE) continue;</div>
+    <div class="line-explain">
+      <strong>Validation/Safety check!</strong> If the character is not a letter (like a digit or symbol), <code>char_idx</code> would return a value outside 0-25 range. This check SKIPS such invalid characters using <code>continue</code> (jumps to next loop iteration).<br><br>
+      <strong>Faculty Answer:</strong> "This is a bounds-checking guard clause. If the character maps to an index outside the valid range [0, 25], we skip it using continue. This prevents array out-of-bounds access and handles any non-alphabetic characters gracefully."
+    </div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Line 39</div>
+    <div class="line-code">if(!cur->children[idx]) cur->children[idx] = trie_new_node();</div>
+    <div class="line-explain">
+      <strong>THE CREATION STEP!</strong><br><br>
+      <code>!cur->children[idx]</code> = if child at this index is NULL (doesn't exist yet)...<br>
+      <code>cur->children[idx] = trie_new_node()</code> = ...create a new node and link it!<br><br>
+      If the path already exists (from a previously inserted word sharing this prefix), this line does NOTHING — we reuse the existing node. <strong>This is how tries share prefixes!</strong><br><br>
+      <strong>Example:</strong> After inserting "AMD", the path A→M exists. When inserting "AMZN", A and M nodes already exist, so no new nodes needed for those — only Z and N are new.<br><br>
+      <strong>Faculty Answer:</strong> "This implements lazy node creation — we only allocate a new node if the path doesn't already exist. If a previous insertion created this path (shared prefix), we reuse the existing node. This is the key mechanism for prefix sharing in tries."
+    </div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Line 40</div>
+    <div class="line-code">cur = cur->children[idx];</div>
+    <div class="line-explain">
+      Move the cursor DOWN to the child node. We've processed one character, now move to the next level of the trie. Next iteration of the loop will process the next character starting from this new position.
+    </div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Lines 42–45</div>
+    <div class="line-code">cur->is_end = 1;<br>strncpy(cur->symbol, symbol, MAX_SYMBOL_LEN - 1);<br>cur->last_price = price;<br>trie_words++;</div>
+    <div class="line-explain">
+      After the loop, <code>cur</code> points to the LAST node of the word. Now we mark it:<br><br>
+      • <code>is_end = 1</code> — "a complete word ends here"<br>
+      • <code>strncpy</code> — copies the symbol string safely (max MAX_SYMBOL_LEN-1 chars to prevent buffer overflow). Unlike <code>strcpy</code>, <code>strncpy</code> takes a max length parameter for safety.<br>
+      • <code>last_price = price</code> — store the stock price<br>
+      • <code>trie_words++</code> — increment word counter<br><br>
+      <strong>Faculty Answer:</strong> "After traversing/creating the path for all characters, we mark the terminal node as a word boundary by setting is_end=1, store the complete symbol string using strncpy for buffer-safety, store the associated price, and increment our word counter."
+    </div>
+  </div>
+
+  <h4>🎬 Visual Walkthrough: Inserting "AAPL" ($178.50)</h4>
+  <div class="flow-box">
+Step 1: i=0, char='A', idx=0
+  root->children[0] is NULL → CREATE new node
+  cur moves to children[0]
+
+Step 2: i=1, char='A', idx=0  
+  cur->children[0] is NULL → CREATE new node
+  cur moves to children[0]
+
+Step 3: i=2, char='P', idx=15
+  cur->children[15] is NULL → CREATE new node
+  cur moves to children[15]
+
+Step 4: i=3, char='L', idx=11
+  cur->children[11] is NULL → CREATE new node
+  cur moves to children[11]
+
+Loop ends (symbol[4] = '\0')
+
+Mark cur: is_end=1, symbol="AAPL", price=178.50
+Total new nodes created: 4 (+ 1 root = 5 total)</div>
+</div>
+<!-- PART 7: LINES 48-56 — TRIE SEARCH -->
+
+<hr>
+<div class="section" id="search">
+  <div class="section-number">Section 07</div>
+  <h2>Lines 48–56: <span class="green">trie_search()</span> — Exact Lookup</h2>
+
+  <p>This function checks if a COMPLETE symbol exists in the trie. Returns 1 (true) if found, 0 (false) if not.</p>
+
+  <pre data-lang="C"><code><span class="kw">static int</span> <span class="fn">trie_search</span>(<span class="type">TrieNode</span>* root, <span class="kw">const</span> <span class="type">char</span>* symbol) {
+    <span class="type">TrieNode</span>* cur = root;
+    <span class="kw">for</span>(<span class="type">int</span> i = <span class="num">0</span>; symbol[i]; i++) {
+        <span class="type">int</span> idx = char_idx(symbol[i]);
+        <span class="kw">if</span>(idx < <span class="num">0</span> || idx >= <span class="num">ALPHABET_SIZE</span> || !cur->children[idx]) <span class="kw">return</span> <span class="num">0</span>;
+        cur = cur->children[idx];
+    }
+    <span class="kw">return</span> cur && cur->is_end;
+}</code></pre>
+
+  <div class="line-box">
+    <div class="line-num">Line 48</div>
+    <div class="line-code">static int trie_search(TrieNode* root, const char* symbol) {</div>
+    <div class="line-explain">
+      Returns <code>int</code> — will return 1 (found) or 0 (not found). Takes the root pointer and the symbol string to search for.
+    </div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Line 49</div>
+    <div class="line-code">TrieNode* cur = root;</div>
+    <div class="line-explain">
+      Same as insert — create a cursor starting at root to walk down the trie.
+    </div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Lines 50–53</div>
+    <div class="line-code">for(int i = 0; symbol[i]; i++) {<br>    int idx = char_idx(symbol[i]);<br>    if(idx < 0 || idx >= ALPHABET_SIZE || !cur->children[idx]) return 0;<br>    cur = cur->children[idx];<br>}</div>
+    <div class="line-explain">
+      Similar loop as insert, BUT with one key difference on <strong>Line 52</strong>:<br><br>
+      <code>if(idx < 0 || idx >= ALPHABET_SIZE || !cur->children[idx]) return 0;</code><br><br>
+      Three conditions checked with <code>||</code> (OR):<br>
+      1. <code>idx < 0</code> — invalid character (below 'A')<br>
+      2. <code>idx >= ALPHABET_SIZE</code> — invalid character (above 'Z')<br>
+      3. <code>!cur->children[idx]</code> — <strong>the child doesn't exist!</strong> This means the word is NOT in the trie.<br><br>
+      If ANY of these is true → immediately return 0 (NOT FOUND). No need to continue.<br><br>
+      <strong>Key difference from insert:</strong> In insert, if child is NULL, we CREATE a new node. In search, if child is NULL, we GIVE UP — the word isn't there.<br><br>
+      <strong>Faculty Answer:</strong> "The search loop navigates the trie character by character. If at any point the required child pointer is NULL, it means the search key doesn't exist in the trie, and we return 0 immediately. This is an early termination optimization — we don't need to check the remaining characters."
+    </div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Line 55</div>
+    <div class="line-code">return cur && cur->is_end;</div>
+    <div class="line-explain">
+      <strong>THIS LINE IS TRICKY — FACULTY FAVORITE! 🎯</strong><br><br>
+      After the loop, <code>cur</code> points to the node of the last character. But we need TWO checks:<br><br>
+      1. <code>cur</code> — is the pointer not NULL? (safety check)<br>
+      2. <code>cur->is_end</code> — is this node marked as end of a word?<br><br>
+      <strong>WHY do we need is_end check?</strong><br>
+      Imagine "AMD" is in the trie. If someone searches for "AM":<br>
+      - Loop follows A→M successfully ✅<br>
+      - But <code>cur->is_end</code> is 0 at M node (because "AM" is NOT a valid stock symbol)<br>
+      - Returns 0 (NOT FOUND) — correct!<br><br>
+      Without <code>is_end</code> check, "AM" would falsely return as found just because the path exists.<br><br>
+      <code>&&</code> is logical AND — BOTH conditions must be true to return 1.<br><br>
+      <strong>Faculty Answer:</strong> "The final return statement checks two conditions: (1) cur is not NULL (safety), and (2) cur->is_end is 1 (the node marks a complete word). This distinction is crucial — a prefix like 'AM' would navigate the trie successfully but would fail the is_end check since 'AM' is not a stored key, only 'AMD' is."
+    </div>
+  </div>
+
+  <h4>🎬 Visual: Search for "GOOGL" (EXISTS) vs "GOO" (DOESN'T EXIST)</h4>
+  <div class="flow-box">
+Search "GOOGL":
+  i=0: 'G'→idx=6, children[6] exists ✅, move down
+  i=1: 'O'→idx=14, children[14] exists ✅, move down
+  i=2: 'O'→idx=14, children[14] exists ✅, move down
+  i=3: 'G'→idx=6, children[6] exists ✅, move down
+  i=4: 'L'→idx=11, children[11] exists ✅, move down
+  Loop ends → cur->is_end = 1 ✅ → return 1 (FOUND!)
+
+Search "GOO":
+  i=0: 'G'→idx=6, children[6] exists ✅, move down
+  i=1: 'O'→idx=14, children[14] exists ✅, move down
+  i=2: 'O'→idx=14, children[14] exists ✅, move down
+  Loop ends → cur->is_end = 0 ❌ → return 0 (NOT FOUND!)
+  (The path exists but "GOO" is not a complete word)</div>
+
+  <div class="callout callout-green">
+    <div class="callout-title">⏱️ Time Complexity: O(m)</div>
+    <p>Search takes O(m) time where m = length of the search key. For "GOOGL" (5 chars), exactly 5 steps. This is <strong>independent of how many total words</strong> are in the trie! Even with 1 million stocks, searching "GOOGL" still takes only 5 steps.</p>
+  </div>
+</div>
+<!-- PART 8: LINES 58-76 — COLLECT & GET_SUGGESTIONS (AUTO-COMPLETE) -->
+
+<hr>
+<div class="section" id="collect">
+  <div class="section-number">Section 08</div>
+  <h2>Lines 58–76: <span class="green">collect() & get_suggestions()</span> — Auto-Complete</h2>
+
+  <p>These two functions work TOGETHER to implement auto-complete. <code>get_suggestions</code> navigates to the prefix node, then <code>collect</code> does a DFS to find all complete words below it.</p>
+
+  <h3>Part A: collect() — Recursive DFS Collector</h3>
+  <pre data-lang="C"><code><span class="kw">static void</span> <span class="fn">collect</span>(<span class="type">TrieNode</span>* node, <span class="type">char</span> suggestions[][<span class="num">MAX_SYMBOL_LEN</span>], <span class="type">int</span>* cnt, <span class="type">int</span> max) {
+    <span class="kw">if</span>(*cnt >= max) <span class="kw">return</span>;
+    <span class="kw">if</span>(node->is_end) strcpy(suggestions[(*cnt)++], node->symbol);
+    <span class="kw">for</span>(<span class="type">int</span> i = <span class="num">0</span>; i < <span class="num">ALPHABET_SIZE</span>; i++)
+        <span class="kw">if</span>(node->children[i]) collect(node->children[i], suggestions, cnt, max);
+}</code></pre>
+
+  <div class="line-box">
+    <div class="line-num">Line 58</div>
+    <div class="line-code">static void collect(TrieNode* node, char suggestions[][MAX_SYMBOL_LEN], int* cnt, int max) {</div>
+    <div class="line-explain">
+      <strong>Parameters breakdown:</strong><br>
+      • <code>TrieNode* node</code> — current node being visited in the DFS<br>
+      • <code>char suggestions[][MAX_SYMBOL_LEN]</code> — a 2D array to store results. Each row is one symbol string. Think of it as a list of strings.<br>
+      • <code>int* cnt</code> — pointer to a counter (so we can modify it across recursive calls). Tracks how many suggestions found so far.<br>
+      • <code>int max</code> — maximum number of suggestions to collect (prevents overflow)<br><br>
+      <strong>Why is cnt a pointer?</strong> Because this function is RECURSIVE. If <code>cnt</code> was a regular int, each recursive call would get its own copy and changes wouldn't propagate back. With a pointer, ALL recursive calls share the same counter.<br><br>
+      <strong>Faculty Answer:</strong> "collect is a recursive DFS function. The cnt parameter is passed as a pointer (int*) because the function is recursive and we need all recursive calls to share and modify the same counter. The 2D array suggestions[][MAX_SYMBOL_LEN] stores collected symbol strings."
+    </div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Line 59</div>
+    <div class="line-code">if(*cnt >= max) return;</div>
+    <div class="line-explain">
+      <strong>Base case / Safety check.</strong> <code>*cnt</code> dereferences the pointer to get the actual count value. If we've already collected enough suggestions (count >= max), STOP recursing. This prevents array overflow.<br><br>
+      <strong>Faculty Answer:</strong> "This is the termination condition — once we've collected the maximum number of results, we stop the DFS traversal to prevent buffer overflow."
+    </div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Line 60</div>
+    <div class="line-code">if(node->is_end) strcpy(suggestions[(*cnt)++], node->symbol);</div>
+    <div class="line-explain">
+      <strong>DENSE LINE — BREAK IT DOWN!</strong> 🔥<br><br>
+      1. <code>node->is_end</code> — check if this node marks a complete word<br>
+      2. If yes: <code>strcpy(suggestions[(*cnt)++], node->symbol)</code><br><br>
+      Breaking down <code>suggestions[(*cnt)++]</code>:<br>
+      - <code>*cnt</code> — get current count value (e.g., 2)<br>
+      - <code>suggestions[2]</code> — access row 2 of the 2D array<br>
+      - <code>strcpy(suggestions[2], node->symbol)</code> — copy the symbol string into that row<br>
+      - <code>(*cnt)++</code> — THEN increment count to 3 (post-increment)<br><br>
+      So if count is 2 and node has "AMZN", it copies "AMZN" into suggestions[2] and increments count to 3.<br><br>
+      <strong>Faculty Answer:</strong> "When we reach a node with is_end=1, we copy its symbol into the suggestions array at the current count index, then post-increment the count. The expression (*cnt)++ first dereferences the pointer to access the count, uses it as the array index, then increments it."
+    </div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Lines 61–62</div>
+    <div class="line-code">for(int i = 0; i < ALPHABET_SIZE; i++)<br>    if(node->children[i]) collect(node->children[i], suggestions, cnt, max);</div>
+    <div class="line-explain">
+      <strong>THE RECURSION!</strong> Loop through all 26 possible children. For each child that EXISTS (not NULL), recursively call collect on it.<br><br>
+      This is a <strong>Depth-First Search (DFS)</strong> — we go deep into each branch before trying the next one. Since we iterate i from 0 to 25 (A to Z), results come back in <strong>alphabetical order!</strong><br><br>
+      <strong>Faculty Answer:</strong> "This implements a DFS traversal over all children. By iterating i from 0 (A) to 25 (Z), we naturally collect results in lexicographic (alphabetical) order. The recursive structure explores each subtree completely before moving to the next sibling."
+    </div>
+  </div>
+
+  <h3>Part B: get_suggestions() — Navigate to Prefix, Then Collect</h3>
+  <pre data-lang="C"><code><span class="kw">static int</span> <span class="fn">get_suggestions</span>(<span class="type">TrieNode</span>* root, <span class="kw">const</span> <span class="type">char</span>* prefix,
+                            <span class="type">char</span> suggestions[][<span class="num">MAX_SYMBOL_LEN</span>], <span class="type">int</span> max) {
+    <span class="type">TrieNode</span>* cur = root;
+    <span class="kw">for</span>(<span class="type">int</span> i = <span class="num">0</span>; prefix[i]; i++) {
+        <span class="type">int</span> idx = char_idx(prefix[i]);
+        <span class="kw">if</span>(idx < <span class="num">0</span> || idx >= <span class="num">ALPHABET_SIZE</span> || !cur->children[idx]) <span class="kw">return</span> <span class="num">0</span>;
+        cur = cur->children[idx];
+    }
+    <span class="type">int</span> cnt = <span class="num">0</span>;
+    collect(cur, suggestions, &cnt, max);
+    <span class="kw">return</span> cnt;
+}</code></pre>
+
+  <div class="line-box">
+    <div class="line-num">Lines 65–66</div>
+    <div class="line-code">static int get_suggestions(TrieNode* root, const char* prefix,<br>                            char suggestions[][MAX_SYMBOL_LEN], int max) {</div>
+    <div class="line-explain">
+      Returns <code>int</code> — the number of suggestions found. Takes root, prefix string, output array, and max results limit.
+    </div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Lines 67–72</div>
+    <div class="line-code">TrieNode* cur = root;<br>for(...) { navigate to prefix node }<br>if(!cur->children[idx]) return 0;</div>
+    <div class="line-explain">
+      <strong>Step 1: Navigate to the prefix node.</strong> Same loop as search — follow the path for each character of the prefix. If the path breaks (child is NULL), the prefix doesn't exist in the trie, return 0 suggestions.
+    </div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Lines 73–75</div>
+    <div class="line-code">int cnt = 0;<br>collect(cur, suggestions, &cnt, max);<br>return cnt;</div>
+    <div class="line-explain">
+      <strong>Step 2: Collect all words below this prefix node.</strong><br><br>
+      • <code>int cnt = 0</code> — initialize result counter<br>
+      • <code>&cnt</code> — pass the ADDRESS of cnt (pointer) so collect can modify it<br>
+      • <code>collect(cur, ...)</code> — start DFS from the prefix node. Finds ALL complete words below<br>
+      • <code>return cnt</code> — return how many suggestions were found<br><br>
+      <strong>Two-step process:</strong><br>
+      1. Navigate: O(m) — walk to the prefix node<br>
+      2. Collect: O(r) — DFS to collect r results<br>
+      Total: <strong>O(m + r)</strong><br><br>
+      <strong>Faculty Answer:</strong> "get_suggestions implements a two-phase algorithm: first, it navigates to the node representing the end of the prefix in O(m) time, then calls collect() to perform a DFS from that node, gathering all complete words in O(r) time where r is the number of results. The total complexity is O(m + r)."
+    </div>
+  </div>
+
+  <h4>🎬 Visual: Auto-Complete for Prefix "A"</h4>
+  <div class="flow-box">
+Step 1: Navigate to prefix "A"
+  Follow root->children[0] (A) → cur now points to [A] node
+
+Step 2: DFS collect from [A] node
+  Visit [A] → is_end=0, skip
+    Visit [A][A] → is_end=0
+      Visit [A][A][P] → is_end=0
+        Visit [A][A][P][L] → is_end=1! Add "AAPL" ✅ (cnt=1)
+    Visit [A][D] → is_end=0
+      Visit [A][D][B] → is_end=0
+        Visit [A][D][B][E] → is_end=1! Add "ADBE" ✅ (cnt=2)
+    Visit [A][M] → is_end=0
+      Visit [A][M][D] → is_end=1! Add "AMD" ✅ (cnt=3)
+      Visit [A][M][Z] → is_end=0
+        Visit [A][M][Z][N] → is_end=1! Add "AMZN" ✅ (cnt=4)
+    Visit [A][V] → is_end=0
+      Visit [A][V][G] → is_end=0
+        Visit [A][V][G][O] → is_end=1! Add "AVGO" ✅ (cnt=5)
+
+Result: 5 suggestions → AAPL, ADBE, AMD, AMZN, AVGO (alphabetical!)</div>
+</div>
+<!-- PART 9: LINES 78-140 — RUN_TRIE DRIVER -->
+
+<hr>
+<div class="section" id="runtrie">
+  <div class="section-number">Section 09</div>
+  <h2>Lines 78–140: <span class="green">run_trie()</span> — Main Driver</h2>
+
+  <p>This is the main function that demonstrates everything — creates the trie, inserts stocks, runs searches, and shows auto-complete.</p>
+
+  <h4>Lines 78–85: Initialization</h4>
+  <pre data-lang="C"><code><span class="kw">void</span> <span class="fn">run_trie</span>() {
+    trie_nodes = <span class="num">0</span>; trie_words = <span class="num">0</span>;
+    <span class="cm">// ... printf header lines ...</span>
+    <span class="type">TrieNode</span>* root = trie_new_node();
+}</code></pre>
+
+  <div class="line-box">
+    <div class="line-num">Line 78</div>
+    <div class="line-code">void run_trie() {</div>
+    <div class="line-explain">
+      <strong>NOT static</strong> — this is the PUBLIC function! Other files (like main.c) can call <code>run_trie()</code>. All other functions were static (private). This is the only entry point into the trie module.<br><br>
+      <strong>Faculty Answer:</strong> "run_trie is the public interface of this module. Unlike the helper functions which are static (file-scoped), this function has external linkage and can be called from main.c or any other translation unit."
+    </div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Line 79</div>
+    <div class="line-code">trie_nodes = 0; trie_words = 0;</div>
+    <div class="line-explain">Reset both counters to 0. This ensures clean statistics if run_trie() is called multiple times.</div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Line 85</div>
+    <div class="line-code">TrieNode* root = trie_new_node();</div>
+    <div class="line-explain">
+      <strong>Create the ROOT of the trie.</strong> The root is an empty node — it doesn't represent any character. It's the starting point. All 26 children start as NULL (thanks to calloc).<br><br>
+      After this line: trie_nodes = 1 (root counted).
+    </div>
+  </div>
+
+  <h4>Lines 87–99: Stock Data & Bulk Insert</h4>
+  <pre data-lang="C"><code><span class="kw">struct</span> { <span class="type">char</span> symbol[MAX_SYMBOL_LEN]; <span class="type">double</span> price; } stocks[] = {
+    {<span class="str">"AAPL"</span>, <span class="num">178.50</span>}, {<span class="str">"AMD"</span>,  <span class="num">195.30</span>}, {<span class="str">"AMZN"</span>, <span class="num">173.80</span>},
+    {<span class="str">"GOOGL"</span>,<span class="num">142.30</span>}, {<span class="str">"GOOG"</span>, <span class="num">143.10</span>}, {<span class="str">"META"</span>, <span class="num">485.60</span>},
+    {<span class="str">"MSFT"</span>, <span class="num">410.20</span>}, {<span class="str">"NVDA"</span>, <span class="num">875.30</span>}, {<span class="str">"NFLX"</span>, <span class="num">625.40</span>},
+    {<span class="str">"TSLA"</span>, <span class="num">248.50</span>}, {<span class="str">"IBM"</span>,  <span class="num">183.40</span>}, {<span class="str">"INTC"</span>,  <span class="num">42.50</span>},
+    {<span class="str">"ORCL"</span>, <span class="num">118.20</span>}, {<span class="str">"ADBE"</span>, <span class="num">562.30</span>}, {<span class="str">"CSCO"</span>,  <span class="num">51.20</span>},
+    {<span class="str">"AVGO"</span>,<span class="num">1295.60</span>}, {<span class="str">"TXN"</span>,  <span class="num">188.90</span>}, {<span class="str">"QCOM"</span>, <span class="num">172.40</span>}
+};
+<span class="type">int</span> n = <span class="kw">sizeof</span>(stocks)/<span class="kw">sizeof</span>(stocks[<span class="num">0</span>]);</code></pre>
+
+  <div class="line-box">
+    <div class="line-num">Lines 87–94</div>
+    <div class="line-code">struct { char symbol[...]; double price; } stocks[] = { ... };</div>
+    <div class="line-explain">
+      <strong>Anonymous struct array!</strong> Instead of defining a named struct type, we define the structure inline and immediately create an array of it. This is a C shorthand.<br><br>
+      Each element has two fields: <code>symbol</code> (string) and <code>price</code> (double). 18 stocks total.<br><br>
+      <strong>Faculty Answer:</strong> "This is an anonymous struct declaration with an initializer list. We define the structure and instantiate an array simultaneously. Each element is a compound literal with a symbol string and price value. 18 stock entries are initialized."
+    </div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Line 95</div>
+    <div class="line-code">int n = sizeof(stocks)/sizeof(stocks[0]);</div>
+    <div class="line-explain">
+      <strong>Classic C trick to calculate array length!</strong><br><br>
+      <code>sizeof(stocks)</code> = total bytes of the entire array<br>
+      <code>sizeof(stocks[0])</code> = bytes of ONE element<br>
+      Dividing gives the NUMBER of elements: 18<br><br>
+      <strong>Why not just write 18?</strong> Because if we add or remove stocks, this automatically adjusts. No manual counting needed!<br><br>
+      <strong>Faculty Answer:</strong> "This computes the array length at compile-time using the sizeof operator. It divides the total array size by the size of a single element, making the code maintainable — adding or removing entries doesn't require updating a hardcoded count."
+    </div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Lines 98–99</div>
+    <div class="line-code">for(int i = 0; i < n; i++)<br>    trie_insert(root, stocks[i].symbol, stocks[i].price);</div>
+    <div class="line-explain">
+      Loop through all 18 stocks and insert each one into the trie. <code>stocks[i].symbol</code> accesses the symbol field of the i-th stock.
+    </div>
+  </div>
+
+  <h4>Lines 101–115: Exact Search & Auto-Complete Tests</h4>
+
+  <div class="line-box">
+    <div class="line-num">Lines 102–105</div>
+    <div class="line-code">const char* tests[] = {"AAPL", "GOOGL", "XYZ", "MSFT"};<br>for(int i = 0; i < 4; i++)<br>    printf("  Search '%-6s': %s\n", tests[i],<br>           trie_search(root, tests[i]) ? "FOUND" : "NOT FOUND");</div>
+    <div class="line-explain">
+      Tests exact search with 4 symbols. "XYZ" is intentionally NOT in the trie to show a failed search.<br><br>
+      <code>trie_search(...) ? "FOUND" : "NOT FOUND"</code> — this is the <strong>ternary operator</strong> (<code>condition ? if_true : if_false</code>). If search returns 1 → prints "FOUND", if 0 → prints "NOT FOUND".<br><br>
+      <code>%-6s</code> — left-aligned string padded to 6 characters (for neat formatting).<br><br>
+      <strong>Faculty Answer:</strong> "The ternary operator provides inline conditional string selection. We test with both existing symbols (AAPL, GOOGL, MSFT) and a non-existent one (XYZ) to demonstrate both successful and failed search cases."
+    </div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Lines 108–115</div>
+    <div class="line-code">const char* prefixes[] = {"A", "G", "M", "NV"};<br>// ... get_suggestions for each prefix</div>
+    <div class="line-explain">
+      Tests auto-complete with 4 different prefixes:<br>
+      • "A" → should return: AAPL, ADBE, AMD, AMZN, AVGO (5 results)<br>
+      • "G" → should return: GOOG, GOOGL (2 results)<br>
+      • "M" → should return: META, MSFT (2 results)<br>
+      • "NV" → should return: NVDA (1 result)<br><br>
+      <code>j&lt;cnt-1?", ":""</code> — another ternary: if not the last item, print comma+space, else print empty string. This creates comma-separated output.
+    </div>
+  </div>
+
+  <h4>Lines 117–125: Simulating User Typing "AAPL"</h4>
+  <div class="line-box">
+    <div class="line-num">Lines 118–125</div>
+    <div class="line-code">const char* typing[] = {"A", "AA", "AAP", "AAPL"};</div>
+    <div class="line-explain">
+      <strong>Coolest demo!</strong> Simulates a user typing one character at a time and shows how suggestions narrow down:<br><br>
+      • "A" → AAPL, ADBE, AMD, AMZN, AVGO (5 suggestions)<br>
+      • "AA" → AAPL (narrowed to 1!)<br>
+      • "AAP" → AAPL (still 1)<br>
+      • "AAPL" → AAPL (exact match)<br><br>
+      This perfectly demonstrates the real-world auto-complete behavior.
+    </div>
+  </div>
+
+  <h4>Lines 127–139: Statistics & Key Concepts</h4>
+  <div class="line-box">
+    <div class="line-num">Line 132</div>
+    <div class="line-code">printf("  Memory Usage:   ~%d bytes\n", trie_nodes * (int)sizeof(TrieNode));</div>
+    <div class="line-explain">
+      Calculates approximate memory: number of nodes × size of each node. The <code>(int)</code> cast converts <code>sizeof</code> result (which is <code>size_t</code>) to int for the <code>%d</code> format specifier.<br><br>
+      With ~58 nodes × ~230 bytes = approximately 13,340 bytes ≈ 13KB.
+    </div>
+  </div>
+</div>
+<!-- PART 10: COMPLEXITY ANALYSIS & FAQ -->
+
+<hr>
+<div class="section" id="complexity">
+  <div class="section-number">Section 10</div>
+  <h2>Complexity Analysis & <span class="green">Space-Time Tradeoff</span></h2>
+
+  <table>
+    <thead><tr><th>Operation</th><th>Time</th><th>Explanation</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Insert</strong></td><td>O(m)</td><td>m = length of key. Walk/create one node per character. "AAPL" = 4 steps.</td></tr>
+      <tr><td><strong>Exact Search</strong></td><td>O(m)</td><td>Walk the trie for m characters. Check is_end at the final node.</td></tr>
+      <tr><td><strong>Auto-Complete</strong></td><td>O(m + r)</td><td>m steps to reach prefix node + r steps to collect r results via DFS.</td></tr>
+      <tr><td><strong>Space (per node)</strong></td><td>O(26) = O(1)</td><td>Each node has a fixed-size array of 26 pointers regardless of usage.</td></tr>
+      <tr><td><strong>Total Space</strong></td><td>O(26 × N)</td><td>N = total nodes. Each node stores 26 pointers. With 58 nodes → ~13KB.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-purple">
+    <div class="callout-title">⚖️ The Space-Time Tradeoff</div>
+    <p>
+      <strong>Trie WASTES space</strong> — each node has 26 child pointers, but most are NULL. A typical node might use only 1-2 of its 26 slots.<br><br>
+      <strong>But it GAINS speed</strong> — O(m) lookup independent of how many words exist. A hash table is O(1) average but CANNOT do prefix search. You'd need to check every key!<br><br>
+      <strong>Real numbers:</strong> 18 stocks, 58 nodes, ~13KB memory. The same 18 stocks in a hash table would use ~2KB. But the hash table can't answer "give me all stocks starting with A" without scanning everything.<br><br>
+      <strong>Conclusion:</strong> Trie trades ~6x more memory for the ABILITY to do instant prefix queries. For auto-complete, this is worth it.
+    </p>
+  </div>
+</div>
+
+<hr>
+<div class="section" id="faq">
+  <div class="section-number">Section 11</div>
+  <h2>Faculty FAQ — <span class="green">Tricky Questions & Answers</span> 🎯</h2>
+
+  <div class="line-box">
+    <div class="line-num">Q1</div>
+    <div class="line-code">Why did you use calloc instead of malloc?</div>
+    <div class="line-explain">calloc zero-initializes all memory. This sets all 26 child pointers to NULL automatically. With malloc, we'd need a loop to set each pointer to NULL manually. calloc is cleaner and safer for structures with pointer arrays.</div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Q2</div>
+    <div class="line-code">What does "static" mean before a function?</div>
+    <div class="line-explain">Static limits the function's visibility to the current file (translation unit). Other .c files cannot call static functions. It's like "private" in Java/C++. Only <code>run_trie()</code> is non-static (public) — it's the module's entry point.</div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Q3</div>
+    <div class="line-code">Why is ALPHABET_SIZE 26? What if we had digits too?</div>
+    <div class="line-explain">26 for uppercase A-Z only. If we needed digits (0-9), we'd change to 36. If we needed full ASCII, 128. But more children per node = more memory per node = less efficient. Since stock symbols are only letters, 26 is optimal.</div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Q4</div>
+    <div class="line-code">What does "symbol[i]" in the for-loop condition mean?</div>
+    <div class="line-explain">In C, strings end with '\0' (null terminator, ASCII value 0). The loop condition <code>symbol[i]</code> evaluates the character — any non-zero character is "true" (continue), but '\0' is "false" (stop). This is a standard C idiom for iterating through strings.</div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Q5</div>
+    <div class="line-code">Why use strncpy instead of strcpy?</div>
+    <div class="line-explain"><code>strcpy</code> has NO length limit — if the source string is too long, it overflows the destination buffer (security vulnerability!). <code>strncpy</code> takes a max length parameter, copying at most N-1 characters. This prevents buffer overflow attacks. It's safer.</div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Q6</div>
+    <div class="line-code">What is the difference between trie_search and get_suggestions?</div>
+    <div class="line-explain"><code>trie_search</code> checks if an EXACT complete word exists (returns 0 or 1). <code>get_suggestions</code> finds ALL words that START WITH a given prefix. Search checks is_end at the final node. Suggestions navigates to the prefix node and then does DFS to collect all is_end nodes below.</div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Q7</div>
+    <div class="line-code">Why is cnt passed as int* (pointer) in collect()?</div>
+    <div class="line-explain">Because collect() is recursive. If cnt was a regular int, each recursive call would get its OWN COPY, and modifications wouldn't propagate back to the caller. With a pointer, all recursive calls share the SAME counter variable, so everyone sees the updated count.</div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Q8</div>
+    <div class="line-code">What happens if I search for "AM" when only "AMD" and "AMZN" exist?</div>
+    <div class="line-explain">trie_search("AM") returns 0 (NOT FOUND). The path A→M exists, but the M node has <code>is_end = 0</code> because "AM" was never inserted as a complete word. However, get_suggestions("AM") would return AMD and AMZN — because they're complete words BELOW the AM prefix node.</div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Q9</div>
+    <div class="line-code">What is toupper() and why do we need it?</div>
+    <div class="line-explain"><code>toupper()</code> from ctype.h converts lowercase to uppercase ('a'→'A'). We use it so our trie is case-insensitive — "aapl", "Aapl", "AAPL" all map to the same path. Without it, 'a' and 'A' would map to different indices (97-65=32 vs 65-65=0).</div>
+  </div>
+
+  <div class="line-box">
+    <div class="line-num">Q10</div>
+    <div class="line-code">What is sizeof(stocks)/sizeof(stocks[0])?</div>
+    <div class="line-explain">A compile-time trick to calculate array length. <code>sizeof(stocks)</code> gives total bytes of the array. <code>sizeof(stocks[0])</code> gives bytes of one element. Division = number of elements. This is better than hardcoding "18" because it auto-adjusts if you add/remove items.</div>
+  </div>
+</div>
+<!-- PART 11: HINGLISH FUN EXPLANATORY SCRIPT -->
+
+<hr>
+<div class="section" id="script">
+  <div class="section-number">Section 12</div>
+  <h2>🎬 Hinglish <span class="green">Explanatory Script</span> — Fun & Easy!</h2>
+
+  <p>Isko padho aur code yaad kar lo. Jab mam pooche, confidently bol dena. 😎</p>
+
+  <div class="script-box">
+    <strong>🎬 SCENE 1: TRIE KYA HAI? — The Phone Contacts Analogy</strong><br><br>
+
+    Bhai, Trie ko samjhne ka sabse easy tarika hai — <strong>apna phone kholo!</strong> 📱<br><br>
+
+    Jab tum contacts mein "A" type karte ho, to kya hota hai? Amit, Ankit, Aman — sab suggestions aa jaate hain. Ab "AM" type karo — sirf Amit aur Aman dikhega. "AMA" type karo — sirf Aman!<br><br>
+
+    <strong>YAHI TO TRIE HAI!</strong> 🌳 Ek aisa tree jismein har node ek letter hai. Root se kisi bhi leaf tak ka path ek complete word spell karta hai. Aur prefix type karo — usse related saare words mil jaate hain. <strong>Bina poore contacts ko scan kiye!</strong><br><br>
+
+    Trie ka naam aaya hai "re-TRIE-val" se. Pronounce karte hain "TRY" — like "let's give it a try!" 😄<br><br>
+
+    <hr style="border:none;border-top:1px dashed rgba(201,168,76,0.3);margin:20px 0">
+
+    <strong>🎬 SCENE 2: STRUCT — Har Node Kya Store Karta Hai?</strong><br><br>
+
+    Socho ek dabba hai. <strong>Har dabbe mein 26 chhote drawers hain</strong> — A se Z tak. 🗄️<br><br>
+
+    <code>children[26]</code> — Yeh hai 26 drawers! Har drawer mein ya to <strong>NULL hai</strong> (drawer khaali) ya <strong>ek aur dabba hai</strong> (agla node). Agar "AAPL" daalte ho, to:<br>
+    Root ke drawer 'A' mein ek naya dabba → uske drawer 'A' mein ek naya dabba → uske drawer 'P' mein ek naya dabba → uske drawer 'L' mein ek naya dabba.<br><br>
+
+    <code>is_end</code> — Yeh ek <strong>flag hai, jaise chhoti si jhandi</strong> 🚩. Agar jhandi lagi hai (is_end=1) to "bhai yahan ek complete word khatam hota hai!" Agar nahi lagi (is_end=0) to "yeh sirf raasta hai, yahan koi word khatam nahi hota."<br><br>
+
+    <code>symbol[]</code> — Last waale dabbe mein ek <strong>chit rakhi hai</strong> jismein poora naam likha hai — "AAPL". Taaki baad mein easily padh sakein.<br><br>
+
+    <code>last_price</code> — Chit ke saath <strong>price tag bhi hai</strong> — $178.50. 💰<br><br>
+
+    <hr style="border:none;border-top:1px dashed rgba(201,168,76,0.3);margin:20px 0">
+
+    <strong>🎬 SCENE 3: CALLOC vs MALLOC — Safaai Waala Memory</strong><br><br>
+
+    <code>calloc(1, sizeof(TrieNode))</code> — Yeh hai <strong>safaai waala memory</strong>! 🧹<br><br>
+
+    <strong>malloc</strong> = Ek naya kamra deta hai but kamra GANDA hai — kachra pada hai (garbage values). Tumhe khud saaf karna padega.<br><br>
+
+    <strong>calloc</strong> = Ek naya kamra deta hai aur <strong>pehle se SAAF karke deta hai!</strong> Sab zero. Sab pointers NULL. Sab numbers 0. Clean slate! ✨<br><br>
+
+    Isliye calloc use karte hain — 26 children pointers automatically NULL ho jaate hain. Warna 26 baar <code>children[i] = NULL;</code> likhna padta! Kaun itna kaam karega bhai? 😂<br><br>
+
+    <hr style="border:none;border-top:1px dashed rgba(201,168,76,0.3);margin:20px 0">
+
+    <strong>🎬 SCENE 4: CHAR_IDX — Letter Ko Number Mein Badlo</strong><br><br>
+
+    <code>toupper(c) - 'A'</code> — Yeh hai <strong>letter-to-number converter</strong>! 🔢<br><br>
+
+    ASCII mein 'A'=65, 'B'=66, ... 'Z'=90. Agar hum 'A' minus karte hain:<br>
+    'A'-'A' = 65-65 = <strong>0</strong> → children[0]<br>
+    'B'-'A' = 66-65 = <strong>1</strong> → children[1]<br>
+    'M'-'A' = 77-65 = <strong>12</strong> → children[12]<br>
+    'Z'-'A' = 90-65 = <strong>25</strong> → children[25]<br><br>
+
+    <code>toupper()</code> pehle small ko capital bana deta hai. Taaki 'a' aur 'A' dono same jagah jaayein. <strong>Case-insensitive search!</strong> 🎯<br><br>
+
+    <hr style="border:none;border-top:1px dashed rgba(201,168,76,0.3);margin:20px 0">
+
+    <strong>🎬 SCENE 5: INSERT — Ek-Ek Letter Se Raasta Banao</strong><br><br>
+
+    Socho tum <strong>jungle mein raasta bana rahe ho</strong> 🌿:<br><br>
+
+    <strong>"AAPL" insert karna hai:</strong><br>
+    1. Root pe khade ho. 'A' ka drawer check karo — khaali? Naya dabba banao, andar jaao ✅<br>
+    2. Naye dabbe mein. 'A' ka drawer check karo — khaali? Naya dabba banao, andar jaao ✅<br>
+    3. Naye dabbe mein. 'P' ka drawer check karo — khaali? Naya dabba banao, andar jaao ✅<br>
+    4. Naye dabbe mein. 'L' ka drawer check karo — khaali? Naya dabba banao, andar jaao ✅<br>
+    5. Word khatam! Jhandi lagao 🚩 (is_end=1), chit rakho ("AAPL"), price tag lagao ($178.50)<br><br>
+
+    <strong>Ab "AMD" insert karo:</strong><br>
+    1. Root pe khade ho. 'A' ka drawer check karo — <strong>ALREADY FILLED!</strong> Naya banane ki zaroorat nahi, seedha andar jaao ✅ (PREFIX SHARING!)<br>
+    2. 'A' waale dabbe mein. 'M' ka drawer check karo — khaali? Naya dabba banao ✅<br>
+    3. 'M' waale dabbe mein. 'D' ka drawer check karo — khaali? Naya dabba banao ✅<br>
+    4. Jhandi lagao 🚩, chit rakho, price tag lagao!<br><br>
+
+    <strong>Dekha?</strong> "AAPL" aur "AMD" dono 'A' share karte hain. Yeh hai Trie ki taaqat — <strong>common prefixes share hote hain!</strong> Memory bachti hai! 💪<br><br>
+
+    <hr style="border:none;border-top:1px dashed rgba(201,168,76,0.3);margin:20px 0">
+
+    <strong>🎬 SCENE 6: SEARCH — Raaste Pe Chalo, Jhandi Dhundo</strong><br><br>
+
+    <strong>"GOOGL" search karo:</strong><br>
+    1. Root pe khade ho. 'G' ka drawer check — hai? ✅ andar jaao<br>
+    2. 'O' ka drawer — hai? ✅ andar jaao<br>
+    3. 'O' ka drawer — hai? ✅ andar jaao<br>
+    4. 'G' ka drawer — hai? ✅ andar jaao<br>
+    5. 'L' ka drawer — hai? ✅ andar jaao<br>
+    6. Jhandi hai? ✅ (is_end=1) → <strong>FOUND!</strong> 🎉<br><br>
+
+    <strong>"XYZ" search karo:</strong><br>
+    1. Root pe khade ho. 'X' ka drawer check — <strong>KHAALI! NULL!</strong> ❌<br>
+    2. TATA BYE BYE → return 0 → <strong>NOT FOUND!</strong><br><br>
+
+    <strong>"AM" search karo (TRICKY!):</strong><br>
+    1. Root → 'A' ✅ → 'M' ✅<br>
+    2. Jhandi check — <strong>NAHI HAI!</strong> (is_end=0) ❌<br>
+    3. "AM" sirf raasta hai, word nahi → <strong>NOT FOUND!</strong><br><br>
+
+    Isliye <code>is_end</code> flag zaroori hai — bina iske "AM" bhi found show hota! 🚩<br><br>
+
+    <hr style="border:none;border-top:1px dashed rgba(201,168,76,0.3);margin:20px 0">
+
+    <strong>🎬 SCENE 7: AUTO-COMPLETE — DFS Ka Jaadu</strong><br><br>
+
+    <strong>Prefix "A" ke liye suggestions chahiye:</strong><br><br>
+
+    Step 1: <strong>Pehle "A" tak pahuncho</strong> — Root se 'A' waale dabbe mein jaao. Bas ek step.<br><br>
+
+    Step 2: <strong>Ab DFS karo — har drawer kholo, andar jaao, jhandi dhundo!</strong> 🔍<br><br>
+
+    "A" ke andar 'A' drawer kholo → andar jaao → 'P' kholo → andar jaao → 'L' kholo → <strong>JHANDI MILI! "AAPL"!</strong> ✅ Wapas jaao...<br>
+    'D' drawer kholo → andar jaao → 'B' kholo → 'E' kholo → <strong>JHANDI! "ADBE"!</strong> ✅ Wapas...<br>
+    'M' drawer kholo → 'D' kholo → <strong>JHANDI! "AMD"!</strong> ✅<br>
+    'M' drawer se wapas jaao → 'Z' kholo → 'N' kholo → <strong>JHANDI! "AMZN"!</strong> ✅<br>
+    Aur aise hi... "AVGO" bhi mil jaayega! ✅<br><br>
+
+    <strong>Result:</strong> Prefix "A" → AAPL, ADBE, AMD, AMZN, AVGO — <strong>Alphabetical order mein!</strong> 🔤<br>
+    (Kyunki hum 0 se 25 tak loop karte hain, 'A' pehle aata hai, fir 'B', fir 'C'...)<br><br>
+
+    <hr style="border:none;border-top:1px dashed rgba(201,168,76,0.3);margin:20px 0">
+
+    <strong>🎬 SCENE 8: TYPING SIMULATION — Real Auto-Complete!</strong><br><br>
+
+    User type kar raha hai "AAPL" ek-ek letter se:<br><br>
+
+    Type "A" → <strong>5 suggestions!</strong> AAPL, ADBE, AMD, AMZN, AVGO 📱<br>
+    Type "AA" → <strong>1 suggestion!</strong> AAPL (narrowed down!) 🎯<br>
+    Type "AAP" → <strong>1 suggestion!</strong> AAPL 🎯<br>
+    Type "AAPL" → <strong>Exact match!</strong> Show price $178.50 💰<br><br>
+
+    Jaise Google Search mein type karte ho aur suggestions narrow hoti jaati hain — <strong>EXACTLY wahi concept!</strong> 🔥<br><br>
+
+    <hr style="border:none;border-top:1px dashed rgba(201,168,76,0.3);margin:20px 0">
+
+    <strong>🎬 SCENE 9: SPACE-TIME TRADEOFF — Memory vs Speed</strong><br><br>
+
+    <strong>Hash Table:</strong> Chhota sa kamra (2KB), but auto-complete nahi kar sakta 🏠<br>
+    <strong>Trie:</strong> Bada ghar (13KB), but instant auto-complete! 🏰<br><br>
+
+    Trie mein har node ke 26 drawers mein se zyaadatar <strong>khaali</strong> rehte hain. Jaise ek bada almari kharida but sirf 2-3 drawers use kar rahe — <strong>space waste!</strong> But jab zaroorat padti hai, <strong>instant access!</strong><br><br>
+
+    Yeh hai <strong>space-time tradeoff</strong> — zyaada memory do, zyaada speed lo! ⚡<br><br>
+
+    <hr style="border:none;border-top:1px dashed rgba(201,168,76,0.3);margin:20px 0">
+
+    <strong>🎬 SCENE 10: FINAL SUMMARY — 30 Second Revision</strong><br><br>
+
+    ✅ <strong>Trie</strong> = Tree jismein har node ek letter, root to leaf = word<br>
+    ✅ <strong>26 children</strong> = A to Z, har node mein 26 pointers<br>
+    ✅ <strong>is_end flag</strong> = "Yahan word khatam hota hai ya nahi"<br>
+    ✅ <strong>Insert</strong> = Ek-ek letter ka raasta banao, end pe jhandi lagao (O(m))<br>
+    ✅ <strong>Search</strong> = Raaste pe chalo, jhandi dhundo (O(m))<br>
+    ✅ <strong>Auto-complete</strong> = Prefix tak jaao + DFS se sab jhandi waale dhundo (O(m+r))<br>
+    ✅ <strong>calloc</strong> = Saaf memory, malloc = gandi memory<br>
+    ✅ <strong>static</strong> = Private function, sirf is file mein use hoga<br>
+    ✅ <strong>char_idx</strong> = toupper(c) - 'A' = letter to 0-25 index<br>
+    ✅ <strong>Space-time tradeoff</strong> = Zyaada memory, zyaada speed! 🔥<br><br>
+
+    <strong>Ab jao aur mam ko impress karo! 🚀 Koi bhi line pooche — READY HO!</strong>
+  </div>
+</div>
+<!-- PART 12: FOOTER -->
+
+<hr>
+<div class="footer">
+  <div style="font-size:24px;margin-bottom:8px">🌳</div>
+  <div style="color:var(--accent-green);font-weight:700;font-size:18px;letter-spacing:4px;margin-bottom:8px">MEMBER 5 — TRIE WALKTHROUGH</div>
+  <p>Complete Line-by-Line Code Guide • Faculty-Ready • Hinglish Script Included</p>
+  <p style="margin-top:12px;font-size:12px;color:var(--text-dim)">member5_trie.c • 141 Lines • 6 Functions • O(m) Search • O(m+r) Auto-Complete</p>
+</div>
+
+</div><!-- /container -->
+</body>
+</html>
